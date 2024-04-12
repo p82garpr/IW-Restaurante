@@ -1,0 +1,143 @@
+[
+    {
+      "id": 1,
+      "name": "Coca-Cola",
+      "image": "url_de_la_imagen",
+      "description": "Refresco de cola",
+      "price": 2.5
+    },
+    {
+      "id": 2,
+      "name": "Agua Mineral",
+      "image": "url_de_la_imagen",
+      "description": "Agua sin gas",
+      "price": 1.5
+    },
+    {
+      "id": 3,
+      "name": "Cerveza",
+      "image": "url_de_la_imagen",
+      "description": "Cerveza rubia",
+      "price": 3.0
+    },
+    {
+      "id": 4,
+      "name": "Fanta Naranja",
+      "image": "url_de_la_imagen",
+      "description": "Refresco de naranja",
+      "price": 2.0
+    },
+    {
+      "id": 5,
+      "name": "Limonada",
+      "image": "url_de_la_imagen",
+      "description": "Refresco de limón",
+      "price": 2.0
+    },
+    {
+      "id": 6,
+      "name": "Té Helado",
+      "image": "url_de_la_imagen",
+      "description": "Té frío sin azúcar",
+      "price": 2.0
+    },
+    {
+      "id": 7,
+      "name": "Mojito",
+      "image": "url_de_la_imagen",
+      "description": "Cóctel de ron, lima y menta",
+      "price": 5.0
+    },
+    {
+      "id": 8,
+      "name": "Vino Tinto",
+      "image": "url_de_la_imagen",
+      "description": "Vino tinto joven",
+      "price": 4.0
+    },
+    {
+      "id": 9,
+      "name": "Vino Blanco",
+      "image": "url_de_la_imagen",
+      "description": "Vino blanco seco",
+      "price": 4.0
+    },
+    {
+      "id": 10,
+      "name": "Margarita",
+      "image": "url_de_la_imagen",
+      "description": "Cóctel de tequila, triple sec y lima",
+      "price": 6.0
+    },
+    {
+      "id": 11,
+      "name": "Café",
+      "image": "url_de_la_imagen",
+      "description": "Café negro sin azúcar",
+      "price": 1.5
+    },
+    {
+      "id": 12,
+      "name": "Té Verde",
+      "image": "url_de_la_imagen",
+      "description": "Té verde caliente",
+      "price": 1.5
+    },
+    {
+      "id": 13,
+      "name": "Smoothie de Frutas",
+      "image": "url_de_la_imagen",
+      "description": "Bebida refrescante de frutas",
+      "price": 3.5
+    },
+    {
+      "id": 14,
+      "name": "Mimosa",
+      "image": "url_de_la_imagen",
+      "description": "Cóctel de champán y zumo de naranja",
+      "price": 5.0
+    },
+    {
+      "id": 15,
+      "name": "Piña Colada",
+      "image": "url_de_la_imagen",
+      "description": "Cóctel de ron, piña y coco",
+      "price": 5.0
+    },
+    {
+      "id": 16,
+      "name": "Gin Tonic",
+      "image": "url_de_la_imagen",
+      "description": "Cóctel de ginebra y tónica",
+      "price": 4.5
+    },
+    {
+      "id": 17,
+      "name": "Agua de Coco",
+      "image": "url_de_la_imagen",
+      "description": "Agua de coco natural",
+      "price": 2.5
+    },
+    {
+      "id": 18,
+      "name": "Sangría",
+      "image": "url_de_la_imagen",
+      "description": "Bebida de vino, frutas y azúcar",
+      "price": 4.5
+    },
+    {
+      "id": 19,
+      "name": "Mojito de Fresa",
+      "image": "url_de_la_imagen",
+      "description": "Cóctel de ron, lima, menta y fresas",
+      "price": 5.5
+    },
+    {
+      "id": 20,
+      "name": "Smoothie de Mango",
+      "image": "url_de_la_imagen",
+      "description": "Bebida refrescante de mango",
+      "price": 3.5
+    }
+  ]
+  
