@@ -1,0 +1,21 @@
+{
+    "categories": [
+      {
+        "id": 1,
+        "name": "Entrantes"
+      },
+      {
+        "id": 2,
+        "name": "Principales"
+      },
+      {
+        "id": 3,
+        "name": "Postre"
+      },
+      {
+        "id": 4,
+        "name": "Bebidas"
+      }
+    ]
+  }
+  
