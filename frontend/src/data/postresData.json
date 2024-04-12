@@ -1,0 +1,30 @@
+[
+    {
+        "id": 1,
+        "name": "Tarta de Chocolate",
+        "description": "Deliciosa tarta de chocolate con cobertura de ganache.",
+        "image": "https://via.placeholder.com/300",
+        "price": 9.99
+    },
+    {
+        "id": 2,
+        "name": "Helado de Vainilla",
+        "description": "Helado cremoso de vainilla con trozos de galleta.",
+        "image": "https://via.placeholder.com/300",
+        "price": 4.99
+    },
+    {
+        "id": 3,
+        "name": "Coulant de Chocolate",
+        "description": "Tierno bizcocho de chocolate con corazón líquido de chocolate.",
+        "image": "https://via.placeholder.com/300",
+        "price": 7.99
+    },
+    {
+        "id": 4,
+        "name": "Tiramisú",
+        "description": "Postre italiano con capas de bizcocho de café, mascarpone y cacao.",
+        "image": "https://via.placeholder.com/300",
+        "price": 6.99
+    }
+]
