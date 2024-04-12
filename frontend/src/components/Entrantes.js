@@ -13,7 +13,10 @@ const Entrantes = () => {
               <CardImg top width="100%" src={entrante.image} alt={entrante.name} />
               <CardBody>
                 <CardTitle>{entrante.name}</CardTitle>
-                <CardText>{entrante.description}</CardText>
+                <CardText>
+                  {entrante.description}<br />
+                  <span style={{ color: 'green', fontWeight: 'bold' }}>{entrante.price} €</span>
+                </CardText>
                 <Button color="primary">Agregar al carrito</Button>
               </CardBody>
             </Card>
