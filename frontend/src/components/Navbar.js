@@ -67,6 +67,9 @@ function Example(props) {
                 GitHub
               </NavLink>
             </NavItem>
+            <NavItem>
+              <NavLink href="/components/Perfil">Perfil</NavLink>
+            </NavItem>
             {/* Comentario para desactivar el DropdownMenu */}
             {/* <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav caret>

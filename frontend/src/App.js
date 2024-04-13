@@ -8,6 +8,7 @@ import Postres from './components/Postres';
 import Principales from './components/Principales';
 
 import Home from './components/Home';
+import Perfil from './components/Perfil';
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="/components/Bebidas" component={Bebidas} />
           <Route path="/components/Postres" component={Postres} />
           <Route path="/components/Principales" component={Principales} />
+          <Route path="/components/Perfil" component={Perfil} />
         </Switch>
         
       </div>
