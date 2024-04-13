@@ -26,5 +26,12 @@
         "description": "Pizza tradicional italiana con salsa de tomate, mozzarella y albahaca fresca.",
         "image": "https://via.placeholder.com/300",
         "price": 8.99
+    },
+    {
+        "id": 5,
+        "name": "Kebab",
+        "description": "Kebab del moro cabron de debajo tu casa",
+        "image": "https://pbs.twimg.com/profile_images/2318816965/7m475rz41n8j02gavo5n_400x400.jpeg",
+        "price": 7.99
     }
 ]
