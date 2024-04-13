@@ -1,38 +1,43 @@
 import React from 'react';
-import { Card, CardBody, CardTitle, CardText, Button } from 'reactstrap';
+import { Container, Row, Col, Button } from 'reactstrap';
 import styled from 'styled-components';
 import perfilData from '../data/perfilData.json';
 
-const PerfilContainer = styled.div`
+const PerfilContainer = styled(Container)`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 `;
 
-const StyledCard = styled(Card)`
-  width: 400px;
+const PerfilBox = styled.div`
+  background-color: #f5f5f5;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
-const StyledCardBody = styled(CardBody)`
-  text-align: center;
-`;
-
-const StyledTitle = styled(CardTitle)`
+const Title = styled.h1`
   font-size: 2rem;
   font-weight: bold;
   margin-bottom: 20px;
 `;
 
-const StyledText = styled(CardText)`
+const Text = styled.p`
   font-size: 1.2rem;
   margin-bottom: 20px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 const StyledButton = styled(Button)`
   background-color: #1a237e;
   border-color: #1a237e;
   font-size: 1.2rem;
+  margin-right: 10px;
 
   &:hover {
     background-color: #3f51b5;
@@ -43,16 +48,15 @@ const StyledButton = styled(Button)`
 const Perfil = () => {
   return (
     <PerfilContainer>
-      <StyledCard>
-        <StyledCardBody>
-          <StyledTitle>Perfil de Usuario</StyledTitle>
-          <StyledText>Nombre: {perfilData.nombre}</StyledText>
-          <StyledText>Correo electrónico: {perfilData.email}</StyledText>
-          <StyledText>Dirección: {perfilData.direccion}</StyledText>
-          <StyledText>Teléfono: {perfilData.telefono}</StyledText>
+      <PerfilBox>
+        <Title>Perfil de Usuario</Title>
+        <Text>Nombre: {perfilData.nombre}</Text>
+        <Text>Correo electrónico: {perfilData.email}</Text>
+        <ButtonContainer>
           <StyledButton>Editar Perfil</StyledButton>
-        </StyledCardBody>
-      </StyledCard>
+          <StyledButton>Ver Historial</StyledButton>
+        </ButtonContainer>
+      </PerfilBox>
     </PerfilContainer>
   );
 };
