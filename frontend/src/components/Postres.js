@@ -72,7 +72,7 @@ const Postres = () => {
   useEffect(() => {
     const getProductos = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/productos');
+        const res = await axios.get('http://localhost:4000/api/productos');
         setLista(res.data);
       } catch (error) {
         console.error('Error al obtener los productos:', error);
