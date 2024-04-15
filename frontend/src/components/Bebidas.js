@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardImg, CardBody, CardTitle, CardText, Button } from 'reactstrap';
 import styled from 'styled-components';
-import bebidasData from '../data/bebidasData.json';
+import axios from 'axios';
 
 const BebidasContainer = styled.div`
   display: flex;
@@ -60,24 +60,31 @@ const BebidasCardBody = styled(CardBody)`
   height: 100%;
 `;
 
-const BebidasContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1; /* Para que el contenido pueda expandirse */
-`;
-
 const Bebidas = () => {
+  const [lista, setLista] = useState([]);
+  useEffect(() => {
+    const getProductos = async () => {
+      try {
+        const res = await axios.get('http://localhost:4000/api/productos');
+        setLista(res.data);
+      } catch (error) {
+        console.error('Error al obtener los productos:', error);
+      }
+    };
+    getProductos();
+  }, []);
+
+  const bebidas = lista.filter(producto => producto.categoria === 'bebida');
+
   return (
     <BebidasContainer>
-      {bebidasData.map(bebida => (
-        <BebidasCard key={bebida.id}>
-          <BebidasImage top width="100%" src={bebida.image} alt={bebida.name} />
+      {bebidas.map(bebida => (
+        <BebidasCard key={bebida.nombre}>
+          <BebidasImage top width="100%" src={bebida.imagen} alt={bebida.nombre} />
           <BebidasCardBody>
-            <BebidasContent>
-              <BebidasTitle>{bebida.name}</BebidasTitle>
-              <BebidasDescription>{bebida.description}</BebidasDescription>
-            </BebidasContent>
-            <BebidasPrice>{bebida.price} €</BebidasPrice>
+            <BebidasTitle>{bebida.nombre}</BebidasTitle>
+            <BebidasDescription>{bebida.descripcion}</BebidasDescription>
+            <BebidasPrice>{bebida.precio} €</BebidasPrice>
             <BebidasButton>Agregar al carrito</BebidasButton>
           </BebidasCardBody>
         </BebidasCard>
