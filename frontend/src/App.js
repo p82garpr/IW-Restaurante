@@ -17,12 +17,12 @@ const App = () => {
         <Navbar color="light" light expand="md" />
         <Switch>
           <Route exact path="/" component={Home} />
-          <Route path="/components/MenuCategorias" component={MenuCategorias} />
-          <Route path="/components/Entrantes" component={Entrantes} />
-          <Route path="/components/Bebidas" component={Bebidas} />
-          <Route path="/components/Postres" component={Postres} />
-          <Route path="/components/Principales" component={Principales} />
-          <Route path="/components/Perfil" component={Perfil} />
+          <Route path="/MenuCategorias" component={MenuCategorias} />
+          <Route path="/Entrantes" component={Entrantes} />
+          <Route path="/Bebidas" component={Bebidas} />
+          <Route path="/Postres" component={Postres} />
+          <Route path="/Principales" component={Principales} />
+          <Route path="/Perfil" component={Perfil} />
         </Switch>
         
       </div>

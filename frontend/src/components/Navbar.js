@@ -60,7 +60,7 @@ function Example(props) {
         <Collapse isOpen={isOpen} navbar>
           <Nav className="me-auto" navbar>
             <NavItem>
-              <NavLink href="/components/MenuCategorias">Categorias</NavLink>
+              <NavLink href="/MenuCategorias">Categorias</NavLink>
             </NavItem>
             <NavItem>
               <NavLink href="https://github.com/reactstrap/reactstrap">
