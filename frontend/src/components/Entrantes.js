@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardImg, CardBody, CardTitle, CardText, Button } from 'reactstrap';
 import styled from 'styled-components';
-import entrantesData from '../data/entrantesData.json';
+import entrantesDataa from '../data/entrantesData.json';
+import axios from 'axios';
+
 
 const EntrantesContainer = styled.div`
   display: flex;
@@ -64,16 +66,33 @@ const EntrantesCardBody = styled(CardBody)`
 `;
 
 const Entrantes = () => {
+
+  //conseguir los entrantes de la api que está en /api/productos y mostrarlos
+
+  const [entrantesData, setEntrantes] = useState([]);
+  useEffect(() => {
+      const getProductosEntrantes = async () => {
+        const response = await axios.get('http://localhost:4000/api/productos');
+        setEntrantes(response.data);
+  }
+  getProductosEntrantes();
+  }, [entrantesData]);
+
+  //quedarnos con solo los productos que tengan como categoria "entrantes"
+  //const entrantesData = entrantes.filter(entrante => entrante.categoria === "entrante");
+  const entrantesFiltrados = entrantesData.filter(entrante => entrante.categoria === "entrante");
+
+
   return (
     <EntrantesContainer>
-      {entrantesData.map(entrante => (
-        <EntrantesCard key={entrante.id}>
-          <EntrantesImage top width="100%" src={entrante.image} alt={entrante.name} />
+      {entrantesFiltrados.map(entrante => (
+        <EntrantesCard key={entrante.nombre}>
+          <EntrantesImage top width="100%" src={entrante.imagen} alt={entrante.nombre} />
           <EntrantesCardBody>
             <div>
-              <EntrantesTitle>{entrante.name}</EntrantesTitle>
-              <EntrantesDescription>{entrante.description}</EntrantesDescription>
-              <EntrantesPrice>{entrante.price} €</EntrantesPrice>
+              <EntrantesTitle>{entrante.nombre}</EntrantesTitle>
+              <EntrantesDescription>{entrante.descripcion}</EntrantesDescription>
+              <EntrantesPrice>{entrante.precio} €</EntrantesPrice>
             </div>
             <EntrantesButton>Agregar al carrito</EntrantesButton>
           </EntrantesCardBody>
