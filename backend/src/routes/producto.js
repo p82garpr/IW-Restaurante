@@ -3,14 +3,15 @@ const router = Router()
 
 const {createProd, getProd, getProducto, deleteProd, updateProd}= require('../controller/producto.controller')
 
-router.route('/')
+// Ruta para obtener todos los productos o filtrar por categoría
+router.get('/:categoria?', getProd);
 
-    .get(getProd)
-    .post(createProd)
+router.post('/', createProd);
 
 router.route('/:id')
     .get(getProducto)
     .delete(deleteProd)
-    .put(updateProd)
+    .put(updateProd);
+
 
 module.exports = router;

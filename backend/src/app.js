@@ -21,5 +21,7 @@ app.use('/api/usuarios', require('./routes/usuario'))
 // ruta para nuestra api de productos
 app.use('/api/productos', require('./routes/producto'))
 
+app.use('/api/categorias', require('./routes/categoria'))
+
 
 module.exports = app;
