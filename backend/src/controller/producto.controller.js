@@ -4,8 +4,15 @@ const Producto = require('../models/Producto')
 
 productoCtrl.getProd = async (req, res) => {
     try {
-        const productos = await Producto.find()
-        res.json(productos)
+        let productos;
+        if (req.params.categoria) {
+            // Si se proporciona una categoría en la URL, filtrar productos por esa categoría
+            productos = await Producto.find({ categoria: req.params.categoria });
+        } else {
+            // Si no se proporciona una categoría, obtener todos los productos
+            productos = await Producto.find();
+        }
+        res.json(productos);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -33,12 +40,14 @@ productoCtrl.createProd = async (req, res) => {
 
 productoCtrl.getProducto = async (req, res) => {
     try {
-        const producto = await Producto.findById(req.params.id)
+        const producto = await Producto.findByIdcd (req.params.id)
         res.json(producto)
     } catch (error) {
         res.status(404).json({ message: "Producto no encontrado" });
     }
 }
+
+
 
 productoCtrl.deleteProd = async (req, res) => {
     try {
