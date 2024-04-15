@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 //cadena de conexion
 const URI = process.env.MONGODB_URI
             ? process.env.MONGODB_URI
-            : 'mongodb://localhost/dbtest'
+            : 'mongodb+srv://admin:admin@cluster0.th0zlsz.mongodb.net/'
 
 mongoose.connect(URI)
 

@@ -7,7 +7,12 @@ const usuarioSchema = new Schema({
     contraseña: String,
     fecha_nacimiento: Date,
     privilegio: Number,
-    id_mesa: Number
+    rol: { type: String, enum: ['cliente', 'administrador'] },
+    cliente_info: {
+        saldo: { type: Number, default: 0 },
+        id_mesa: { type: Number, default: null }
+    },
+        
 },
 {
     timestamps: true

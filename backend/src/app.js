@@ -18,4 +18,8 @@ app.get('/',(req,res)=>{
 // ruta para nuestra api de usuarios
 app.use('/api/usuarios', require('./routes/usuario'))
 
+// ruta para nuestra api de productos
+app.use('/api/productos', require('./routes/producto'))
+
+
 module.exports = app;
