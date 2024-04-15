@@ -6,11 +6,8 @@ const {createProd, getCateg, getCategoria, deleteProd, updateProd}= require('../
 router.route('/')
 
     .get(getCateg)
-    .post(createProd)
 
 router.route('/:id')
     .get(getCategoria)
-    .delete(deleteProd)
-    .put(updateProd)
 
 module.exports = router;
