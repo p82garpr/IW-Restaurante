@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardImg, CardBody, CardTitle, CardText, Button } from 'reactstrap';
 import styled from 'styled-components';
-import postresData from '../data/postresData.json';
+import axios from 'axios';
 
 const PostresContainer = styled.div`
   display: flex;
@@ -67,19 +67,33 @@ const PostresContent = styled.div`
 `;
 
 const Postres = () => {
+  const [lista, setLista] = useState([]);
 
+  useEffect(() => {
+    const getProductos = async () => {
+      try {
+        const res = await axios.get('http://localhost:4000/productos');
+        setLista(res.data);
+      } catch (error) {
+        console.error('Error al obtener los productos:', error);
+      }
+    };
+    getProductos();
+  }, []);
+
+  const postres = lista.filter(producto => producto.categoria === 'postre');
 
   return (
     <PostresContainer>
-      {postresData.map(postre => (
-        <PostresCard key={postre.id}>
-          <PostresImage top width="100%" src={postre.image} alt={postre.name} />
+      {postres.map(postre => (
+        <PostresCard key={postre.nombre}>
+          <PostresImage top width="100%" src={postre.imagen} alt={postre.nombre} />
           <PostresCardBody>
             <PostresContent>
-              <PostresTitle>{postre.name}</PostresTitle>
-              <PostresDescription>{postre.description}</PostresDescription>
+              <PostresTitle>{postre.nombre}</PostresTitle>
+              <PostresDescription>{postre.descripcion}</PostresDescription>
             </PostresContent>
-            <PostresPrice>{postre.price} €</PostresPrice>
+            <PostresPrice>{postre.precio} €</PostresPrice>
             <PostresButton>Agregar al carrito</PostresButton>
           </PostresCardBody>
         </PostresCard>

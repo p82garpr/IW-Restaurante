@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardImg, CardBody, CardTitle, CardText, Button } from 'reactstrap';
 import styled from 'styled-components';
-import principalesData from '../data/principalesData.json';
+//import principalesData from '../data/principalesData.json';
+import axios from 'axios';
 
 const PrincipalesContainer = styled.div`
   display: flex;
@@ -67,17 +68,31 @@ const PrincipalesContent = styled.div`
 `;
 
 const Principales = () => {
+  const [lista, setLista] = useState([]);
+  useEffect(() => {
+    const getProductos = async () => {
+      try {
+        const res = await axios.get('http://localhost:4000/productos');
+        setLista(res.data);
+      } catch (error) {
+        console.error('Error al obtener los productos:', error);
+      }
+    };
+    getProductos();
+  }, []);
+  
+  const principales = lista.filter(producto => producto.categoria === 'principal');
   return (
     <PrincipalesContainer>
-      {principalesData.map(plato => (
-        <PrincipalesCard key={plato.id}>
-          <PrincipalesImage top width="100%" src={plato.image} alt={plato.name} />
+      {principales.map(plato => (
+        <PrincipalesCard key={plato.nombre}>
+          <PrincipalesImage top width="100%" src={plato.imagen} alt={plato.nombre} />
           <PrincipalesCardBody>
             <PrincipalesContent>
-              <PrincipalesTitle>{plato.name}</PrincipalesTitle>
-              <PrincipalesDescription>{plato.description}</PrincipalesDescription>
+              <PrincipalesTitle>{plato.nombre}</PrincipalesTitle>
+              <PrincipalesDescription>{plato.descripcion}</PrincipalesDescription>
             </PrincipalesContent>
-            <PrincipalesPrice>{plato.price} €</PrincipalesPrice>
+            <PrincipalesPrice>{plato.precio} €</PrincipalesPrice>
             <PrincipalesButton>Agregar al carrito</PrincipalesButton>
           </PrincipalesCardBody>
         </PrincipalesCard>
