@@ -1,16 +1,31 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import MenuPlatos from './components/MenuPlatos';
+import Navbar from './components/Navbar';
+import MenuCategorias from './components/MenuCategorias';
+import Entrantes from './components/Entrantes';
+import Bebidas from './components/Bebidas';
+import Postres from './components/Postres';
+import Principales from './components/Principales';
 
-function App() {
+import Home from './components/Home';
+import Perfil from './components/Perfil';
+
+const App = () => {
   return (
     <Router>
-      <Switch>
-        {/* Ruta para el componente MenuPlatos */}
-        <Route path="/menu-platos">
-          <MenuPlatos />
-        </Route>
-      </Switch>
+      <div>
+        <Navbar color="light" light expand="md" />
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/components/MenuCategorias" component={MenuCategorias} />
+          <Route path="/components/Entrantes" component={Entrantes} />
+          <Route path="/components/Bebidas" component={Bebidas} />
+          <Route path="/components/Postres" component={Postres} />
+          <Route path="/components/Principales" component={Principales} />
+          <Route path="/components/Perfil" component={Perfil} />
+        </Switch>
+        
+      </div>
     </Router>
   );
 }

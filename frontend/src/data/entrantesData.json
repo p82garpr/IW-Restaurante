@@ -1,0 +1,24 @@
+[
+    {
+      "id": 1,
+      "name": "Ensalada César",
+      "description": "Lechuga romana fresca, crutones, queso parmesano y aderezo César.",
+      "image": "https://via.placeholder.com/300",
+      "price": 8.99
+    },
+    {
+      "id": 2,
+      "name": "Bruschetta",
+      "description": "Pan tostado con tomate fresco, albahaca, ajo y aceite de oliva.",
+      "image": "https://via.placeholder.com/300",
+      "price": 6.99
+    },
+    {
+      "id": 3,
+      "name": "Croquetas de Jamón",
+      "description": "Deliciosas croquetas caseras rellenas de jamón ibérico.",
+      "image": "https://via.placeholder.com/300",
+      "price": 5.99
+    }
+  ]
+  
