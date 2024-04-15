@@ -1,7 +1,9 @@
 import React from 'react';
-import { Container, Row, Col, Button } from 'reactstrap';
+import { Container, Button } from 'reactstrap';
 import styled from 'styled-components';
 import perfilData from '../data/perfilData.json';
+import { Link } from 'react-router-dom';
+
 
 const PerfilContainer = styled(Container)`
   display: flex;
@@ -53,8 +55,8 @@ const Perfil = () => {
         <Text>Nombre: {perfilData.nombre}</Text>
         <Text>Correo electrónico: {perfilData.email}</Text>
         <ButtonContainer>
-          <StyledButton>Editar Perfil</StyledButton>
-          <StyledButton>Ver Historial</StyledButton>
+          <Link to="/EditarPerfil"><StyledButton>Editar Perfil</StyledButton></Link>
+          <Link to="/Historial"><StyledButton>Ver Historial</StyledButton></Link>
         </ButtonContainer>
       </PerfilBox>
     </PerfilContainer>
