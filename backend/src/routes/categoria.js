@@ -1,7 +1,7 @@
 const {Router} = require('express')
 const router = Router()
 
-const {createProd, getCateg, getCategoria, deleteProd, updateProd}= require('../controller/categoria.controller')
+const {getCateg, getCategoria}= require('../controller/categoria.controller')
 
 router.route('/')
 

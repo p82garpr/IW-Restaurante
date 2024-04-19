@@ -40,7 +40,7 @@ productoCtrl.createProd = async (req, res) => {
 
 productoCtrl.getProducto = async (req, res) => {
     try {
-        const producto = await Producto.findByIdcd (req.params.id)
+        const producto = await Producto.findById(req.params.id)
         res.json(producto)
     } catch (error) {
         res.status(404).json({ message: "Producto no encontrado" });

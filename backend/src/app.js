@@ -23,5 +23,6 @@ app.use('/api/productos', require('./routes/producto'))
 
 app.use('/api/categorias', require('./routes/categoria'))
 
+app.use('/api/cesta', require('./routes/cesta'))
 
 module.exports = app;
