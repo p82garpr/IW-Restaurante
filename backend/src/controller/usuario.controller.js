@@ -2,6 +2,10 @@ const usuarioCtrl = {}
 
 const Usuario = require('../models/Usuario')
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10; // Número de rondas de sal para el hashing
+
+
 usuarioCtrl.getUsu = async (req, res) => {
     try {
         const usuarios = await Usuario.find()
@@ -15,11 +19,13 @@ usuarioCtrl.createUsu = async (req, res) => {
     const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, privilegio, rol, cliente_info } = req.body;
 
     try {
+        const contraseña_hashed = await bcrypt.hash(contraseña, saltRounds);
+
         const newUsu = new Usuario({
             nombre_usuario,
             nombre,
             apellido,
-            contraseña,
+            contraseña: contraseña_hashed,
             fecha_nacimiento,
             privilegio,
             rol,
@@ -55,11 +61,12 @@ usuarioCtrl.updateUsu = async (req, res) => {
     const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, privilegio, rol, cliente_info } = req.body;
 
     try {
+        const contraseña_hashed = await bcrypt.hash(contraseña, saltRounds);
         await Usuario.findByIdAndUpdate(req.params.id, {
             nombre_usuario,
             nombre,
             apellido,
-            contraseña,
+            contraseña:contraseña_hashed,
             fecha_nacimiento,
             privilegio,
             rol,
