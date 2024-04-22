@@ -1,6 +1,8 @@
 const productoCtrl = {}
 
 const Producto = require('../models/Producto');
+const Categoria = require('../models/Categoria');
+
 
 productoCtrl.getProd = async (req, res) => {
     try {
@@ -34,7 +36,7 @@ productoCtrl.createProd = async (req, res) => {
             nombre,
             precio,
             imagen,
-            categoria: categoriaEncontrada._id, // Utilizar el ID de la categoría encontrada
+            categoria: categoriaEncontrada, // Utilizar el ID de la categoría encontrada
             descripcion: ['entrante', 'principal', 'postre'].includes(categoria) ? descripcion : '',
             ingredientes: ['entrante', 'principal', 'postre'].includes(categoria) ? ingredientes : []
         });
