@@ -72,16 +72,16 @@ const Principales = () => {
   useEffect(() => {
     const getProductos = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/api/productos');
+        const res = await axios.get('http://localhost:4000/api/productos/principal');
         setLista(res.data);
       } catch (error) {
         console.error('Error al obtener los productos:', error);
       }
     };
     getProductos();
-  }, []);
+  }, [lista]);
   
-  const principales = lista.filter(producto => producto.categoria === 'principal');
+  const principales = lista
   return (
     <PrincipalesContainer>
       {principales.map(plato => (
