@@ -72,7 +72,7 @@ const Entrantes = () => {
   const [entrantesData, setEntrantes] = useState([]);
   useEffect(() => {
       const getProductosEntrantes = async () => {
-        const response = await axios.get('http://localhost:4000/api/productos');
+        const response = await axios.get('http://localhost:4000/api/productos/entrante');
         setEntrantes(response.data);
   }
   getProductosEntrantes();
@@ -80,7 +80,7 @@ const Entrantes = () => {
 
   //quedarnos con solo los productos que tengan como categoria "entrantes"
   //const entrantesData = entrantes.filter(entrante => entrante.categoria === "entrante");
-  const entrantesFiltrados = entrantesData.filter(entrante => entrante.categoria === "entrante");
+  const entrantesFiltrados = entrantesData;
 
 
   return (
