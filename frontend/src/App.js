@@ -9,6 +9,7 @@ import Principales from './components/Principales';
 import Registro from './components/Registro';
 import Home from './components/Home';
 import Perfil from './components/Perfil';
+import ProductoDetalle from './components/ProductoDetalle';
 
 const App = () => {
   return (
@@ -24,6 +25,8 @@ const App = () => {
           <Route path="/Principales" component={Principales} />
           <Route path="/Perfil" component={Perfil} />
           <Route path="/Registro" component={Registro} />
+          <Route path="/producto/:id" component={ProductoDetalle} />
+
         </Switch>
         
       </div>

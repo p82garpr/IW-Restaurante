@@ -65,17 +65,16 @@ const Bebidas = () => {
   useEffect(() => {
     const getProductos = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/api/productos');
+        const res = await axios.get('http://localhost:4000/api/productos/bebida');
         setLista(res.data);
       } catch (error) {
         console.error('Error al obtener los productos:', error);
       }
     };
     getProductos();
-  }, []);
+  }, [lista]);
 
-  const bebidas = lista.filter(producto => producto.categoria === 'bebida');
-
+  const bebidas = lista
   return (
     <BebidasContainer>
       {bebidas.map(bebida => (
