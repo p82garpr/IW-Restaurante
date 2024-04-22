@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardImg, CardBody, CardTitle, CardText, Button } from 'reactstrap';
 import styled from 'styled-components';
-import entrantesDataa from '../data/entrantesData.json';
 import axios from 'axios';
-
 
 const EntrantesContainer = styled.div`
   display: flex;
@@ -44,7 +43,6 @@ const EntrantesPrice = styled(CardText)`
   font-weight: bold;
   margin-top: auto;
   margin-bottom: auto;
-
 `;
 
 const EntrantesButton = styled(Button)`
@@ -65,27 +63,36 @@ const EntrantesCardBody = styled(CardBody)`
   height: 100%;
 `;
 
+const DetallesButton = styled(Button)`
+  background-color: #6200ea;
+  border-color: #6200ea;
+  font-size: 1rem;
+  width: 100%;
+  
+  &:hover {
+    background-color: #9c4dcc;
+    border-color: #9c4dcc;
+  }
+`;
+
 const Entrantes = () => {
-
-  //conseguir los entrantes de la api que está en /api/productos y mostrarlos
-
   const [entrantesData, setEntrantes] = useState([]);
+
   useEffect(() => {
-      const getProductosEntrantes = async () => {
+    const fetchData = async () => {
+      try {
         const response = await axios.get('http://localhost:4000/api/productos/entrante');
         setEntrantes(response.data);
-  }
-  getProductosEntrantes();
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
   }, [entrantesData]);
-
-  //quedarnos con solo los productos que tengan como categoria "entrantes"
-  //const entrantesData = entrantes.filter(entrante => entrante.categoria === "entrante");
-  const entrantesFiltrados = entrantesData;
-
 
   return (
     <EntrantesContainer>
-      {entrantesFiltrados.map(entrante => (
+      {entrantesData.map(entrante => (
         <EntrantesCard key={entrante.nombre}>
           <EntrantesImage top width="100%" src={entrante.imagen} alt={entrante.nombre} />
           <EntrantesCardBody>
@@ -95,6 +102,9 @@ const Entrantes = () => {
               <EntrantesPrice>{entrante.precio} €</EntrantesPrice>
             </div>
             <EntrantesButton>Agregar al carrito</EntrantesButton>
+            <Link to={`/producto/${entrante.id}`} style={{ textDecoration: 'none' }}>
+  <DetallesButton>Ver detalles</DetallesButton>
+</Link>
           </EntrantesCardBody>
         </EntrantesCard>
       ))}

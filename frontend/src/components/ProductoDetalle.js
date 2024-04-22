@@ -1,27 +1,40 @@
-import React from 'react';
-import { Card, CardImg, CardBody, CardTitle, CardText, Button } from 'reactstrap';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
-const ProductoDetalle = ({ producto }) => {
+const ProductoDetalle = (props) => {
+  const { id } = useParams(); // Obtener el ID del producto de la URL
+  const [producto, setProducto] = useState(null);
+
+  useEffect(() => {
+    const fetchProducto = async () => {
+      try {
+        const response = await axios.get(`http://localhost:4000/api/productos/${props.id}`);
+        setProducto(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchProducto();
+  }, [id]);
+
+  if (!producto) {
+    return <div>Cargando...</div>;
+  }
+
   return (
     <div className="container">
-      <h2 className="mt-5 mb-4">{producto.name}</h2>
+      <h2 className="mt-5 mb-4">{producto.nombre}</h2>
       <div className="row">
         <div className="col-md-6">
-          <Card>
-            <CardImg top width="100%" src={producto.image} alt={producto.name} />
-          </Card>
+          <img src={producto.imagen} alt={producto.nombre} />
         </div>
         <div className="col-md-6">
-          <Card>
-            <CardBody>
-              <CardTitle>{producto.name}</CardTitle>
-              <CardText>
-                {producto.description}<br />
-                <span style={{ color: 'green', fontWeight: 'bold' }}>{producto.price} €</span>
-              </CardText>
-              <Button color="primary">Agregar al carrito</Button>
-            </CardBody>
-          </Card>
+          <h3>Descripción:</h3>
+          <p>{producto.descripcion}</p>
+          <h3>Precio:</h3>
+          <p>{producto.precio} €</p>
+          {/* Otros detalles del producto */}
         </div>
       </div>
     </div>
