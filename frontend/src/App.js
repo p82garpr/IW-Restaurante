@@ -10,6 +10,8 @@ import Registro from './components/Registro';
 import Home from './components/Home';
 import Perfil from './components/Perfil';
 import ProductoDetalle from './components/ProductoDetalle';
+import CerrarSesion from './components/CerrarSesion';
+import IniciarSesion from './components/IniciarSesion';
 
 const App = () => {
   return (
@@ -26,6 +28,8 @@ const App = () => {
           <Route path="/Perfil" component={Perfil} />
           <Route path="/Registro" component={Registro} />
           <Route path="/producto/:id" component={ProductoDetalle} />
+          <Route path="/CerrarSesion" component={CerrarSesion} />
+          <Route path="/IniciarSesion" component={IniciarSesion} />
 
         </Switch>
         
