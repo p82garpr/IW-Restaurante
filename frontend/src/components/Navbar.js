@@ -68,7 +68,10 @@ function Example(props) {
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink href="/components/Perfil">Perfil</NavLink>
+              <NavLink href="/Registro">Registro</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="/Perfil">Perfil</NavLink>
             </NavItem>
             {/* Comentario para desactivar el DropdownMenu */}
             {/* <UncontrolledDropdown nav inNavbar>

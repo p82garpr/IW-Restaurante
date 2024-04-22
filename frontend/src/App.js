@@ -6,7 +6,7 @@ import Entrantes from './components/Entrantes';
 import Bebidas from './components/Bebidas';
 import Postres from './components/Postres';
 import Principales from './components/Principales';
-
+import Registro from './components/Registro';
 import Home from './components/Home';
 import Perfil from './components/Perfil';
 
@@ -23,6 +23,7 @@ const App = () => {
           <Route path="/Postres" component={Postres} />
           <Route path="/Principales" component={Principales} />
           <Route path="/Perfil" component={Perfil} />
+          <Route path="/Registro" component={Registro} />
         </Switch>
         
       </div>
