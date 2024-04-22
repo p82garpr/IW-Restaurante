@@ -1,6 +1,6 @@
 const categoriaCtrl = {}
 
-const Catgeoria = require('../models/Categoria')
+const Categoria = require('../models/Categoria')
 
 categoriaCtrl.getCateg = async (req, res) => {
     try {
