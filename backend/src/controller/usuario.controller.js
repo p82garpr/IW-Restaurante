@@ -87,4 +87,31 @@ usuarioCtrl.updateUsu = async (req, res) => {
     }
 }
 
+usuarioCtrl.loginUsu = async (req, res) => {
+    const { nombre_usuario, contraseña } = req.body;
+
+    try {
+        const usuario = await Usuario.findOne({ nombre_usuario });
+
+        if (!usuario) {
+            return res.status(401).json({ message: 'Credenciales incorrectas' });
+        }
+
+        const contraseñaValida = await bcrypt.compare(contraseña, usuario.contraseña);
+
+        if (!contraseñaValida) {
+            return res.status(401).json({ message: 'Credenciales incorrectas' });
+        }
+
+        // Almacenar el ID del usuario en la sesión
+        req.session.usuarioId = usuario._id;
+
+        res.json({ message: 'Inicio de sesión exitoso' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+
+
 module.exports = usuarioCtrl

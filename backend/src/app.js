@@ -1,4 +1,5 @@
 const express = require('express')
+const session = require('express-session');
 const cors = require('cors')
 const app = express();
 
@@ -14,6 +15,14 @@ app.use(express.json())
 app.get('/',(req,res)=>{
     res.send('Bienvenido a mi api rest full');
 })
+
+// Configuración de express-session
+app.use(session({
+    secret: 'mi_clave_secreta', // Cadena secreta para firmar la cookie de sesión
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false } // Configuración de la cookie de sesión
+}));
 
 // ruta para nuestra api de usuarios
 app.use('/api/usuarios', require('./routes/usuario'))
