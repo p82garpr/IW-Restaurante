@@ -116,7 +116,7 @@ const Producto = ({ tipo }) => {
           <ProductoImage top width="100%" src={`/images/${producto.imagen}`} alt={producto.nombre} />
           <ProductoCardBody>
             <ProductoTitle>{producto.nombre}</ProductoTitle>
-            <ProductoDescription>{producto.descripcion}</ProductoDescription>
+          
             <ProductoPrice>{producto.precio} €</ProductoPrice>
             <ProductoButton>Agregar al carrito</ProductoButton>
             <Link to={`/productos/${producto._id}`} style={{ textDecoration: 'none' }}>
