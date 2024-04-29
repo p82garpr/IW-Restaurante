@@ -19,7 +19,7 @@ router.route('/auth/login')
     .post(loginUsu)
 
 router.route('/auth/logout')
-    .post(loginUsu)
+    .post(logoutnUsu)
 
 
 module.exports = router;
