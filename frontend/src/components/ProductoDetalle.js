@@ -39,7 +39,7 @@ const ProductoDetalle = () => {
     max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
-    animation: ${slideUp} 0.5s ease-in-out;
+    animation: ${slideUp} 1.5s ease-in-out;
   `;
 
   const ProductoDetalleContenedor = styled.div`
