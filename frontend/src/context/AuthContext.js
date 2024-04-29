@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await axios.post('http://localhost:4000/api/login', credentials);
+      const response = await axios.post('http://localhost:4000/api/usuarios/auth/login', credentials);
       setUser(response.data.user);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       return response.data.user;

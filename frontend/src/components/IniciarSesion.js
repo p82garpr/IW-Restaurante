@@ -56,7 +56,7 @@ const IniciarSesion = () => {
   const { login } = useUsuario(); // Obtener la función login del contexto
 
   const [credenciales, setCredenciales] = useState({
-    correo: '',
+    nombre_usuario: '',
     contraseña: ''
   });
 
