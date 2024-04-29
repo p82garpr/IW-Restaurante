@@ -81,7 +81,7 @@ const ProductoDetalle = () => {
     <Contenedor>
       <ProductoDetalleContenedor>
         <ProductoImagen>
-          <ProductoImagenImg src={producto.imagen} alt={producto.nombre} />
+          <ProductoImagenImg src={`/images/${producto.imagen}`} alt={producto.nombre} />
         </ProductoImagen>
         <ProductoInformacion>
           <ProductoNombre>{producto.nombre}</ProductoNombre>

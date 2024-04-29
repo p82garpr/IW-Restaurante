@@ -93,7 +93,7 @@ const Producto = ({ tipo }) => {
     <ProductosContainer>
       {productos.map(producto => (
         <ProductoCard key={producto._id}> {/* Use _id as the key */}
-          <ProductoImage top width="100%" src={producto.imagen} alt={producto.nombre} />
+          <ProductoImage top width="100%" src={`/images/${producto.imagen}`} alt={producto.nombre} />
           <ProductoCardBody>
             <ProductoTitle>{producto.nombre}</ProductoTitle>
             <ProductoDescription>{producto.descripcion}</ProductoDescription>
