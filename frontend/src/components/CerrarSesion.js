@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from 'reactstrap';
-import { useUsuario } from './AuthContext'; // Importa el hook useUsuario para acceder al contexto
+import { useUsuario } from '../context/AuthContext';
 
 const CerrarSesionContainer = styled.div`
   display: flex;
