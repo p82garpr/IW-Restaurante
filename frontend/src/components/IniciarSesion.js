@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Container, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import axios from 'axios';
 import { useUsuario } from '../context/AuthContext';
-const bcrypt = require('bcrypt');
+
 
 const IniciarSesionContainer = styled(Container)`
   display: flex;
@@ -72,14 +72,10 @@ const IniciarSesion = () => {
     e.preventDefault();
     try {
       // Cifrar la contraseña antes de enviarla
-      const hashedPassword = await bcrypt.hash(credenciales.contraseña, 10);
-      const credencialesCifradas = {
-        ...credenciales,
-        contraseña: hashedPassword
-      };
+      
 
       // Llamar a la función login del contexto para iniciar sesión
-      await login(credencialesCifradas);
+      await login(credenciales);
 
       // Redirigir al usuario a la página principal o a otra página
       window.location.href = '/';
