@@ -62,7 +62,7 @@ productoCtrl.getProducto = async (req, res) => {
     } catch (error) {
         res.status(404).json({ message: "Producto no encontrado" });
     }
-}
+};
 
 productoCtrl.deleteProd = async (req, res) => {
     try {
