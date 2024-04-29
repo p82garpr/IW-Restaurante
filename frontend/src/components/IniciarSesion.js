@@ -1,9 +1,11 @@
+// IniciarSesion.js
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Container, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import axios from 'axios';
-import { useUsuario } from '../context/AuthContext';
-const bcrypt = require('bcrypt');
+import { useUsuario } from '../context/AuthContext'; // Importa useUsuario desde AuthContext
+
+
 
 const IniciarSesionContainer = styled(Container)`
   display: flex;
@@ -53,7 +55,7 @@ const IniciarSesionButton = styled(Button)`
 `;
 
 const IniciarSesion = () => {
-  const { login } = useUsuario(); // Obtener la función login del contexto
+  const { login } = useUsuario(); // Utiliza useUsuario para obtener la función login del contexto
 
   const [credenciales, setCredenciales] = useState({
     correo: '',
@@ -71,19 +73,11 @@ const IniciarSesion = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      // Cifrar la contraseña antes de enviarla
-      const hashedPassword = await bcrypt.hash(credenciales.contraseña, 10);
-      const credencialesCifradas = {
-        ...credenciales,
-        contraseña: hashedPassword
-      };
+     
+      
+      await login(credenciales); // Llama a la función login del contexto para iniciar sesión
 
-      // Llamar a la función login del contexto para iniciar sesión
-      await login(credencialesCifradas);
-
-      // Redirigir al usuario a la página principal o a otra página
-      window.location.href = '/';
-
+      window.location.href = '/'; // Redirige al usuario a la página principal
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
       alert('Error en el inicio de sesión');

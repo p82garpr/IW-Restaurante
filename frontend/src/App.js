@@ -18,15 +18,17 @@ const App = () => {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/MenuCategorias" component={MenuCategorias} />
-
           <Route path="/Entrantes" render={() => <Categoria tipo="entrante" />} />
+
           <Route path="/Bebidas" render={() => <Categoria tipo="bebida" />} />
+
           <Route path="/Postres" render={() => <Categoria tipo="postre" />} />
+
           <Route path="/Principales" render={() => <Categoria tipo="principal" />} />
 
           <Route path="/Perfil" component={Perfil} />
           <Route path="/Registro" component={Registro} />
-          <Route path="/productos/:id" component={ProductoDetalle} />          
+          <Route path="/productos/:nombre" component={ProductoDetalle} />          
           <Route path="/CerrarSesion" component={CerrarSesion} />
           <Route path="/IniciarSesion" component={IniciarSesion} />
 
