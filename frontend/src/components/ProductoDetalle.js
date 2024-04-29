@@ -2,25 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const ProductoDetalle = (props) => {
-  const { id } = useParams(); // Obtener el ID del producto de la URL
+const ProductoDetalle = ({ match }) => {
   const [producto, setProducto] = useState(null);
 
   useEffect(() => {
     const fetchProducto = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/api/productos/${props.id}`);
+        const response = await axios.get(`http://localhost:4000/api/productos/${match.params.nombre}`);
         setProducto(response.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching product:', error);
       }
     };
     fetchProducto();
-  }, [id]);
+  }, [match.params.nombre]);
 
-  if (!producto) {
-    return <div>Cargando...</div>;
-  }
 
   return (
     <div className="container">

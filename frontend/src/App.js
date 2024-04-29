@@ -27,7 +27,7 @@ const App = () => {
           <Route path="/Principales" component={Principales} />
           <Route path="/Perfil" component={Perfil} />
           <Route path="/Registro" component={Registro} />
-          <Route path="/producto/:id" component={ProductoDetalle} />
+          <Route path="/productos/:nombre" component={ProductoDetalle} />          
           <Route path="/CerrarSesion" component={CerrarSesion} />
           <Route path="/IniciarSesion" component={IniciarSesion} />
 
