@@ -57,12 +57,12 @@ productoCtrl.createProd = async (req, res) => {
 
 productoCtrl.getProducto = async (req, res) => {
     try {
-        const producto = await Producto.findById(req.params.id).populate('categoria', 'nombre');
-        res.json(producto);
+        const producto = await Producto.findById(req.params.id)
+        res.status(200).json(producto)
     } catch (error) {
         res.status(404).json({ message: "Producto no encontrado" });
     }
-};
+}
 
 productoCtrl.deleteProd = async (req, res) => {
     try {
