@@ -12,40 +12,72 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  NavbarText,
 } from 'reactstrap';
 
-// Estilos inspirados en Material Design
 const Navbar = styled(RSNavbar)`
-  background-color: #ffffff; /* Fondo del navbar */
-  font-family: 'Roboto', sans-serif; /* Fuente del texto */
-  padding: 10px 0; /* Espaciado interior */
+  background-color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  padding: 10px 0;
 `;
 
 const NavbarBrand = styled(RSNavbarBrand)`
-  color: #1a237e; /* Color del texto del NavbarBrand */
-  font-size: 1.5rem; /* Tamaño del texto del NavbarBrand */
-  font-weight: bold; /* Peso de la fuente del NavbarBrand */
+  color: #1a237e;
+  font-size: 1.5rem;
+  font-weight: bold;
 `;
 
 const NavLink = styled(RSNavLink)`
-  color: #1a237e; /* Color del texto de los NavLink */
-  font-size: 1.2rem; /* Tamaño del texto de los NavLink */
-  font-weight: 500; /* Peso de la fuente de los NavLink */
-  margin-right: 20px; /* Espaciado entre los NavLink */
-  transition: color 0.3s ease; /* Transición del color */
+  color: #1a237e;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-right: 20px;
+  transition: color 0.3s ease;
   
   &:hover {
-    color: #3f51b5; /* Color del texto al pasar el cursor */
+    color: #3f51b5;
   }
 `;
 
 const TogglerIcon = styled.span`
-  background-color: #1a237e; /* Color del icono del NavbarToggler */
+  background-color: #1a237e;
 `;
 
-// Componente funcional principal
-function Example(props) {
+const StyledUncontrolledDropdown = styled(UncontrolledDropdown)`
+  & .dropdown-toggle {
+    color: #1a237e;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-right: 20px;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #3f51b5;
+    }
+  }
+
+  & .dropdown-menu {
+    background-color: #ffffff;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 0;
+    margin-top: 10px;
+  }
+
+  & .dropdown-item {
+    color: #1a237e;
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
+`;
+
+function NavbarComponent(props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -60,12 +92,20 @@ function Example(props) {
         <Collapse isOpen={isOpen} navbar>
           <Nav className="me-auto" navbar>
             <NavItem>
-              <NavLink href="/MenuCategorias">Categorias</NavLink>
+              <StyledUncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav caret>
+                  Categorias
+                </DropdownToggle>
+                <DropdownMenu right>
+                  <DropdownItem href="/Entrantes">Entrantes</DropdownItem>
+                  <DropdownItem href="/Principales">Principales</DropdownItem>
+                  <DropdownItem href="/Bebidas">Bebidas</DropdownItem>
+                  <DropdownItem href="/Postres">Postres</DropdownItem>
+                </DropdownMenu>
+              </StyledUncontrolledDropdown>
             </NavItem>
             <NavItem>
-              <NavLink href="https://github.com/reactstrap/reactstrap">
-                GitHub
-              </NavLink>
+              <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
             </NavItem>
             <NavItem>
               <NavLink href="/Registro">Registro</NavLink>
@@ -82,24 +122,11 @@ function Example(props) {
             <NavItem>
               <NavLink href="/Cesta">Cesta</NavLink>
             </NavItem>
-            {/* Comentario para desactivar el DropdownMenu */}
-            {/* <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Options
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem>Option 1</DropdownItem>
-                <DropdownItem>Option 2</DropdownItem>
-                <DropdownItem divider />
-                <DropdownItem>Reset</DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown> */}
           </Nav>
-          {/*<NavbarText>Simple Text</NavbarText>*/}
         </Collapse>
       </Navbar>
     </div>
   );
 }
 
-export default Example;
+export default NavbarComponent;
