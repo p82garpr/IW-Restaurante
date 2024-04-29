@@ -18,7 +18,7 @@ router.route('/')
 router.route('/auth/login')
     .post(loginUsu)
 
-router.route('/auth/logoutUsu')
+router.route('/auth/logout')
     .post(loginUsu)
 
 
