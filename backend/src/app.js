@@ -3,38 +3,38 @@ const session = require('express-session');
 const cors = require('cors')
 const app = express();
 
-//configuracion
+// Configuración
 app.set('port', process.env.PORT || 4000)
 
-//middlewares
+// Middlewares
 app.use(cors())
 app.use(express.json())
 
-//rutas
-
-app.get('/',(req,res)=>{
-    res.send('Bienvenido a mi api rest full');
+// Rutas
+app.get('/', (req, res) => {
+    res.send('Bienvenido a mi API RESTful');
 })
 
 // Configuración de express-session
 app.use(session({
-    secret: 'mi_clave_secreta', // Cadena secreta para firmar la cookie de sesión
+    secret: 'mi_clave_secreta',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } // Configuración de la cookie de sesión
+    cookie: { secure: false }
 }));
 
-// ruta para nuestra api de usuarios
+// Rutas para la API
 app.use('/api/usuarios', require('./routes/usuario'))
-
-// ruta para nuestra api de productos
 app.use('/api/productos', require('./routes/producto'))
-
 app.use('/api/categorias', require('./routes/categoria'))
-
 app.use('/api/cesta', require('./routes/cesta'))
 
 app.use(express.static('public'));
 
+// Verificación de la configuración de la sesión
+app.use((req, res, next) => {
+    console.log(req.session); // Verifica si la sesión se está inicializando correctamente
+    next();
+});
 
 module.exports = app;

@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Button } from 'reactstrap';
 import styled from 'styled-components';
-import perfilData from '../data/perfilData.json';
 import { Link } from 'react-router-dom';
-
+import axios from 'axios';
 
 const PerfilContainer = styled(Container)`
   display: flex;
@@ -48,12 +47,32 @@ const StyledButton = styled(Button)`
 `;
 
 const Perfil = () => {
+  const [usuario, setUsuario] = useState(null);
+
+  useEffect(() => {
+    // Obtener la información del usuario actual al cargar el componente
+    const obtenerUsuarioActual = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion');
+        setUsuario(response.data);
+      } catch (error) {
+        console.error('Error al obtener información del usuario:', error);
+      }
+    };
+
+    obtenerUsuarioActual();
+  }, []);
+
   return (
     <PerfilContainer>
       <PerfilBox>
         <Title>Perfil de Usuario</Title>
-        <Text>Nombre: {perfilData.nombre}</Text>
-        <Text>Correo electrónico: {perfilData.email}</Text>
+        {usuario && (
+          <>
+            <Text>Nombre: {usuario.nombre}</Text>
+            <Text>Correo electrónico: {usuario.correo}</Text>
+          </>
+        )}
         <ButtonContainer>
           <Link to="/EditarPerfil"><StyledButton>Editar Perfil</StyledButton></Link>
           <Link to="/Historial"><StyledButton>Ver Historial</StyledButton></Link>

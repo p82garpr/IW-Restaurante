@@ -70,9 +70,11 @@ const Registro = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:4000/api/registro', usuario);
+      await axios.post('http://localhost:4000/api/usuarios', usuario);
       alert('Registro exitoso');
       // Redirigir al usuario a la página de inicio de sesión u otra página
+      window.location.replace('/IniciarSesion');
+      
     } catch (error) {
       console.error('Error en el registro:', error);
       alert('Error en el registro');
@@ -85,12 +87,12 @@ const Registro = () => {
         <RegistroTitle>Registro</RegistroTitle>
         <RegistroForm onSubmit={handleSubmit}>
           <RegistroFormGroup>
-            <RegistroLabel for="correo">Correo electrónico</RegistroLabel>
+            <RegistroLabel for="nombre_usuario">Correo electrónico</RegistroLabel>
             <RegistroInput
               type="email"
-              name="correo"
-              id="correo"
-              value={usuario.correo}
+              name="nombre_usuario"
+              id="nombre_usuario"
+              value={usuario.nombre_usuario}
               onChange={handleChange}
               required
             />
