@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Container, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import axios from 'axios';
+import { useUsuario } from '../context/AuthContext';
+const bcrypt = require('bcrypt');
 
 const IniciarSesionContainer = styled(Container)`
   display: flex;
@@ -51,6 +53,8 @@ const IniciarSesionButton = styled(Button)`
 `;
 
 const IniciarSesion = () => {
+  const { login } = useUsuario(); // Obtener la función login del contexto
+
   const [credenciales, setCredenciales] = useState({
     correo: '',
     contraseña: ''
@@ -67,10 +71,19 @@ const IniciarSesion = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:4000/api/iniciarsesion', credenciales);
-      alert('Inicio de sesión exitoso');
-      console.log(response.data); // Puedes hacer algo con la respuesta, como almacenar el token de autenticación
+      // Cifrar la contraseña antes de enviarla
+      const hashedPassword = await bcrypt.hash(credenciales.contraseña, 10);
+      const credencialesCifradas = {
+        ...credenciales,
+        contraseña: hashedPassword
+      };
+
+      // Llamar a la función login del contexto para iniciar sesión
+      await login(credencialesCifradas);
+
       // Redirigir al usuario a la página principal o a otra página
+      window.location.href = '/';
+
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
       alert('Error en el inicio de sesión');
