@@ -18,5 +18,8 @@ router.route('/')
 router.route('/auth/login')
     .post(loginUsu)
 
+router.route('/auth/logoutUsu')
+    .post(loginUsu)
+
 
 module.exports = router;

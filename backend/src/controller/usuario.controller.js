@@ -112,6 +112,21 @@ usuarioCtrl.loginUsu = async (req, res) => {
     }
 }
 
+usuarioCtrl.logoutUsu = async (req, res) => {
+    try {
+        // Destruir la sesión del usuario
+        req.session.destroy((err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error al cerrar sesión' });
+            }
+            res.clearCookie('connect.sid'); // Limpiar la cookie de sesión
+            res.json({ message: 'Sesión cerrada exitosamente' });
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 
 
 module.exports = usuarioCtrl
