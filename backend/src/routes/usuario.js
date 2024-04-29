@@ -36,8 +36,8 @@ router.route('/auth/login')
         }
     })
     
-router.route('/auth/logout')
-    .post(logoutUsu)
+/*router.route('/auth/logout')
+    .post(logoutUsu)*/
 
 router.route('/auth/sesion')
     .get(async (req, res) => {

@@ -4,17 +4,21 @@ const cors = require('cors')
 const app = express();
 
 app.use(session({
-    secret: 'mi_clave_secreta',
+    secret: 'your-secret-key',
     resave: false,
-    saveUninitialized: true,
-    timeout: 1000 * 60 * 60 * 24, // 24 horas
-    cookie: { secure: false }
+    saveUninitialized: false
+    
 }));
+const corsOptions = { 
+    origin: 'http://localhost:3000',
+    credentials: true
+}
+app.use(cors(corsOptions));
 // Configuración
 app.set('port', process.env.PORT || 4000)
 
 // Middlewares
-app.use(cors())
+
 app.use(express.json())
 
 
