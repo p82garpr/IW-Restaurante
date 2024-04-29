@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from 'reactstrap';
-import { useUsuario } from '../context/AuthContext';
+import axios from 'axios'; // Importa axios para hacer solicitudes HTTP
 
 const CerrarSesionContainer = styled.div`
   display: flex;
@@ -35,19 +35,16 @@ const CerrarSesionButton = styled(Button)`
 `;
 
 const CerrarSesion = () => {
-  const { logout } = useUsuario(); // Obtiene la función logout del contexto
 
   const handleCerrarSesion = async () => {
     try {
-      // Llama a la función logout del contexto
-      logout();
-      // Si la llamada es exitosa, mostrar un mensaje de éxito
+      // Realiza una solicitud POST a la ruta de cierre de sesión en la API
+      const response = await axios.post('http://localhost:4000/api/logout');
+      console.log(response.data.message); // Mensaje de éxito de cierre de sesión
       alert('Sesión cerrada exitosamente');
-      return window.location.replace('/');
-      // Aquí puedes redirigir al usuario a la página de inicio de sesión o a otra página deseada
+      window.location.replace('/'); // Redirige al usuario a la página de inicio
     } catch (error) {
-      // Si hay un error, mostrar un mensaje de error
-      console.error('Error al cerrar sesión:', error);
+      console.error('Error al cerrar sesión:', error.response.data.message);
       alert('Ocurrió un error al cerrar la sesión');
     }
   };

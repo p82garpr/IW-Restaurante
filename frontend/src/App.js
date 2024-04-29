@@ -9,10 +9,10 @@ import ProductoDetalle from './components/ProductoDetalle';
 import CerrarSesion from './components/CerrarSesion';
 import IniciarSesion from './components/IniciarSesion';
 import Categoria from './components/Categoria';
-import { AuthProvider } from './context/AuthContext';
+
 const App = () => {
   return (
-    <AuthProvider>
+    
     <Router>
       <div>
         <Navbar color="light" light expand="md" />
@@ -37,7 +37,7 @@ const App = () => {
         
       </div>
     </Router>
-    </AuthProvider>
+   
   );
 }
 
