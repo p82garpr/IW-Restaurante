@@ -96,21 +96,24 @@ usuarioCtrl.loginUsu = async (req, res) => {
 
         // Almacenar el ID del usuario en la sesión
         req.session.usuarioId = usuario._id.toString();
-        req.session.save();
-        
-        console.log(req.session.usuarioId);
+                
+        //console.log(req.session.usuarioId);
         res.json({ message: 'Inicio de sesión exitoso' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
 usuarioCtrl.getUsuarioActual = async (req, res) => {
+    
     try {
+        if(!req.session){
+            return res.status(401).json({ message: 'Sesión no inicializada' });
+        }       
         if (!req.session.usuarioId) {
             return res.status(401).json({ message: 'Usuario no autenticado' });
         }
         
-        console.log(req.session.usuarioId);
+        //console.log(req.session.usuarioId);
 
         const usuario = await Usuario.findById(req.session.usuarioId, { contraseña: 0 }); // Excluir la contraseña
         if (!usuario) {

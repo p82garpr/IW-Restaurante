@@ -3,6 +3,13 @@ const session = require('express-session');
 const cors = require('cors')
 const app = express();
 
+app.use(session({
+    secret: 'mi_clave_secreta',
+    resave: false,
+    saveUninitialized: true,
+    timeout: 1000 * 60 * 60 * 24, // 24 horas
+    cookie: { secure: false }
+}));
 // Configuración
 app.set('port', process.env.PORT || 4000)
 
@@ -10,18 +17,14 @@ app.set('port', process.env.PORT || 4000)
 app.use(cors())
 app.use(express.json())
 
+
 // Rutas
 app.get('/', (req, res) => {
     res.send('Bienvenido a mi API RESTful');
 })
 
 // Configuración de express-session
-app.use(session({
-    secret: 'mi_clave_secreta',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false }
-}));
+
 
 // Rutas para la API
 app.use('/api/usuarios', require('./routes/usuario'))
