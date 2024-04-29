@@ -102,7 +102,7 @@ const Entrantes = () => {
               <EntrantesPrice>{entrante.precio} €</EntrantesPrice>
             </div>
             <EntrantesButton>Agregar al carrito</EntrantesButton>
-            <Link to={`/productos/${entrante.nombre}`} style={{ textDecoration: 'none' }}>
+            <Link to={`/productos?nombre=${entrante.nombre}`} style={{ textDecoration: 'none' }}>
   <DetallesButton>Ver detalles</DetallesButton>
 </Link>
           </EntrantesCardBody>

@@ -2,21 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const ProductoDetalle = ({ match }) => {
+const ProductoDetalle = () => {
   const [producto, setProducto] = useState(null);
+  const { nombre } = useParams(); // Obtener el parámetro de la URL
 
   useEffect(() => {
     const fetchProducto = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/api/productos/${match.params.nombre}`);
+        const response = await axios.get(`http://localhost:4000/api/productos/${nombre}`);
         setProducto(response.data);
       } catch (error) {
         console.error('Error fetching product:', error);
       }
     };
     fetchProducto();
-  }, [match.params.nombre]);
+  }, [nombre]);
 
+  // Verificar si producto es null antes de intentar acceder a sus propiedades
+  if (!producto) {
+    return <div>Cargando...</div>;
+  }
 
   return (
     <div className="container">
