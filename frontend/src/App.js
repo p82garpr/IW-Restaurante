@@ -29,7 +29,7 @@ const App = () => {
 
           <Route path="/Perfil" component={Perfil} />
           <Route path="/Registro" component={Registro} />
-          <Route path="/productos/:nombre" component={ProductoDetalle} />          
+          <Route path="/productos/:id" component={ProductoDetalle} />          
           <Route path="/CerrarSesion" component={CerrarSesion} />
           <Route path="/IniciarSesion" component={IniciarSesion} />
 
