@@ -16,7 +16,7 @@ const App = () => {
       <div>
         <Navbar color="light" light expand="md" />
         <Switch>
-          <Route exact path="/" component={Home} />
+          <Route exact path="/" component={MenuCategorias} />
           <Route path="/MenuCategorias" component={MenuCategorias} />
           <Route path="/Entrantes" render={() => <Categoria tipo="entrante" />} />
 
