@@ -14,7 +14,7 @@ router.route('/:id')
 
 
 // Ruta para obtener todos los productos o filtrar por categoría
-router.get('/:categoria?', getProd);
+router.get('/categoria/:categoria?', getProd);
 
 
 module.exports = router;
