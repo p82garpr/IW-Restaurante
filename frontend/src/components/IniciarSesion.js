@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Container, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import axios from 'axios'; // Importa axios para hacer solicitudes HTTP
 
+
 const IniciarSesionContainer = styled(Container)`
   display: flex;
   justify-content: center;
@@ -68,7 +69,7 @@ const IniciarSesion = () => {
     e.preventDefault();
     try {
       // Realizar solicitud POST a la ruta de inicio de sesión en la API
-      const response = await axios.post('http://localhost:4000/api/usuarios/auth/login', credenciales);
+      const response = await axios.post('http://localhost:4000/api/usuarios/auth/login', credenciales,{withCredentials: true});
       console.log(response.data.message); // Mensaje de éxito de inicio de sesión
       window.location.href = '/'; // Redirigir al usuario a la página principal después de iniciar sesión
     } catch (error) {

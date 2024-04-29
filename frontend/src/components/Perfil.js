@@ -53,7 +53,7 @@ const Perfil = () => {
     // Obtener la información del usuario actual al cargar el componente
     const obtenerUsuarioActual = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion');
+        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
         setUsuario(response.data);
       } catch (error) {
         console.error('Error al obtener información del usuario:', error);

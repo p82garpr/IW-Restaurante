@@ -9,6 +9,8 @@ import ProductoDetalle from './components/ProductoDetalle';
 import CerrarSesion from './components/CerrarSesion';
 import IniciarSesion from './components/IniciarSesion';
 import Categoria from './components/Categoria';
+import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 const App = () => {
   return (
