@@ -15,6 +15,6 @@ router.route('/:id')
 
 // Ruta para obtener todos los productos o filtrar por categoría
 router.get('/categoria/:categoria?', getProd);
-
+//consulta para esta api: http://localhost:4000/api/productos/categoria/entrante
 
 module.exports = router;

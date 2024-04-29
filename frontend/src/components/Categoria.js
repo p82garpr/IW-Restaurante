@@ -48,7 +48,7 @@ const ProductoButton = styled(Button)`
   background-color: #1a237e;
   border-color: #1a237e;
   font-size: 1.2rem;
-  
+
   &:hover {
     background-color: #3f51b5;
     border-color: #3f51b5;
@@ -67,7 +67,7 @@ const DetallesButton = styled(Button)`
   font-size: 1rem;
   width: 100%;
   margin: 5px 0;
-  
+
   &:hover {
     background-color: #9c4dcc;
     border-color: #9c4dcc;
@@ -80,7 +80,7 @@ const Producto = ({ tipo }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/api/productos/${tipo}`);
+        const response = await axios.get(`http://localhost:4000/api/productos/categoria/${tipo}`);
         setProductos(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -92,14 +92,14 @@ const Producto = ({ tipo }) => {
   return (
     <ProductosContainer>
       {productos.map(producto => (
-        <ProductoCard key={producto.nombre}>
+        <ProductoCard key={producto._id}> {/* Use _id as the key */}
           <ProductoImage top width="100%" src={producto.imagen} alt={producto.nombre} />
           <ProductoCardBody>
             <ProductoTitle>{producto.nombre}</ProductoTitle>
             <ProductoDescription>{producto.descripcion}</ProductoDescription>
             <ProductoPrice>{producto.precio} €</ProductoPrice>
             <ProductoButton>Agregar al carrito</ProductoButton>
-            <Link to={`/productos/${producto.nombre}`} style={{ textDecoration: 'none' }}>
+            <Link to={`/productos/${producto._id}`} style={{ textDecoration: 'none' }}>  {/* Pass _id in the link */}
               <DetallesButton>Ver detalles</DetallesButton>
             </Link>
           </ProductoCardBody>

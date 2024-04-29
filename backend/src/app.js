@@ -25,6 +25,7 @@ app.use('/api/categorias', require('./routes/categoria'))
 
 app.use('/api/cesta', require('./routes/cesta'))
 
+app.use(express.static('public'));
 
 
 module.exports = app;
