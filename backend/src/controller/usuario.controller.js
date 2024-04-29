@@ -96,13 +96,14 @@ usuarioCtrl.loginUsu = async (req, res) => {
 
         // Almacenar el ID del usuario en la sesión
         req.session.usuarioId = usuario._id.toString();
-                
-        //console.log(req.session.usuarioId);
+
+        console.log("En el login:", req.session.usuarioId);
         res.json({ message: 'Inicio de sesión exitoso' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
+
 usuarioCtrl.getUsuarioActual = async (req, res) => {
     
     try {
@@ -114,8 +115,9 @@ usuarioCtrl.getUsuarioActual = async (req, res) => {
         }
         
         //console.log(req.session.usuarioId);
+        console.log("ID de usuario en la sesión:", req.session.usuarioId);
 
-        const usuario = await Usuario.findById(req.session.usuarioId, { contraseña: 0 }); // Excluir la contraseña
+        const usuario = await Usuario.findById(req.session.usuarioId);
         if (!usuario) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
