@@ -1,19 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardImg, CardBody, CardTitle, CardText, Button } from 'reactstrap';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import axios from 'axios';
+
+const slideUp = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 const ProductosContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   padding: 20px;
+  animation: ${slideUp} 1.5s ease-in-out;
 `;
 
 const ProductoCard = styled(Card)`
   width: 300px;
   margin: 20px;
+  animation: ${slideUp} 0.5s ease-in-out;
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
 const ProductoImage = styled(CardImg)`
@@ -48,6 +66,7 @@ const ProductoButton = styled(Button)`
   background-color: #1a237e;
   border-color: #1a237e;
   font-size: 1.2rem;
+  transition: background-color 0.3s ease-in-out;
 
   &:hover {
     background-color: #3f51b5;
@@ -67,6 +86,7 @@ const DetallesButton = styled(Button)`
   font-size: 1rem;
   width: 100%;
   margin: 5px 0;
+  transition: background-color 0.3s ease-in-out;
 
   &:hover {
     background-color: #9c4dcc;
@@ -91,15 +111,15 @@ const Producto = ({ tipo }) => {
 
   return (
     <ProductosContainer>
-      {productos.map(producto => (
-        <ProductoCard key={producto._id}> {/* Use _id as the key */}
+      {productos.map((producto) => (
+        <ProductoCard key={producto._id}>
           <ProductoImage top width="100%" src={`/images/${producto.imagen}`} alt={producto.nombre} />
           <ProductoCardBody>
             <ProductoTitle>{producto.nombre}</ProductoTitle>
-    
+            <ProductoDescription>{producto.descripcion}</ProductoDescription>
             <ProductoPrice>{producto.precio} €</ProductoPrice>
             <ProductoButton>Agregar al carrito</ProductoButton>
-            <Link to={`/productos/${producto._id}`} style={{ textDecoration: 'none' }}>  {/* Pass _id in the link */}
+            <Link to={`/productos/${producto._id}`} style={{ textDecoration: 'none' }}>
               <DetallesButton>Ver detalles</DetallesButton>
             </Link>
           </ProductoCardBody>
