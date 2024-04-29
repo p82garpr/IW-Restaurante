@@ -19,6 +19,15 @@ usuarioCtrl.createUsu = async (req, res) => {
     const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, privilegio, rol, cliente_info } = req.body;
 
     try {
+
+        // Verificar si ya existe un usuario con el mismo nombre de usuario
+        const usuarioExistente = await Usuario.findOne({ nombre_usuario });
+
+        if (usuarioExistente) {
+            return res.status(400).json({ message: "El nombre de usuario ya está en uso" });
+        }
+
+
         const contraseña_hashed = await bcrypt.hash(contraseña, saltRounds);
 
         const newUsu = new Usuario({
