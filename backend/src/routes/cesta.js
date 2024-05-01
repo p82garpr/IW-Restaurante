@@ -1,15 +1,16 @@
 const {Router} = require('express')
 const router = Router()
 
-const {createCesta, getCesta, updateCesta}= require('../controller/cesta.controller')
+const {addProductoCesta, getCesta, updateCesta, deleteProductoCesta}= require('../controller/cesta.controller')
 
 router.route('/')
 
-    .post(createCesta)
+    .post(addProductoCesta)
+    .get(getCesta)
 
 router.route('/:id')
-    .get(getCesta)
-    .put(updateCesta);
+    .put(updateCesta)
+    .delete(deleteProductoCesta)
 
 
 module.exports = router;
