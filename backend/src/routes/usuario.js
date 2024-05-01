@@ -8,36 +8,10 @@ const {createUsu, getUsu, deleteUsu, updateUsu, loginUsu, logoutUsu, getUsuarioA
 
 
 router.route('/auth/login')
-    .post(async (req, res) => {
-        const { nombre_usuario, contraseña } = req.body;
+    .post(loginUsu)
     
-        try {
-            const usuario = await Usuario.findOne({ nombre_usuario });
-    
-            if (!usuario) {
-                return res.status(401).json({ message: 'Credenciales incorrectas' });
-            }
-    
-            const contraseñaValida = await bcrypt.compare(contraseña, usuario.contraseña);
-    
-            if (!contraseñaValida) {
-                return res.status(401).json({ message: 'Credenciales incorrectas' });
-            }
-    
-            // Almacenar el ID del usuario en la sesión
-            req.session.usuarioId = usuario._id.toString();
-            req.session.hola = 'hola';
-            console.log(req.session);
-            
-            //console.log(req.session.usuarioId);
-            res.json({ message: 'Inicio de sesión exitoso' });
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    })
-    
-/*router.route('/auth/logout')
-    .post(logoutUsu)*/
+router.route('/auth/logout')
+    .post(logoutUsu)
 
 router.route('/auth/sesion')
     .get(async (req, res) => {
