@@ -70,7 +70,7 @@ const Perfil = () => {
         {usuario && (
           <>
             <Text>Nombre: {usuario.nombre}</Text>
-            <Text>Correo electrónico: {usuario.correo}</Text>
+            <Text>Correo electrónico: {usuario.nombre_usuario}</Text>
           </>
         )}
         <ButtonContainer>
