@@ -97,6 +97,7 @@ function NavbarComponent(props) {
   }, []);
 
   const inicio = usuario ? usuario.id : null;
+  const privilegio = usuario ? usuario.privilegio : null;
 
   const toggle = () => setIsOpen(!isOpen);
 
@@ -122,7 +123,7 @@ function NavbarComponent(props) {
                 </DropdownMenu>
               </StyledUncontrolledDropdown>
             </NavItem>
-            {inicio === null ? (
+            {inicio === null && (
               <>
                 <NavItem>
                   <NavLink href="/Registro">Registro</NavLink>
@@ -131,7 +132,8 @@ function NavbarComponent(props) {
                   <NavLink href="/IniciarSesion">Iniciar Sesión</NavLink>
                 </NavItem>
               </>
-            ) : (
+            )}
+            {(inicio !== null && privilegio === 0) && (
               <>
                 <NavItem>
                   <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
@@ -141,6 +143,19 @@ function NavbarComponent(props) {
                 </NavItem>
                 <NavItem>
                   <NavLink href="/Cesta">Cesta</NavLink>
+                </NavItem>
+              </>
+            )}
+            {(inicio !== null && privilegio === 1) && (
+              <>
+                <NavItem>
+                  <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink href="/Perfil">Perfil</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink href="/admin">Menu Admin</NavLink>
                 </NavItem>
               </>
             )}
