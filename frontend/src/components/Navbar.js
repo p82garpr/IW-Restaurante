@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import Cesta from './Cesta'; 
 import {
   Collapse,
   Navbar as RSNavbar,
@@ -15,10 +16,16 @@ import {
   DropdownItem,
 } from 'reactstrap';
 
-const Navbar = styled(RSNavbar)`
+const SidePanel = styled.div`
+  position: fixed;
+  top: 0;
+  right: ${({ open }) => (open ? '0' : '-300px')};
+  width: 300px;
+  height: 100%;
   background-color: #ffffff;
-  font-family: 'Roboto', sans-serif;
-  padding: 10px 0;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease;
+  z-index: 1000;
 `;
 
 const NavbarBrand = styled(RSNavbarBrand)`
@@ -83,7 +90,6 @@ function NavbarComponent(props) {
   const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
-    // Obtener la información del usuario actual al cargar el componente
     const obtenerUsuarioActual = async () => {
       try {
         const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
@@ -103,7 +109,7 @@ function NavbarComponent(props) {
 
   return (
     <div>
-      <Navbar {...props}>
+      <RSNavbar {...props}>
         <NavbarBrand href="/">QR-MENU</NavbarBrand>
         <NavbarToggler onClick={toggle}>
           <TogglerIcon />
@@ -133,7 +139,7 @@ function NavbarComponent(props) {
                 </NavItem>
               </>
             )}
-            {(inicio !== null && privilegio === 0) && (
+            {inicio !== null && privilegio === 0 && (
               <>
                 <NavItem>
                   <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
@@ -146,7 +152,7 @@ function NavbarComponent(props) {
                 </NavItem>
               </>
             )}
-            {(inicio !== null && privilegio === 1) && (
+            {inicio !== null && privilegio === 1 && (
               <>
                 <NavItem>
                   <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
@@ -164,7 +170,10 @@ function NavbarComponent(props) {
             </NavItem>
           </Nav>
         </Collapse>
-      </Navbar>
+      </RSNavbar>
+      <SidePanel open={isOpen}>
+        <Cesta />
+      </SidePanel>
     </div>
   );
 }
