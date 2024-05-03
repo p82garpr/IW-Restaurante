@@ -1,6 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const AdminMenuContainer = styled.div`
   display: flex;
@@ -39,17 +40,41 @@ const MenuItemImage = styled.img`
 `;
 
 const AdminMenu = () => {
+    const [usuario, setUsuario] = useState(null);
+
+    useEffect(() => {
+      // Obtener la información del usuario actual al cargar el componente
+      const obtenerUsuarioActual = async () => {
+        try {
+          const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
+          //console.log('Usuario:', response.data);
+          setUsuario(response.data);
+        } catch (error) {
+          console.error('Error al obtener información del usuario:', error);
+        }
+      };
+  
+      obtenerUsuarioActual();
+    }, []);
+
+
   return (
     <AdminMenuContainer>
-      <MenuTitle>Panel de Administración</MenuTitle>
-      <MenuItem to="/admin/comandas">
-        <MenuItemImage src={`/images/comandas.png`} alt="Comandas" />
-        Comandas
-      </MenuItem>
-      <MenuItem to="/admin/mesas">
-        <MenuItemImage src={`/images/mesas.png`} alt="Mesas" />
-        Mesas
-      </MenuItem>
+      {usuario && usuario.privilegio==1 ? (
+        <>
+          <MenuTitle>Panel de Administración</MenuTitle>
+          <MenuItem to="/admin/comandas">
+            <MenuItemImage src={`/images/comandas.png`} alt="Comandas" />
+            Comandas
+          </MenuItem>
+          <MenuItem to="/admin/mesas">
+            <MenuItemImage src={`/images/mesas.png`} alt="Mesas" />
+            Mesas
+          </MenuItem>
+        </>
+      ) : (
+        <p>No autorizado</p> //HAY QUE METER AQUI UNA REDIRECCION A ERROR 403
+      )}
     </AdminMenuContainer>
   );
 };
