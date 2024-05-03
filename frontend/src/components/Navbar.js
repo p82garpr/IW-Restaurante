@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import {
   Collapse,
   Navbar as RSNavbar,
@@ -79,6 +80,23 @@ const StyledUncontrolledDropdown = styled(UncontrolledDropdown)`
 
 function NavbarComponent(props) {
   const [isOpen, setIsOpen] = useState(false);
+  const [usuario, setUsuario] = useState(null);
+
+  useEffect(() => {
+    // Obtener la información del usuario actual al cargar el componente
+    const obtenerUsuarioActual = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
+        setUsuario(response.data);
+      } catch (error) {
+        console.error('Error al obtener información del usuario:', error);
+      }
+    };
+
+    obtenerUsuarioActual();
+  }, []);
+
+  const inicio = usuario ? usuario.id : null;
 
   const toggle = () => setIsOpen(!isOpen);
 
@@ -104,23 +122,30 @@ function NavbarComponent(props) {
                 </DropdownMenu>
               </StyledUncontrolledDropdown>
             </NavItem>
+            {inicio === null ? (
+              <>
+                <NavItem>
+                  <NavLink href="/Registro">Registro</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink href="/IniciarSesion">Iniciar Sesión</NavLink>
+                </NavItem>
+              </>
+            ) : (
+              <>
+                <NavItem>
+                  <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink href="/Perfil">Perfil</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink href="/Cesta">Cesta</NavLink>
+                </NavItem>
+              </>
+            )}
             <NavItem>
               <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/Registro">Registro</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/IniciarSesion">Iniciar Sesión</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/Perfil">Perfil</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/Cesta">Cesta</NavLink>
             </NavItem>
           </Nav>
         </Collapse>
