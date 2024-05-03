@@ -50,9 +50,6 @@ const ProductoTitle = styled(CardTitle)`
   text-align: center;
 `;
 
-const ProductoDescription = styled(CardText)`
-  font-size: 1.2rem;
-`;
 
 const ProductoPrice = styled(CardText)`
   color: green;
@@ -94,8 +91,10 @@ const DetallesButton = styled(Button)`
   }
 `;
 
+
 const Producto = ({ tipo }) => {
   const [productos, setProductos] = useState([]);
+  const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -106,8 +105,23 @@ const Producto = ({ tipo }) => {
         console.error('Error fetching data:', error);
       }
     };
+
     fetchData();
+
+    // Obtener la información del usuario actual al cargar el componente
+    const obtenerUsuarioActual = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
+        setUsuario(response.data);
+      } catch (error) {
+        console.error('Error al obtener información del usuario:', error);
+      }
+    };
+
+    obtenerUsuarioActual();
   }, [tipo]);
+
+  
 
   return (
     <ProductosContainer>
@@ -116,9 +130,14 @@ const Producto = ({ tipo }) => {
           <ProductoImage top width="100%" src={`/images/${producto.imagen}`} alt={producto.nombre} />
           <ProductoCardBody>
             <ProductoTitle>{producto.nombre}</ProductoTitle>
-          
             <ProductoPrice>{producto.precio} €</ProductoPrice>
-            <ProductoButton>Agregar al carrito</ProductoButton>
+            {usuario ? (
+              <ProductoButton>Agregar al carrito</ProductoButton>
+            ) : (
+              <Link to="/login" style={{ textDecoration: 'none' }}>
+                <ProductoButton>Iniciar sesión para comprar</ProductoButton>
+              </Link>
+            )}
             <Link to={`/productos/${producto._id}`} style={{ textDecoration: 'none' }}>
               <DetallesButton>Ver detalles</DetallesButton>
             </Link>
@@ -127,6 +146,6 @@ const Producto = ({ tipo }) => {
       ))}
     </ProductosContainer>
   );
-};
+}
 
 export default Producto;
