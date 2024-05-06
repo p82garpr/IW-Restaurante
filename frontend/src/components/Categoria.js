@@ -125,12 +125,12 @@ const Producto = ({ tipo }) => {
   const agregarProductoACesta = async (productoId) => {
     try {
       await axios.post('http://localhost:4000/api/cesta', { productoId, cantidad: 1});
-      console.log('Producto agregado a la cesta');
+      //console.log('Producto agregado a la cesta');
       
       // Puedes agregar aquí una lógica para mostrar un mensaje de éxito o actualizar la interfaz de usuario
 
       const productos = await axios.get(`http://localhost:4000/api/cesta/`);
-      console.log('Productos en la cesta:', productos.data);
+      //console.log('Productos en la cesta:', productos.data);
       } catch (error) {
       console.error('Error al agregar el producto a la cesta:', error);
       // Puedes agregar aquí una lógica para mostrar un mensaje de error o manejarlo de otra manera

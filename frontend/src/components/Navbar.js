@@ -84,7 +84,6 @@ const StyledUncontrolledDropdown = styled(UncontrolledDropdown)`
     }
   }
 `;
-
 function NavbarComponent(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [usuario, setUsuario] = useState(null);
@@ -129,6 +128,8 @@ function NavbarComponent(props) {
                 </DropdownMenu>
               </StyledUncontrolledDropdown>
             </NavItem>
+          </Nav>
+          <Nav navbar>
             {inicio === null && (
               <>
                 <NavItem>
@@ -139,29 +140,17 @@ function NavbarComponent(props) {
                 </NavItem>
               </>
             )}
-            {inicio !== null && privilegio === 0 && (
+            {inicio !== null && (
               <>
+                
                 <NavItem>
                   <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink href="/Perfil">Perfil</NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink href="/Cesta">Cesta</NavLink>
                 </NavItem>
-              </>
-            )}
-            {inicio !== null && privilegio === 1 && (
-              <>
-                <NavItem>
-                  <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
-                </NavItem>
                 <NavItem>
                   <NavLink href="/Perfil">Perfil</NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink href="/admin">Menu Admin</NavLink>
                 </NavItem>
               </>
             )}
@@ -171,13 +160,17 @@ function NavbarComponent(props) {
                   <NavLink href="/admin">Admin</NavLink>
                 </NavItem>
               </>
+            )}{inicio !== null && privilegio === 0 && (
+              <>
+                <SidePanel open={isOpen}>
+                  <Cesta />
+                </SidePanel>
+              </>
             )}
           </Nav>
         </Collapse>
       </RSNavbar>
-      <SidePanel open={isOpen}>
-        <Cesta />
-      </SidePanel>
+      
     </div>
   );
 }
