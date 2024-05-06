@@ -40,7 +40,7 @@ app.use(express.static('public'));
 
 // Verificación de la configuración de la sesión
 app.use((req, res, next) => {
-    console.log(req.session); // Verifica si la sesión se está inicializando correctamente
+    //console.log(req.session); // Verifica si la sesión se está inicializando correctamente
     next();
 });
 
