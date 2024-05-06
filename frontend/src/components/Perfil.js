@@ -65,6 +65,7 @@ const Perfil = () => {
 
   return (
     <PerfilContainer>
+      {usuario ? (
       <PerfilBox>
         <Title>Perfil de Usuario</Title>
         {usuario && (
@@ -77,7 +78,9 @@ const Perfil = () => {
           <Link to="/EditarPerfil"><StyledButton>Editar Perfil</StyledButton></Link>
           <Link to="/Historial"><StyledButton>Ver Historial</StyledButton></Link>
         </ButtonContainer>
-      </PerfilBox>
+      </PerfilBox>):( 
+        <p>Debes iniciar sesión para ver tu perfil</p>
+      )}
     </PerfilContainer>
   );
 };

@@ -40,7 +40,7 @@ const CerrarSesion = () => {
     try {
       // Realiza una solicitud POST a la ruta de cierre de sesión en la API
       const response = await axios.post('http://localhost:4000/api/usuarios/auth/logout');
-      console.log(response.data.message); // Mensaje de éxito de cierre de sesión
+      //console.log(response.data.message); // Mensaje de éxito de cierre de sesión
       alert('Sesión cerrada exitosamente');
       window.location.replace('/'); // Redirige al usuario a la página de inicio
     } catch (error) {

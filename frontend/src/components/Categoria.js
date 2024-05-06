@@ -64,6 +64,7 @@ const ProductoButton = styled(Button)`
   border-color: #1a237e;
   font-size: 1.2rem;
   transition: background-color 0.3s ease-in-out;
+  width: 100%; /* Ajusta el ancho del botón al 100% */
 
   &:hover {
     background-color: #3f51b5;
@@ -74,6 +75,7 @@ const ProductoButton = styled(Button)`
 const ProductoCardBody = styled(CardBody)`
   display: flex;
   flex-direction: column;
+  justify-content: center; /* Centra verticalmente los elementos hijos */
   height: 100%;
 `;
 

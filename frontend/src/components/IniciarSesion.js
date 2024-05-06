@@ -70,7 +70,7 @@ const IniciarSesion = () => {
     try {
       // Realizar solicitud POST a la ruta de inicio de sesión en la API
       const response = await axios.post('http://localhost:4000/api/usuarios/auth/login', credenciales,{withCredentials: true});
-      console.log(response.data.message); // Mensaje de éxito de inicio de sesión
+      //console.log(response.data.message); // Mensaje de éxito de inicio de sesión
       window.location.href = '/'; // Redirigir al usuario a la página principal después de iniciar sesión
     } catch (error) {
       console.error('Error en el inicio de sesión:', error.response.data.message);
