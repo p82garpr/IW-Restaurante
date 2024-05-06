@@ -153,6 +153,13 @@ function NavbarComponent(props) {
                 </NavItem>
               </>
             )}
+            {inicio !== null && privilegio === 1 && (
+              <>
+                <NavItem>
+                  <NavLink href="/admin">Admin</NavLink>
+                </NavItem>
+              </>
+            )}
           </Nav>
         </Collapse>
       </RSNavbar>
