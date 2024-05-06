@@ -20,8 +20,7 @@ router.route('/auth/sesion')
             if(!req.session){
                 return res.status(401).json({ message: 'Sesión no inicializada' });
             }
-            req.session.adios = 'adios';
-            console.log(req.session.hola);
+           
             console.log(req.session);
             if (!req.session.usuarioId) {
                 return res.status(401).json({ message: 'Usuario no autenticado' });

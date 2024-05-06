@@ -84,6 +84,7 @@ const StyledUncontrolledDropdown = styled(UncontrolledDropdown)`
     }
   }
 `;
+
 function NavbarComponent(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [usuario, setUsuario] = useState(null);
@@ -128,8 +129,6 @@ function NavbarComponent(props) {
                 </DropdownMenu>
               </StyledUncontrolledDropdown>
             </NavItem>
-          </Nav>
-          <Nav navbar>
             {inicio === null && (
               <>
                 <NavItem>
@@ -140,19 +139,35 @@ function NavbarComponent(props) {
                 </NavItem>
               </>
             )}
-            {inicio !== null && (
+            {inicio !== null && privilegio === 0 && (
               <>
                 <NavItem>
                   <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
                 </NavItem>
                 <NavItem>
+                  <NavLink href="/Perfil">Perfil</NavLink>
+                </NavItem>
+                <NavItem>
                   <NavLink href="/Cesta">Cesta</NavLink>
+                </NavItem>
+              </>
+            )}
+            {inicio !== null && privilegio === 1 && (
+              <>
+                <NavItem>
+                  <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink href="/Perfil">Perfil</NavLink>
                 </NavItem>
+                <NavItem>
+                  <NavLink href="/admin">Menu Admin</NavLink>
+                </NavItem>
               </>
             )}
+            <NavItem>
+              <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
+            </NavItem>
           </Nav>
         </Collapse>
       </RSNavbar>

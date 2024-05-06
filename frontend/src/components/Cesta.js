@@ -6,19 +6,24 @@ import styled from 'styled-components';
 const SidePanel = styled.div`
   position: fixed;
   top: 0;
-  right: ${({ open }) => (open ? '0' : '-300px')};
+  ${({ open }) => (open ? 'right: 0;' : 'right: -300px;')}
   width: 300px;
   height: 100%;
   background-color: #fff;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
   transition: right 0.3s ease;
   z-index: 1000;
+
+  @media only screen and (max-width: 768px) {
+    ${({ open }) => (open ? 'width: 75%;' : 'width: 0;')}
+    ${({ open }) => (open ? 'right: 0;' : 'right: -100%;')}
+  }
 `;
 
 const ToggleButton = styled.button`
   position: fixed;
   top: 50%;
-  right: ${({ open }) => (open ? '300px' : '0')};
+  ${({ open }) => (open ? 'right: 300px;' : 'right: 0;')}
   transform: translateY(-50%);
   background-color: #007bff;
   color: #fff;
@@ -28,6 +33,10 @@ const ToggleButton = styled.button`
   cursor: pointer;
   transition: right 0.3s ease;
   z-index: 1000;
+
+  @media only screen and (max-width: 768px) {
+    ${({ open }) => (open ? 'right: 75%;' : 'right: 0;')}
+  }
 `;
 
 const Cesta = () => {
@@ -52,10 +61,12 @@ const Cesta = () => {
     obtenerUsuarioActual();
   }, []);
 
+
   const agregarProducto = (producto) => {
     setProductos([...productos, producto]);
     if (usuario) {
       axios.post(`http://localhost:4000/api/usuarios/${usuario.id}/cesta`, { productos: [...productos, producto] }, { withCredentials: true })
+      console.log()
         .catch(error => console.error('Error al guardar la cesta:', error));
     }
   };
