@@ -165,9 +165,13 @@ function NavbarComponent(props) {
                 </NavItem>
               </>
             )}
-            <NavItem>
-              <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
-            </NavItem>
+            {inicio !== null && privilegio === 1 && (
+              <>
+                <NavItem>
+                  <NavLink href="/admin">Admin</NavLink>
+                </NavItem>
+              </>
+            )}
           </Nav>
         </Collapse>
       </RSNavbar>
