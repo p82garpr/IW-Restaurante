@@ -91,7 +91,7 @@ usuarioCtrl.loginUsu = async (req, res) => {
             const contraseñaValida = await bcrypt.compare(contraseña, usuario.contraseña);
     
             if (!contraseñaValida) {
-                return res.status(401).json({ message: 'Credenciales incorrectas' });
+                return res.status(402).json({ message: 'Credenciales incorrectas' });
             }
     
             // Almacenar el ID del usuario en la sesión
