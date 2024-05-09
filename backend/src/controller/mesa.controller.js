@@ -12,7 +12,7 @@ mesaCtrl.getMesas = async (req, res) => {
     }
 }
 
-productoCtrl.getMesa = async (req, res) => {
+mesaCtrl.getMesa = async (req, res) => {
     try {
         const mesa = await Mesa.findById(req.params.id)
         res.status(200).json(mesa)
