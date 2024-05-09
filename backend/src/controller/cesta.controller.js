@@ -28,7 +28,7 @@ cestaCtrl.addProductoCesta = async (req, res) => {
             req.session.cesta.push({ productoId, cantidad });
         }
 
-        res.json({ message: 'Producto agregado a la cesta' });
+        res.status(200).json({ message: 'Producto agregado a la cesta' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -48,7 +48,7 @@ cestaCtrl.getCesta = async (req, res) => {
             }
         }
 
-        res.json({ cesta: productosEnCesta });
+        res.status(200).json({ cesta: productosEnCesta });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -69,7 +69,7 @@ cestaCtrl.updateCesta = async (req, res) => {
         if (productoIndex !== -1) {
             // Si el producto está en la cesta, actualizar la cantidad
             req.session.cesta[productoIndex].cantidad = cantidad;
-            res.json({ message: 'Cantidad de producto actualizada en la cesta' });
+            res.status(200).json({ message: 'Cantidad de producto actualizada en la cesta' });
         } else {
             // Si el producto no está en la cesta, devolver un error
             res.status(404).json({ message: 'Producto no encontrado en la cesta' });
@@ -88,7 +88,7 @@ cestaCtrl.deleteProductoCesta = async (req,res) => {
     // Filtrar la cesta para excluir el producto a eliminar
     req.session.cesta = cesta.filter(item => item.productoId !== productoId);
 
-    res.json({ message: 'Producto eliminado de la cesta' });
+    res.status(200).json({ message: 'Producto eliminado de la cesta' });
 }
 
 module.exports = cestaCtrl

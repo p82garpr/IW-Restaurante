@@ -21,7 +21,7 @@ productoCtrl.getProd = async (req, res) => {
             // Si no se proporciona una categoría, obtener todos los productos
             productos = await Producto.find().populate('categoria', 'nombre');
         }
-        res.json(productos);
+        res.status(200).json(productos);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -49,7 +49,7 @@ productoCtrl.createProd = async (req, res) => {
         });
 
         await newProd.save();
-        res.json({ message: "El producto ha sido creado" });
+        res.status(200).json({ message: "El producto ha sido creado" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -67,7 +67,7 @@ productoCtrl.getProducto = async (req, res) => {
 productoCtrl.deleteProd = async (req, res) => {
     try {
         await Producto.findByIdAndDelete(req.params.id);
-        res.json({ message: 'Producto ha sido eliminado' });
+        res.status(200).json({ message: 'Producto ha sido eliminado' });
     } catch (error) {
         res.status(404).json({ message: "Producto no encontrado" });
     }
@@ -85,7 +85,7 @@ productoCtrl.updateProd = async (req, res) => {
             descripcion: ['entrante', 'principal', 'postre'].includes(categoria) ? descripcion : '',
             ingredientes: ['entrante', 'principal', 'postre'].includes(categoria) ? ingredientes : []
         });
-        res.json({ message: 'El producto ha sido actualizado' });
+        res.status(200).json({ message: 'El producto ha sido actualizado' });
     } catch (error) {
         res.status(404).json({ message: "Producto no encontrado" });
     }

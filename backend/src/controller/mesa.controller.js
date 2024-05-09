@@ -1,48 +1,32 @@
-const usuarioCtrl = {}
+const mesaCtrl = {}
 
-const Usuario = require('../models/Usuario')
-
-const bcrypt = require('bcrypt');
-const saltRounds = 10; // Número de rondas de sal para el hashing
+const Mesa = require('../models/Mesa')
 
 
-usuarioCtrl.getUsu = async (req, res) => {
+mesaCtrl.getMesas = async (req, res) => {
     try {
-        const usuarios = await Usuario.find()
-        res.status(200).json(usuarios)
+        const mesas = await Mesa.find()
+        res.status(200).json(mesas)
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
 
-usuarioCtrl.createUsu = async (req, res) => {
-    const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, privilegio, rol, cliente_info } = req.body;
+mesaCtrl.createMesa = async (req, res) => {
+    const { estado, capacidad, qr } = req.body;
 
     try {
 
-        // Verificar si ya existe un usuario con el mismo nombre de usuario
-        const usuarioExistente = await Usuario.findOne({ nombre_usuario });
-
-        if (usuarioExistente) {
-            return res.status(400).json({ message: "El nombre de usuario ya está en uso" });
-        }
-
-
-        const contraseña_hashed = await bcrypt.hash(contraseña, saltRounds);
-
-        const newUsu = new Usuario({
-            nombre_usuario,
-            nombre,
-            apellido,
-            contraseña: contraseña_hashed,
-            fecha_nacimiento,
-            privilegio: 0,
-            rol,
-            cliente_info: rol === 'cliente' ? cliente_info : {} // Asegurando que el cliente_info esté vacío si el rol no es 'cliente'
+  
+        const newMesa = new Mesa({
+            estado,
+            capacidad,
+            qr
+    
         });
 
-        await newUsu.save();
-        res.status(200).json({ message: "El usuario ha sido creado" });
+        await newMesa.save();
+        res.status(200).json({ message: "La mesa ha sido creada" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -97,7 +81,7 @@ usuarioCtrl.loginUsu = async (req, res) => {
             // Almacenar el ID del usuario en la sesión
             req.session.usuarioId = usuario._id.toString();
             
-            res.status(200).json({ message: 'Inicio de sesión exitoso' });
+            res.json({ message: 'Inicio de sesión exitoso' });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
@@ -132,7 +116,7 @@ usuarioCtrl.logoutUsu = async (req, res) => {
                 return res.status(500).json({ message: 'Error al cerrar sesión' });
             }
             res.clearCookie('connect.sid'); // Limpiar la cookie de sesión
-            res.status(200).json({ message: 'Sesión cerrada exitosamente' });
+            res.json({ message: 'Sesión cerrada exitosamente' });
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
