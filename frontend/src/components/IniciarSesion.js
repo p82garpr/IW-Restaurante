@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Container, Form, FormGroup, Label, Input, Button } from 'reactstrap';
-import axios from 'axios';
+import axios from 'axios'; // Importa axios para hacer solicitudes HTTP
+
 
 const IniciarSesionContainer = styled(Container)`
   display: flex;
@@ -52,7 +53,7 @@ const IniciarSesionButton = styled(Button)`
 
 const IniciarSesion = () => {
   const [credenciales, setCredenciales] = useState({
-    correo: '',
+    nombre_usuario: '',
     contraseña: ''
   });
 
@@ -67,13 +68,13 @@ const IniciarSesion = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:4000/api/iniciarsesion', credenciales);
-      alert('Inicio de sesión exitoso');
-      console.log(response.data); // Puedes hacer algo con la respuesta, como almacenar el token de autenticación
-      // Redirigir al usuario a la página principal o a otra página
+      // Realizar solicitud POST a la ruta de inicio de sesión en la API
+      const response = await axios.post('http://localhost:4000/api/usuarios/auth/login', credenciales,{withCredentials: true});
+      //console.log(response.data.message); // Mensaje de éxito de inicio de sesión
+      window.location.href = '/'; // Redirigir al usuario a la página principal después de iniciar sesión
     } catch (error) {
-      console.error('Error en el inicio de sesión:', error);
-      alert('Error en el inicio de sesión');
+      console.error('Error en el inicio de sesión:', error.response.data.message);
+      // Manejo de errores (puedes mostrar un mensaje de error al usuario)
     }
   };
 
@@ -83,18 +84,18 @@ const IniciarSesion = () => {
         <IniciarSesionTitle>Iniciar Sesión</IniciarSesionTitle>
         <IniciarSesionForm onSubmit={handleSubmit}>
           <IniciarSesionFormGroup>
-            <IniciarSesionLabel for="correo">Correo electrónico</IniciarSesionLabel>
+            <IniciarSesionLabel htmlFor="nombre_usuario">Nombre de usuario</IniciarSesionLabel>
             <IniciarSesionInput
-              type="email"
-              name="correo"
-              id="correo"
-              value={credenciales.correo}
+              type="text"
+              name="nombre_usuario"
+              id="nombre_usuario"
+              value={credenciales.nombre_usuario}
               onChange={handleChange}
               required
             />
           </IniciarSesionFormGroup>
           <IniciarSesionFormGroup>
-            <IniciarSesionLabel for="contraseña">Contraseña</IniciarSesionLabel>
+            <IniciarSesionLabel htmlFor="contraseña">Contraseña</IniciarSesionLabel>
             <IniciarSesionInput
               type="password"
               name="contraseña"
@@ -104,7 +105,7 @@ const IniciarSesion = () => {
               required
             />
           </IniciarSesionFormGroup>
-          <IniciarSesionButton color="primary" block>Iniciar Sesión</IniciarSesionButton>
+          <IniciarSesionButton type="submit" color="primary" block>Iniciar Sesión</IniciarSesionButton>
         </IniciarSesionForm>
       </IniciarSesionBox>
     </IniciarSesionContainer>

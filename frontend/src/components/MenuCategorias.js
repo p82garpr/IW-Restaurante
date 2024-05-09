@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import menuData from '../data/menuData.json';
+import axios from 'axios';
 
 const CategoriesContainer = styled.div`
   padding: 20px;
@@ -13,45 +13,73 @@ const Title = styled.h1`
 `;
 
 const CardContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
 `;
 
 const CategoryCard = styled.div`
   text-decoration: none;
   color: inherit;
-  margin: 10px;
-  width: 200px;
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
   transition: transform 0.2s ease-in-out;
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
   }
 `;
 
-const Card = styled.div`
-  background-color: #f5f5f5;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+const CardImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
-const CategoryTitle = styled.h2`
+const CategoryTitle = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
   text-align: center;
 `;
 
-const Menu = () => {
+const Categoria = ({ cat }) => {
+  const [categorias, setCategorias] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:4000/api/categorias/`);
+        setCategorias(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, [cat]);
+
+  const mapCategoryName = {
+    "entrante": "Entrantes",
+    "postre": "Postres",
+    "bebida": "Bebidas",
+    "principal": "Principales"
+  };
+
   return (
     <CategoriesContainer>
       <Title>Menú</Title>
       <CardContainer>
-        {menuData.categories.map(category => (
-          <Link key={category.id} to={`${category.name}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        {categorias.map(category => (
+          <Link key={category.id} to={`/${mapCategoryName[category.nombre]}`} style={{ textDecoration: 'none', color: 'inherit' }}>
             <CategoryCard>
-              <Card>
-                <CategoryTitle>{category.name}</CategoryTitle>
-              </Card>
+              <CardImage src={`/images/${category.imagen}`} alt={mapCategoryName[category.nombre]} />
+              <CategoryTitle>{mapCategoryName[category.nombre]}</CategoryTitle>
             </CategoryCard>
           </Link>
         ))}
@@ -60,4 +88,4 @@ const Menu = () => {
   );
 }
 
-export default Menu;
+export default Categoria;

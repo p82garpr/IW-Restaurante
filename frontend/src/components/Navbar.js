@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
+import Cesta from './Cesta'; 
 import {
   Collapse,
   Navbar as RSNavbar,
@@ -12,47 +14,101 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  NavbarText,
 } from 'reactstrap';
 
-// Estilos inspirados en Material Design
-const Navbar = styled(RSNavbar)`
-  background-color: #ffffff; /* Fondo del navbar */
-  font-family: 'Roboto', sans-serif; /* Fuente del texto */
-  padding: 10px 0; /* Espaciado interior */
+const SidePanel = styled.div`
+  position: fixed;
+  top: 0;
+  right: ${({ open }) => (open ? '0' : '-300px')};
+  width: 300px;
+  height: 100%;
+  background-color: #ffffff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease;
+  z-index: 1000;
 `;
 
 const NavbarBrand = styled(RSNavbarBrand)`
-  color: #1a237e; /* Color del texto del NavbarBrand */
-  font-size: 1.5rem; /* Tamaño del texto del NavbarBrand */
-  font-weight: bold; /* Peso de la fuente del NavbarBrand */
+  color: #1a237e;
+  font-size: 1.5rem;
+  font-weight: bold;
 `;
 
 const NavLink = styled(RSNavLink)`
-  color: #1a237e; /* Color del texto de los NavLink */
-  font-size: 1.2rem; /* Tamaño del texto de los NavLink */
-  font-weight: 500; /* Peso de la fuente de los NavLink */
-  margin-right: 20px; /* Espaciado entre los NavLink */
-  transition: color 0.3s ease; /* Transición del color */
+  color: #1a237e;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-right: 20px;
+  transition: color 0.3s ease;
   
   &:hover {
-    color: #3f51b5; /* Color del texto al pasar el cursor */
+    color: #3f51b5;
   }
 `;
 
 const TogglerIcon = styled.span`
-  background-color: #1a237e; /* Color del icono del NavbarToggler */
+  background-color: #1a237e;
 `;
 
-// Componente funcional principal
-function Example(props) {
+const StyledUncontrolledDropdown = styled(UncontrolledDropdown)`
+  & .dropdown-toggle {
+    color: #1a237e;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-right: 20px;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #3f51b5;
+    }
+  }
+
+  & .dropdown-menu {
+    background-color: #ffffff;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 0;
+    margin-top: 10px;
+  }
+
+  & .dropdown-item {
+    color: #1a237e;
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
+`;
+function NavbarComponent(props) {
   const [isOpen, setIsOpen] = useState(false);
+  const [usuario, setUsuario] = useState(null);
+
+  useEffect(() => {
+    const obtenerUsuarioActual = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
+        setUsuario(response.data);
+      } catch (error) {
+        console.error('Error al obtener información del usuario:', error);
+      }
+    };
+
+    obtenerUsuarioActual();
+  }, []);
+
+  const inicio = usuario ? usuario.id : null;
+  const privilegio = usuario ? usuario.privilegio : null;
 
   const toggle = () => setIsOpen(!isOpen);
 
   return (
     <div>
-      <Navbar {...props}>
+      <RSNavbar {...props}>
         <NavbarBrand href="/">QR-MENU</NavbarBrand>
         <NavbarToggler onClick={toggle}>
           <TogglerIcon />
@@ -60,46 +116,63 @@ function Example(props) {
         <Collapse isOpen={isOpen} navbar>
           <Nav className="me-auto" navbar>
             <NavItem>
-              <NavLink href="/MenuCategorias">Categorias</NavLink>
+              <StyledUncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav caret>
+                  Categorias
+                </DropdownToggle>
+                <DropdownMenu right>
+                  <DropdownItem href="/Entrantes">Entrantes</DropdownItem>
+                  <DropdownItem href="/Principales">Principales</DropdownItem>
+                  <DropdownItem href="/Bebidas">Bebidas</DropdownItem>
+                  <DropdownItem href="/Postres">Postres</DropdownItem>
+                </DropdownMenu>
+              </StyledUncontrolledDropdown>
             </NavItem>
-            <NavItem>
-              <NavLink href="https://github.com/reactstrap/reactstrap">
-                GitHub
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/Registro">Registro</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/IniciarSesion">Iniciar Sesión</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/Perfil">Perfil</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="/Cesta">Cesta</NavLink>
-            </NavItem>
-            {/* Comentario para desactivar el DropdownMenu */}
-            {/* <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Options
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem>Option 1</DropdownItem>
-                <DropdownItem>Option 2</DropdownItem>
-                <DropdownItem divider />
-                <DropdownItem>Reset</DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown> */}
           </Nav>
-          {/*<NavbarText>Simple Text</NavbarText>*/}
+          <Nav navbar>
+            {inicio === null && (
+              <>
+                <NavItem>
+                  <NavLink href="/Registro">Registro</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink href="/IniciarSesion">Iniciar Sesión</NavLink>
+                </NavItem>
+              </>
+            )}
+            {inicio !== null && (
+              <>
+                
+                <NavItem>
+                  <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink href="/Cesta">Cesta</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink href="/Perfil">Perfil</NavLink>
+                </NavItem>
+              </>
+            )}
+            {inicio !== null && privilegio === 1 && (
+              <>
+                <NavItem>
+                  <NavLink href="/admin">Admin</NavLink>
+                </NavItem>
+              </>
+            )}{inicio !== null && privilegio === 0 && (
+              <>
+                <SidePanel open={isOpen}>
+                  <Cesta />
+                </SidePanel>
+              </>
+            )}
+          </Nav>
         </Collapse>
-      </Navbar>
+      </RSNavbar>
+      
     </div>
   );
 }
 
-export default Example;
+export default NavbarComponent;

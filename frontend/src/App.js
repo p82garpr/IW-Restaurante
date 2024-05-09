@@ -9,19 +9,27 @@ import ProductoDetalle from './components/ProductoDetalle';
 import CerrarSesion from './components/CerrarSesion';
 import IniciarSesion from './components/IniciarSesion';
 import Categoria from './components/Categoria';
+import MenuAdmin from './components/MenuAdmin';
+import Comandas from './components/Comandas';
+import Mesas from './components/Mesas';
+import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 const App = () => {
   return (
+    
     <Router>
       <div>
         <Navbar color="light" light expand="md" />
         <Switch>
-          <Route exact path="/" component={Home} />
+          <Route exact path="/" component={MenuCategorias} />
           <Route path="/MenuCategorias" component={MenuCategorias} />
-
           <Route path="/Entrantes" render={() => <Categoria tipo="entrante" />} />
+
           <Route path="/Bebidas" render={() => <Categoria tipo="bebida" />} />
+
           <Route path="/Postres" render={() => <Categoria tipo="postre" />} />
+
           <Route path="/Principales" render={() => <Categoria tipo="principal" />} />
 
           <Route path="/Perfil" component={Perfil} />
@@ -30,10 +38,15 @@ const App = () => {
           <Route path="/CerrarSesion" component={CerrarSesion} />
           <Route path="/IniciarSesion" component={IniciarSesion} />
 
+          <Route path="/admin" component={MenuAdmin} />
+          <Route path="/admin/comandas" component={Comandas} />
+          <Route path="/admin/mesas" component={Mesas} />
+
         </Switch>
         
       </div>
     </Router>
+   
   );
 }
 

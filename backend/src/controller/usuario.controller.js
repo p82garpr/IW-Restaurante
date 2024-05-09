@@ -48,15 +48,6 @@ usuarioCtrl.createUsu = async (req, res) => {
     }
 }
 
-usuarioCtrl.getUsuario = async (req, res) => {
-    try {
-        const usuario = await Usuario.findById(req.params.id)
-        res.status(200).json(usuario)
-    } catch (error) {
-        res.status(404).json({ message: "Usuario no encontrado" });
-    }
-}
-
 usuarioCtrl.deleteUsu = async (req, res) => {
     try {
         await Usuario.findByIdAndDelete(req.params.id)
@@ -86,5 +77,68 @@ usuarioCtrl.updateUsu = async (req, res) => {
         res.status(404).json({ message: "Usuario no encontrado" });
     }
 }
+
+usuarioCtrl.loginUsu = async (req, res) => {
+        const { nombre_usuario, contraseña } = req.body;
+    
+        try {
+            const usuario = await Usuario.findOne({ nombre_usuario });
+    
+            if (!usuario) {
+                return res.status(401).json({ message: 'Credenciales incorrectas' });
+            }
+    
+            const contraseñaValida = await bcrypt.compare(contraseña, usuario.contraseña);
+    
+            if (!contraseñaValida) {
+                return res.status(401).json({ message: 'Credenciales incorrectas' });
+            }
+    
+            // Almacenar el ID del usuario en la sesión
+            req.session.usuarioId = usuario._id.toString();
+            
+            res.json({ message: 'Inicio de sesión exitoso' });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    
+}
+usuarioCtrl.getUsuarioActual = async (req, res) => {
+
+        try {
+            if(!req.session){
+                return res.status(401).json({ message: 'Sesión no inicializada' });
+            }
+            if (!req.session.usuarioId) {
+                return res.status(401).json({ message: 'Usuario no autenticado' });
+            }
+            
+            const usuario = await Usuario.findById(req.session.usuarioId, { contraseña: 0 }); // Excluir la contraseña
+            if (!usuario) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+    
+            res.status(200).json(usuario);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    
+}
+usuarioCtrl.logoutUsu = async (req, res) => {
+    try {
+        // Destruir la sesión del usuario
+        req.session.destroy((err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error al cerrar sesión' });
+            }
+            res.clearCookie('connect.sid'); // Limpiar la cookie de sesión
+            res.json({ message: 'Sesión cerrada exitosamente' });
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+
 
 module.exports = usuarioCtrl
