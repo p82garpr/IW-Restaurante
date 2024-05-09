@@ -85,19 +85,19 @@ usuarioCtrl.loginUsu = async (req, res) => {
             const usuario = await Usuario.findOne({ nombre_usuario });
     
             if (!usuario) {
-                return res.status(401).json({ message: 'Credenciales incorrectas' });
+                return res.status(401).json({ message: 'Usuario incorrecto' });
             }
     
             const contraseñaValida = await bcrypt.compare(contraseña, usuario.contraseña);
     
             if (!contraseñaValida) {
-                return res.status(401).json({ message: 'Credenciales incorrectas' });
+                return res.status(402).json({ message: 'Credenciales incorrectas' });
             }
     
             // Almacenar el ID del usuario en la sesión
             req.session.usuarioId = usuario._id.toString();
             
-            res.json({ message: 'Inicio de sesión exitoso' });
+            res.status(200).json({ message: 'Inicio de sesión exitoso' });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
@@ -132,7 +132,7 @@ usuarioCtrl.logoutUsu = async (req, res) => {
                 return res.status(500).json({ message: 'Error al cerrar sesión' });
             }
             res.clearCookie('connect.sid'); // Limpiar la cookie de sesión
-            res.json({ message: 'Sesión cerrada exitosamente' });
+            res.status(200).json({ message: 'Sesión cerrada exitosamente' });
         });
     } catch (error) {
         res.status(500).json({ message: error.message });

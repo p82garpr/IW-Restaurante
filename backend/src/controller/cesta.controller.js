@@ -28,7 +28,7 @@ cestaCtrl.addProductoCesta = async (req, res) => {
             req.session.cesta.push({ productoId, cantidad });
         }
 
-        res.json({ message: 'Producto agregado a la cesta' });
+        res.status(200).json({ message: 'Producto agregado a la cesta' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

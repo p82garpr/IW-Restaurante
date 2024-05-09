@@ -5,7 +5,7 @@ const Categoria = require('../models/Categoria')
 categoriaCtrl.getCateg = async (req, res) => {
     try {
         const categorias = await Categoria.find()
-        res.json(categorias)
+        res.status(200).json(categorias)
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -14,7 +14,7 @@ categoriaCtrl.getCateg = async (req, res) => {
 categoriaCtrl.getCategoria = async (req, res) => {
     try {
         const categoria = await Categoria.findById(req.params.id)
-        res.json(categoria)
+        res.status(200).json(categoria)
     } catch (error) {
         res.status(404).json({ message: "Categoria no encontrada" });
     }
