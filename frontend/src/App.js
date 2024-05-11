@@ -12,6 +12,7 @@ import Categoria from './components/Categoria';
 import MenuAdmin from './components/MenuAdmin';
 import Comandas from './components/Comandas';
 import Mesas from './components/Mesas';
+import Pedido from './components/Pedido';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
@@ -37,7 +38,7 @@ const App = () => {
           <Route path="/productos/:id" component={ProductoDetalle} />          
           <Route path="/CerrarSesion" component={CerrarSesion} />
           <Route path="/IniciarSesion" component={IniciarSesion} />
-
+          <Route path="/Pedido" component={Pedido} />
           <Route path="/admin" component={MenuAdmin} />
           <Route path="/admin/comandas" component={Comandas} />
           <Route path="/admin/mesas" component={Mesas} />

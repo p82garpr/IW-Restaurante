@@ -146,9 +146,7 @@ function NavbarComponent(props) {
                 <NavItem>
                   <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
                 </NavItem>
-                <NavItem>
-                  <NavLink href="/Cesta">Cesta</NavLink>
-                </NavItem>
+                
                 <NavItem>
                   <NavLink href="/Perfil">Perfil</NavLink>
                 </NavItem>

@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Button } from 'reactstrap';
 import axios from 'axios';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom'; // Importar Link desde react-router-dom
+
+const Container = styled.div`
+  /* Evitar que aparezca la barra de desplazamiento horizontal */
+  overflow-x: hidden;
+`;
 
 const SidePanel = styled.div`
   position: fixed;
@@ -15,16 +21,11 @@ const SidePanel = styled.div`
   transition: right 0.3s ease;
   z-index: 1000;
   overflow-y: auto; /* Barra de desplazamiento vertical */
-
-  @media only screen and (max-width: 768px) {
-    ${({ open }) => (open ? 'width: 75%;' : 'width: 0;')}
-    ${({ open }) => (open ? 'right: 0;' : 'right: -100%;')}
-  }
 `;
 
 const ToggleButton = styled.button`
   position: fixed;
-  top: 50%;
+  top: 98%;
   ${({ open }) => (open ? 'right: 300px;' : 'right: 0;')}
   transform: translateY(-50%);
   background-color: #007bff;
@@ -35,10 +36,6 @@ const ToggleButton = styled.button`
   cursor: pointer;
   transition: right 0.3s ease;
   z-index: 1000;
-
-  @media only screen and (max-width: 768px) {
-    ${({ open }) => (open ? 'right: 75%;' : 'right: 0;')}
-  }
 `;
 
 const CestaItem = styled.div`
@@ -100,15 +97,30 @@ const Cesta = () => {
         if (response.data) {
           const cestaResponse = await axios.get(`http://localhost:4000/api/cesta/`, { withCredentials: true });
           setProductos(cestaResponse.data.cesta);
-          calcularTotal(cestaResponse.data.cesta); // Llama a calcularTotal después de actualizar los productos
+          calcularTotal(cestaResponse.data.cesta);
         }
       } catch (error) {
         console.error('Error al obtener información del usuario:', error);
       }
     }
-
+  
     obtenerUsuarioActual();
   }, []);
+
+  useEffect(() => {
+    const actualizarCesta = async () => {
+      try {
+        const cestaResponse = await axios.get(`http://localhost:4000/api/cesta/`, { withCredentials: true });
+        setProductos(cestaResponse.data.cesta);
+        calcularTotal(cestaResponse.data.cesta);
+      } catch (error) {
+        console.error('Error al actualizar la cesta:', error);
+      }
+    };
+
+    actualizarCesta();
+  }, [productos, open]);
+
 
   const removerProducto = async (productoId) => {
     try {
@@ -121,30 +133,25 @@ const Cesta = () => {
     }
   };
   
+
   const calcularTotal = (productos) => {
-    const total = productos.producto.reduce((acc, curr) => acc + curr.precio * curr.cantidad, 0);
-    setTotal(total);
+    const total = productos.reduce((acc, curr) => acc + curr.producto.precio * curr.cantidad, 0);
+    setTotal(total.toFixed(2)); // Limitar a dos decimales
   };
+  
+  
 
-  const limpiarCesta = async () => {
-    try {
-      await axios.delete(`http://localhost:4000/api/usuarios/${usuario.id}/cesta`, { withCredentials: true });
-      setProductos([]);
-      setTotal(0); // Reinicia el total a 0 al limpiar la cesta
-    } catch (error) {
-      console.error('Error al limpiar la cesta:', error);
-    }
-  };
-
+  
   const handleToggle = () => {
     setOpen(!open);
   };
-
+  
   return (
-    <div>
+    <Container>
       <ToggleButton open={open} onClick={handleToggle}>
         {open ? 'Cerrar Cesta' : 'Abrir Cesta'}
       </ToggleButton>
+      
       <SidePanel open={open}>
         <h2 style={{ textAlign: 'center', padding: '20px 0', borderBottom: '1px solid #666' }}>Cesta de Compras</h2>
         {productos.length === 0 ? (
@@ -165,11 +172,14 @@ const Cesta = () => {
             <TotalContainer>
               <TotalText>Total: {total} €</TotalText>
             </TotalContainer>
-            
           </div>
         )}
+        {/* Agregar botón Pedir que nos lleve a la ruta del componente Pedido */}
+        <Button tag={Link} to="/Pedido" color="primary" block className="mt-3">
+          Pedir
+        </Button>
       </SidePanel>
-    </div>
+    </Container>
   );
 };
 

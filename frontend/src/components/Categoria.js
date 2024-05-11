@@ -1,3 +1,4 @@
+// Producto.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardImg, CardBody, CardTitle, CardText, Button } from 'reactstrap';
@@ -93,7 +94,7 @@ const DetallesButton = styled(Button)`
   }
 `;
 
-const Producto = ({ tipo }) => {
+const Producto = ({ tipo, actualizarCesta, abrirPanel }) => {
   const [productos, setProductos] = useState([]);
   const [usuario, setUsuario] = useState(null);
 
@@ -109,7 +110,6 @@ const Producto = ({ tipo }) => {
 
     fetchData();
 
-    // Obtener la información del usuario actual al cargar el componente
     const obtenerUsuarioActual = async () => {
       try {
         const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
@@ -124,16 +124,11 @@ const Producto = ({ tipo }) => {
 
   const agregarProductoACesta = async (productoId) => {
     try {
-      await axios.post('http://localhost:4000/api/cesta', { productoId, cantidad: 1});
-      //console.log('Producto agregado a la cesta');
-      
-      // Puedes agregar aquí una lógica para mostrar un mensaje de éxito o actualizar la interfaz de usuario
-
-      const productos = await axios.get(`http://localhost:4000/api/cesta/`);
-      //console.log('Productos en la cesta:', productos.data);
-      } catch (error) {
+      await axios.post('http://localhost:4000/api/cesta', { productoId, cantidad: 1 });
+      actualizarCesta(); // Actualiza la cesta después de agregar un producto
+      abrirPanel(); // Abre el SidePanel después de agregar un producto
+    } catch (error) {
       console.error('Error al agregar el producto a la cesta:', error);
-      // Puedes agregar aquí una lógica para mostrar un mensaje de error o manejarlo de otra manera
     }
   };
 
@@ -148,7 +143,7 @@ const Producto = ({ tipo }) => {
             {usuario ? (
               <ProductoButton onClick={() => agregarProductoACesta(producto._id)}>Agregar al carrito</ProductoButton>
             ) : (
-              <Link to="/login" style={{ textDecoration: 'none' }}>
+              <Link to="/IniciarSesion" style={{ textDecoration: 'none' }}>
                 <ProductoButton>Iniciar sesión para comprar</ProductoButton>
               </Link>
             )}
