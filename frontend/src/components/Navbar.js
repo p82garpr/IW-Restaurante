@@ -85,7 +85,7 @@ const StyledUncontrolledDropdown = styled(UncontrolledDropdown)`
   }
 `;
 function NavbarComponent(props) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenNavbar, setIsOpenNabvar] = useState(false);
   const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
@@ -104,16 +104,16 @@ function NavbarComponent(props) {
   const inicio = usuario ? usuario.id : null;
   const privilegio = usuario ? usuario.privilegio : null;
 
-  const toggle = () => setIsOpen(!isOpen);
+  const toggleNavbar = () => setIsOpenNabvar(!isOpenNavbar);
 
   return (
     <div>
       <RSNavbar {...props}>
         <NavbarBrand href="/">QR-MENU</NavbarBrand>
-        <NavbarToggler onClick={toggle}>
+        <NavbarToggler onClick={toggleNavbar}>
           <TogglerIcon />
         </NavbarToggler>
-        <Collapse isOpen={isOpen} navbar>
+        <Collapse isOpen={isOpenNavbar} navbar>
           <Nav className="me-auto" navbar>
             <NavItem>
               <StyledUncontrolledDropdown nav inNavbar>
@@ -160,9 +160,7 @@ function NavbarComponent(props) {
               </>
             )}{inicio !== null && privilegio === 0 && (
               <>
-                <SidePanel open={isOpen}>
                   <Cesta />
-                </SidePanel>
               </>
             )}
           </Nav>
