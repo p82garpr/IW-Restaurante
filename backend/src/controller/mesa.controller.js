@@ -27,7 +27,7 @@ mesaCtrl.createMesa = async (req, res) => {
     try {
 
         // Generar el código QR utilizando el número de mesa
-        const qrData = `http://localhost:4000/?mesa=${numeroMesa}`;
+        const qrData = `http://localhost:4000/?mesa=${numero_mesa}`;
         const qrCode = await QRCode.toDataURL(qrData);
   
         const newMesa = new Mesa({

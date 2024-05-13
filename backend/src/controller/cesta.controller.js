@@ -80,8 +80,7 @@ cestaCtrl.updateCesta = async (req, res) => {
 }
 
 cestaCtrl.deleteProductoCesta = async (req, res) => {
-    const { productoId } = req.params;
-
+    const productoId= req.params.id;
     try {
         // Recuperar la cesta de compras del usuario desde la sesión
         let cesta = req.session.cesta || [];
@@ -89,26 +88,30 @@ cestaCtrl.deleteProductoCesta = async (req, res) => {
         // Crear una nueva lista de productos en la cesta excluyendo el producto a eliminar
         const nuevaCesta = [];
         for (const item of cesta) {
-            // Verificar si item y item.producto son definidos antes de acceder a sus propiedades
-            if (item && item.producto && item.producto._id) {
-                // Convertir el _id del producto en la cesta a string para la comparación
-                const stringItemId = item.producto._id.toString();
-                // Convertir el productoId a string para la comparación
+            // Verificar si item y item.productoId son definidos antes de acceder a sus propiedades
+            if (item && item.productoId) {
+            
+                // Convertir el productoId del elemento en la cesta a string para la comparación
+                const stringItemId = item.productoId.toString();
+                // Convertir el productoId de la solicitud a string para la comparación
                 const stringProductoId = productoId.toString();
                 if (stringItemId !== stringProductoId) {
                     nuevaCesta.push(item);
                 }
+            
             }
         }
 
         // Actualizar la cesta en la sesión con la nueva lista
         req.session.cesta = nuevaCesta;
+        console.log("req.session.cesta: ",req.session.cesta)
 
         res.status(200).json({ message: 'Producto eliminado de la cesta' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500);
     }
 }
+
 
 
 
