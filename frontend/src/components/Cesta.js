@@ -124,14 +124,24 @@ const Cesta = () => {
 
   const removerProducto = async (productoId) => {
     try {
-      await axios.delete(`http://localhost:4000/api/cesta/${productoId}`, { withCredentials: true });
-      const cestaResponse = await axios.get(`http://localhost:4000/api/cesta/`, { withCredentials: true });
-      setProductos(cestaResponse.data.cesta);
-      calcularTotal(cestaResponse.data.productos); // Llama a calcularTotal después de actualizar los productos
+        const cestaResponse = await axios.get(`http://localhost:4000/api/cesta/`, { withCredentials: true });
+        const producto = cestaResponse.data.cesta.find(item => item.producto._id === productoId);
+        
+        if (producto) {
+            if (producto.cantidad > 1) {
+                await axios.put(`http://localhost:4000/api/cesta/${productoId}`, { cantidad: producto.cantidad - 1 }, { withCredentials: true });
+            } else {
+                await axios.delete(`http://localhost:4000/api/cesta/${productoId}`, { withCredentials: true });
+            }
+            
+            const updatedCestaResponse = await axios.get(`http://localhost:4000/api/cesta/`, { withCredentials: true });
+            setProductos(updatedCestaResponse.data.cesta);
+            calcularTotal(updatedCestaResponse.data.cesta); // Llama a calcularTotal después de actualizar los productos
+        }
     } catch (error) {
-      console.error('Error al eliminar el producto de la cesta:', error);
+        console.error('Error al modificar el producto de la cesta:', error);
     }
-  };
+};
   
 
   const calcularTotal = (productos) => {
