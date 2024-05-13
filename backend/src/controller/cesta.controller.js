@@ -79,16 +79,24 @@ cestaCtrl.updateCesta = async (req, res) => {
     }
 }
 
-cestaCtrl.deleteProductoCesta = async (req,res) => {
+cestaCtrl.deleteProductoCesta = async (req, res) => {
     const { productoId } = req.params;
 
-    // Recuperar la cesta de compras del usuario desde la sesión
-    const cesta = req.session.cesta || [];
+    try {
+        // Recuperar la cesta de compras del usuario desde la sesión
+        const cesta = req.session.cesta || [];
 
-    // Filtrar la cesta para excluir el producto a eliminar
-    req.session.cesta = cesta.filter(item => item.productoId !== productoId);
+        // Construir una nueva lista de productos en la cesta excluyendo el producto a eliminar
+        const nuevaCesta = cesta.filter(item => item.productoId !== productoId);
 
-    res.status(200).json({ message: 'Producto eliminado de la cesta' });
+        // Actualizar la cesta en la sesión con la nueva lista
+        req.session.cesta = nuevaCesta;
+
+        res.status(200).json({ message: 'Producto eliminado de la cesta' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 }
+
 
 module.exports = cestaCtrl
