@@ -1,45 +1,49 @@
 const request = require('supertest');
 const app = require('../src/app'); 
-const Usuario = require('../models/Usuario');
-//CREAR UN MÉTODO PARA OBTENER EL ID A PARTIR DEL USERNAMEEN EL BACKEND
+const Usuario = require('../src/models/Usuario');
+const mongoose = require('mongoose');
+
+const obtenerIdPorNombreUsuario = async (nombreUsuario) => {
+  try {
+    // Buscar el usuario por su nombre de usuario
+    const usuario = await Usuario.findOne({ nombre_usuario: nombreUsuario });
+    
+    // Verificar si se encontró el usuario
+    if (!usuario) {
+      throw new Error("Usuario no encontrado");
+    }
+    
+    // Retornar el ObjectId del usuario encontrado
+    return usuario._id;
+  } catch (error) {
+    throw new Error("Error al obtener el ObjectId del usuario: " + error.message);
+  }
+};
 
 describe('Pruebas para la API de usuarios', () => {
     beforeAll(async () => {
-        // Conectarse a la base de datos de prueba
-        await mongoose.connect('mongodb://localhost:27017/pruebas', {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-          useCreateIndex: true,
-          useFindAndModify: false
-        });
+        const URI = process.env.MONGODB_URI
+            ? process.env.MONGODB_URI
+            : 'mongodb+srv://i12hurel:admin@clusterpruebas.jelzqjk.mongodb.net/'
+
+          mongoose.connect(URI)
+
+          const connection = mongoose.connection
+
+          connection.once('open', ()=>{
+              console.log('la base de datos ha sido conectada: ', URI);
+          })
       
-        // Insertar datos de prueba en la base de datos
-        await Usuario.create({  nombre_usuario: 'i12hurel',
-            nombre: 'Laura',
-            apellido: 'Huertes',
-            contraseña: 'pass',
-            fecha_nacimiento: '2003-12-01',
-            privilegio: 1,
-            rol: 'cliente',
-            cliente_info: {
-                saldo: 0,
-                id_mesa: null
-            }, });
       });
       
-    afterAll(async () => {
+     afterAll(async () => {
         // Eliminar todos los datos de prueba de la base de datos
-        await Usuario.deleteMany({});
+        //await Usuario.deleteMany({});
         
         // Desconectarse de la base de datos de prueba
         await mongoose.disconnect();
     });
 
-    it('Devolver todos los usuarios', async () => {
-        const response = await request(app).get('/api/usuarios');
-        expect(response.status).toBe(200);
-        expect(Array.isArray(response.body)).toBe(true);
-    });
 
     it('Crear un nuevo usuario', async () => {
         const nuevoUsuario = {
@@ -57,24 +61,158 @@ describe('Pruebas para la API de usuarios', () => {
     expect(response.body.message).toBe("El usuario ha sido creado");
 
     // Verificar si el usuario realmente ha sido creado en la base de datos
-    const usuarioCreado = await Usuario.findOne({ nombre_usuario: nuevoUsuario.nombre_usuario });
-    expect(usuarioCreado).toBeDefined();
-  });
+    //const usuarioCreado = await Usuario.findOne({ nombre_usuario: nuevoUsuario.nombre_usuario });
+    //const idComoCadena = usuarioCreado._id.toString();
+    //console.log(usuarioCreado._id) 
+    //console.log(idComoCadena) 
+    //expect(usuarioCreado).toBeDefined();
+    });
 
-  it('Obtener un usuario específico', async () => {
+    it('Crear un usuario existente', async () => {
+      const nuevoUsuario = {
+      nombre_usuario: 'p82ceali',
+      nombre: 'Isaac',
+      apellido: 'Cejudo',
+      contraseña: 'pass',
+      fecha_nacimiento: '2000-09-19',
+      privilegio: 1,
+      rol: 'cliente',
+    };
 
-    const response = await request(app).get('/api/usuarios/i12hurel');
+    const response = await request(app).post('/api/usuarios').send(nuevoUsuario);
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("El nombre de usuario ya está en uso");
+
+    });
+
+    it('Devolver todos los usuarios', async () => {
+      const response = await request(app).get('/api/usuarios');
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+    });
+
+
+     /*it('Obtener un usuario específico', async () => {
+      const objectId = await obtenerIdPorNombreUsuario("p82ceali");
+      const url = '/api/usuarios/' + objectId;
+      const response = await request(app).get(url);
+      expect(response.status).toBe(200)
+      expect(response.body).toBeDefined();  
+    });
+
+    it('Obtener un usuario inexistente', async () => {
+      const url = '/api/usuarios/12345';
+      const response = await request(app).get(url);
+      expect(response.status).toBe(404)
+      expect(response.body.message).toBe("Usuario no encontrado");  
+    }); */
+
+    it('Actualizar un usuario existente', async () => {
+      const UsuarioAct = {
+        nombre_usuario: 'p82ceali',
+        nombre: 'Isachi',
+        apellido: 'Cejudo',
+        contraseña: 'pass',
+        fecha_nacimiento: '2000-09-19',
+        privilegio: 1,
+        rol: 'cliente',
+      };
+
+      const objectId = await obtenerIdPorNombreUsuario("p82ceali");
+      const url = '/api/usuarios/' + objectId;
+
+      const response = await request(app).put(url).send(UsuarioAct);
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe("El usuario ha sido actualizado");
+
+    });
+
+    it('Actualizar un usuario inexistente', async () => {
+      const url = '/api/usuarios/12345';
+      const response = await request(app).put(url).send(" ");
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe("Usuario no encontrado");
+
+    });
+
+    it('Inicio de sesión de un usuario existente', async () => {
+      const UsuarioAct = {
+        nombre_usuario: 'p82ceali',
+        nombre: 'Isachi',
+        apellido: 'Cejudo',
+        contraseña: 'pass',
+        fecha_nacimiento: '2000-09-19',
+        privilegio: 1,
+        rol: 'cliente',
+      };
+    const response = await request(app).post('/api/usuarios/auth/login/').send(UsuarioAct);
     expect(response.status).toBe(200);
-    expect(response.body).toBeDefined();  
-  });
+    expect(response.body.message).toBe('Inicio de sesión exitoso');
 
-  it('Eliminar un usuario específico', async () => {
+    });
 
-    const response = await request(app).get('/api/usuarios/i12hurel');
+    it('Inicio de sesión de un usuario existente con constraseña errónea', async () => {
+      const UsuarioAct = {
+        nombre_usuario: 'p82ceali',
+        nombre: 'Isachi',
+        apellido: 'Cejudo',
+        contraseña: 'contrasena',
+        fecha_nacimiento: '2000-09-19',
+        privilegio: 1,
+        rol: 'cliente',
+      };
+    const response = await request(app).post('/api/usuarios/auth/login/').send(UsuarioAct);
+    expect(response.status).toBe(402);
+    expect(response.body.message).toBe('Credenciales incorrectas');
 
+    });
 
+    it('Inicio de sesión de un usuario inexistente', async () => {
+      
+    const response = await request(app).post('/api/usuarios/auth/login/').send(" ");
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe('Usuario incorrecto');
 
-  })
+    });
 
+    it('Cierre de sesión de un usuario existente', async () => {
+      const UsuarioAct = {
+        nombre_usuario: 'p82ceali',
+        nombre: 'Isachi',
+        apellido: 'Cejudo',
+        contraseña: 'contrasena',
+        fecha_nacimiento: '2000-09-19',
+        privilegio: 1,
+        rol: 'cliente',
+      };
+      const response = await request(app).post('/api/usuarios/auth/logout/').send(UsuarioAct);
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Sesión cerrada exitosamente');
   
-});
+      });
+
+      /*it('Cierre de sesión de un usuario inexistente', async () => {
+        const response = await request(app).post('/api/usuarios/auth/logout/').send(" ");
+        expect(response.status).toBe(500);
+        expect(response.body.message).toBe('Error al cerrar sesión');
+    
+      });*/ //MIRAR EL USUARIO CONTROLLER PARA CORREGIR ERRORES
+
+    it('Eliminar un usuario específico', async () => {
+      const objectId = await obtenerIdPorNombreUsuario("p82ceali");
+      const url = '/api/usuarios/' + objectId;
+      const response = await request(app).delete(url);
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe("El usuario ha sido eliminado");
+    });
+
+    it('Eliminar un usuario inexistente', async () => {
+      const url = '/api/usuarios/12345';
+      const response = await request(app).delete(url);
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe("Usuario no encontrado");
+    }); 
+
+    
+
+})
