@@ -167,6 +167,7 @@ describe('Pruebas para la API de usuarios', () => {
 
     });
 
+    //COMPROBAR EL FALLO DE ESTAS FUNCION
     it('Inicio de sesión de un usuario inexistente', async () => {
       
     const response = await request(app).post('/api/usuarios/auth/login/').send(" ");

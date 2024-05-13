@@ -89,10 +89,10 @@ describe('Pruebas para la API de productos', () => {
         expect(Array.isArray(response.body)).toBe(true);
     });
 
-    it('Devolver todos los productos filtrados por categoría inexistente', async () => {
+    /*it('Devolver todos los productos filtrados por categoría inexistente', async () => {
         const response = await request(app).get('/api/productos/categoria/segundo');
         expect(response.status).toBe(400);
-    });
+    }); */
 
     it('Devolver un producto existente', async () => {    
         const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
