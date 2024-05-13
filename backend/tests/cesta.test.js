@@ -36,7 +36,7 @@ describe('Pruebas para la API de cesta', () => {
       
       });
       
-    afterAll(async () => {
+    affterAll(async () => {
         // Eliminar todos los datos de prueba de la base de datos
         //await Usuario.deleteMany({});
         
