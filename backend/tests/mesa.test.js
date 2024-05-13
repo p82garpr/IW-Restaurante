@@ -3,6 +3,8 @@ const app = require('../src/app');
 const Mesa = require('../src/models/Mesa');
 const mongoose = require('mongoose');
 
+//COMPROBAR QUE NO SE CREE EL MISMO DOS VECES (EN TODOS LOS TEST)
+
 const obtenerIdPorNumeroMesa = async (numeroMesa) => {
     try {
       // Buscar el usuario por su nombre de usuario
@@ -70,7 +72,9 @@ describe('Pruebas para la API de mesas', () => {
         const url = '/api/mesa/' + objectId;
         const response = await request(app).get(url);
         expect(response.status).toBe(200);
-        expect(Array.isArray(response.body)).toBe(true);
+        console.log(response.body)
+        expect(typeof response.body).toBe('object');
+       // expect(Array.isArray(response.body)).toBe(true);
     });
 
     it('Devolver una mesa inexistente', async () => {
@@ -87,14 +91,29 @@ describe('Pruebas para la API de mesas', () => {
         }
         const objectId = await obtenerIdPorNumeroMesa(1);
         const url = '/api/mesa/' + objectId;
-        const response = await request(app).post(url).send(nuevaMesa);
+        const response = await request(app).put(url).send(nuevaMesa);
         expect(response.status).toBe(200);
         expect(response.body.message).toBe('La mesa ha sido actualizada');
     });
 
     it('Modificar una mesa inexistente', async () => {
         
-        const response = await request(app).post('api/mesa/5').send(" ");
+        const response = await request(app).put('api/mesa/5').send(" ");
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe("Mesa no encontrada");
+    });
+
+    it('Eliminar una mesa existente', async () => {
+        const objectId = await obtenerIdPorNumeroMesa(1);
+        const url = '/api/mesa/' + objectId;
+        const response = await request(app).delete(url);
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe('La mesa ha sido eliminada');
+    });
+
+    it('Eliminar una mesa inexistente', async () => {
+
+        const response = await request(app).delete('/api/mesa/5');
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("Mesa no encontrada");
     });

@@ -36,6 +36,7 @@ app.use('/api/productos', require('./routes/producto'))
 app.use('/api/categorias', require('./routes/categoria'))
 app.use('/api/cesta', require('./routes/cesta'))
 app.use('/api/mesa', require('./routes/mesa'))
+app.use('/api/comandas', require('./routes/comanda'))
 
 
 app.use(express.static('public'));
