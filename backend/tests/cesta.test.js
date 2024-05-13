@@ -36,7 +36,7 @@ describe('Pruebas para la API de cesta', () => {
       
       });
       
-    affterAll(async () => {
+    afterAll(async () => {
         // Eliminar todos los datos de prueba de la base de datos
         //await Usuario.deleteMany({});
         
@@ -56,14 +56,14 @@ describe('Pruebas para la API de cesta', () => {
             ingredientes: " ",
         };
     
-    const res = await request(app).post('/api/productos').send(nuevoProd);
-    //expect(res.status).toBe(200);
-    //expect(res.body.message).toBe("El producto ha sido creado");
+      const res = await request(app).post('/api/productos').send(nuevoProd);
+      //expect(res.status).toBe(200);
+      //expect(res.body.message).toBe("El producto ha sido creado");
 
-    const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
-    const response = await request(app).post('/api/cesta').send(objectId,"2");
-    expect(res.status).toBe(200);
-    expect(res.body.message).toBe('Producto agregado a la cesta');
+      const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
+      const response = await request(app).post('/api/cesta').send({ productoId: objectId, cantidad: 2 });
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Producto agregado a la cesta');
 
     });
 
