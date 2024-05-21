@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { Link, Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
@@ -60,14 +61,14 @@ const AdminMenu = () => {
 
   return (
     <AdminMenuContainer>
-      {usuario && usuario.privilegio==1 ? (
+      {usuario && usuario.privilegio===1 ? (
         <>
           <MenuTitle>Panel de Administración</MenuTitle>
-          <MenuItem to="/admin/comandas">
+          <MenuItem to="/Comandas">
             <MenuItemImage src={`/images/comandas.png`} alt="Comandas" />
             Comandas
           </MenuItem>
-          <MenuItem to="/admin/mesas">
+          <MenuItem to="/Mesas">
             <MenuItemImage src={`/images/mesas.png`} alt="Mesas" />
             Mesas
           </MenuItem>

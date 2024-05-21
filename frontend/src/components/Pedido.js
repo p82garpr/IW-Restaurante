@@ -138,10 +138,41 @@ const Pedido = () => {
     setTotal(totalCalculado.toFixed(2));
   };
 
-  const finalizarPedido = () => {
-    // Aquí puedes implementar la lógica para finalizar el pedido
-    console.log('Pedido finalizado');
+  const obtenerFechaActual = () => {
+    const ahora = new Date();
+    const dia = ahora.getDate().toString().padStart(2, '0');
+    const mes = (ahora.getMonth() + 1).toString().padStart(2, '0'); // Se suma 1 porque en JavaScript los meses van de 0 a 11
+    const año = ahora.getFullYear();
+  
+    return `${año}-${mes}-${dia}`;
   };
+  const finalizarPedido = async () => {
+    try {
+      const fechaActual = obtenerFechaActual();
+      const comentarios = "No hay ningún comentario";
+      let precio_total = total; // Suponiendo que esta función devuelve el precio total correctamente
+      precio_total = parseFloat(precio_total).toFixed(2); // Suponiendo que esta función devuelve el precio total correctamente
+  
+      const response = await axios.post('http://localhost:4000/api/comandas', {
+        fecha: fechaActual,
+        comentarios: comentarios,
+        precio_total: precio_total
+      }, { withCredentials: true });
+  
+      console.log("Respuesta de la API:", response.data); // Agrega este console.log
+  
+      if (response.status === 201) {
+        console.log('Comanda creada correctamente:', response.data.comanda);
+        volverACategoria();
+      } else {
+        console.error('Error al crear la comanda:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error al finalizar el pedido:', error.message);
+    }
+    
+  };
+  
 
   const volverACategoria = () => {
     history.push('/');

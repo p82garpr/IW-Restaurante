@@ -85,6 +85,7 @@ const TotalText = styled.p`
 
 const Cesta = () => {
   const [productos, setProductos] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [usuario, setUsuario] = useState(null);
   const [open, setOpen] = useState(false);
   const [total, setTotal] = useState(0);
@@ -124,17 +125,21 @@ const Cesta = () => {
 
   const removerProducto = async (productoId) => {
     try {
-        const cestaResponse = await axios.get(`http://localhost:4000/api/cesta/`, { withCredentials: true });
+        // Obtener la cesta actual
+        const cestaResponse = await axios.get('http://localhost:4000/api/cesta/', { withCredentials: true });
         const producto = cestaResponse.data.cesta.find(item => item.producto._id === productoId);
-        
+
         if (producto) {
             if (producto.cantidad > 1) {
+                // Disminuir la cantidad del producto
                 await axios.put(`http://localhost:4000/api/cesta/${productoId}`, { cantidad: producto.cantidad - 1 }, { withCredentials: true });
             } else {
+                // Eliminar el producto de la cesta
                 await axios.delete(`http://localhost:4000/api/cesta/${productoId}`, { withCredentials: true });
             }
-            
-            const updatedCestaResponse = await axios.get(`http://localhost:4000/api/cesta/`, { withCredentials: true });
+
+            // Obtener la cesta actualizada
+            const updatedCestaResponse = await axios.get('http://localhost:4000/api/cesta/', { withCredentials: true });
             setProductos(updatedCestaResponse.data.cesta);
             calcularTotal(updatedCestaResponse.data.cesta); // Llama a calcularTotal después de actualizar los productos
         }
@@ -142,6 +147,7 @@ const Cesta = () => {
         console.error('Error al modificar el producto de la cesta:', error);
     }
 };
+
   
 
   const calcularTotal = (productos) => {

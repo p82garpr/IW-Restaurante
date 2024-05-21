@@ -34,7 +34,7 @@ mesaCtrl.createMesa = async (req, res) => {
             numero_mesa,
             estado,
             capacidad,
-            qr: qrCode // Almacena el código QR en la base de datos
+            QR: qrCode // Almacena el código QR en la base de datos
     
         });
 

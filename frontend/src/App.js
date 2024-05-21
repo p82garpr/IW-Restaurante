@@ -13,6 +13,8 @@ import MenuAdmin from './components/MenuAdmin';
 import Comandas from './components/Comandas';
 import Mesas from './components/Mesas';
 import Pedido from './components/Pedido';
+import HistoricoComandas from './components/HistoricoComandas';
+
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
@@ -40,8 +42,9 @@ const App = () => {
           <Route path="/IniciarSesion" component={IniciarSesion} />
           <Route path="/Pedido" component={Pedido} />
           <Route path="/admin" component={MenuAdmin} />
-          <Route path="/admin/comandas" component={Comandas} />
-          <Route path="/admin/mesas" component={Mesas} />
+          <Route path="/Comandas" component={Comandas} />
+          <Route path="/Mesas" component={Mesas} />
+          <Route path="/HistoricoComandas" component={HistoricoComandas} />
 
         </Switch>
         
