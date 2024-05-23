@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Container, Form, FormGroup, Label, Input, Button } from 'reactstrap';
-import axios from 'axios'; // Importa axios para hacer solicitudes HTTP
-
+import axios from 'axios';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const IniciarSesionContainer = styled(Container)`
   display: flex;
@@ -57,6 +57,11 @@ const IniciarSesion = () => {
     contraseña: ''
   });
 
+  const history = useHistory();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const mesaNumero = query.get('mesa');
+
   const handleChange = e => {
     const { name, value } = e.target;
     setCredenciales(prevCredenciales => ({
@@ -68,13 +73,42 @@ const IniciarSesion = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      // Realizar solicitud POST a la ruta de inicio de sesión en la API
-      const response = await axios.post('http://localhost:4000/api/usuarios/auth/login', credenciales,{withCredentials: true});
-      //console.log(response.data.message); // Mensaje de éxito de inicio de sesión
-      window.location.href = '/'; // Redirigir al usuario a la página principal después de iniciar sesión
+      console.log('Enviando credenciales:', credenciales);
+      const response = await axios.post('http://localhost:4000/api/usuarios/auth/login', credenciales, { withCredentials: true });
+      
+      console.log('Respuesta de autenticación:', response);
+
+      if (response.status === 200) {
+        console.log('Autenticación exitosa');
+
+        const mesaResponse = await axios.get('http://localhost:4000/api/mesa', { withCredentials: true });
+        console.log('Respuesta de las mesas:', mesaResponse);
+
+        const mesa = mesaResponse.data.find(m => m.numero_mesa === parseInt(mesaNumero, 10));
+
+        if (mesa) {
+          console.log('Mesa encontrada:', mesa);
+          
+          const updateResponse = await axios.put(`http://localhost:4000/api/mesa/${mesa._id}`, {
+            estado: 'ocupada'
+          }, { withCredentials: true });
+
+          console.log('Respuesta de actualización del estado de la mesa:', updateResponse);
+
+          if (updateResponse.status === 200) {
+            console.log('Estado de la mesa actualizado');
+            history.push('/');
+          } else {
+            console.error('Error en la actualización del estado de la mesa:', updateResponse.status);
+          }
+        } else {
+          console.error('Mesa no encontrada');
+        }
+      } else {
+        console.error('Error en la autenticación:', response.status);
+      }
     } catch (error) {
-      console.error('Error en el inicio de sesión:', error.response.data.message);
-      // Manejo de errores (puedes mostrar un mensaje de error al usuario)
+      console.error('Error en el inicio de sesión:', error.response?.data?.message || error.message);
     }
   };
 
