@@ -3,6 +3,7 @@ const app = require('../src/app');
 const Producto = require('../src/models/Producto');
 const mongoose = require('mongoose');
 
+//AÑADIR QUE NO SE PUEDA CREAR EL MSIMO PRODUCTO DOS VECES
 const obtenerIdPorNombreProducto = async (nombreProd) => {
   try {
     // Buscar el usuario por su nombre de usuario

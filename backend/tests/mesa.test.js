@@ -43,7 +43,7 @@ describe('Pruebas para la API de mesas', () => {
         await mongoose.disconnect();
     });
 
-    //hay que cambiar una cosa de backend
+    
     it('Crear una mesa', async () => {
         const nuevaMesa = {
             numero_mesa: 1,
@@ -54,6 +54,17 @@ describe('Pruebas para la API de mesas', () => {
         expect(response.status).toBe(200);
         expect(response.body.message).toBe("La mesa ha sido creada");
     });
+
+    /*it('Crear una mesa existente', async () => {
+        const nuevaMesa = {
+            numero_mesa: 1,
+            estado: 'libre',
+            capacidad: 4
+        }
+        const response = await request(app).post('/api/mesa').send(nuevaMesa);
+        expect(response.status).toBe(500);
+        expect(response.body.message).toBe("La mesa no se ha podido crear");
+    }); */
 
     it('Devolver las mesas existentes', async () => {
         const nuevaMesa = {
@@ -98,7 +109,7 @@ describe('Pruebas para la API de mesas', () => {
 
     it('Modificar una mesa inexistente', async () => {
         
-        const response = await request(app).put('api/mesa/5').send(" ");
+        const response = await request(app).put('/api/mesa/5').send(" ");
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("Mesa no encontrada");
     });
@@ -109,6 +120,10 @@ describe('Pruebas para la API de mesas', () => {
         const response = await request(app).delete(url);
         expect(response.status).toBe(200);
         expect(response.body.message).toBe('La mesa ha sido eliminada');
+
+        const objectId2 = await obtenerIdPorNumeroMesa(2);
+        const url2 = '/api/mesa/' + objectId2;
+        const res = await request(app).delete(url2);
     });
 
     it('Eliminar una mesa inexistente', async () => {
