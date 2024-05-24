@@ -11,7 +11,6 @@ const usuarioSchema = new Schema({
     cliente_info: {
         saldo: { type: Number, default: 0 },
         id_mesa: {type: Schema.Types.ObjectId, ref: 'Mesa'},
-        id_comanda: {type: Schema.Types.ObjectId, ref: 'Comanda'}
     },
         
 },

@@ -1,6 +1,8 @@
 const usuarioCtrl = {}
 
 const Usuario = require('../models/Usuario')
+const Mesa = require('../models/Mesa'); 
+
 
 const bcrypt = require('bcrypt');
 const saltRounds = 10; // Número de rondas de sal para el hashing
@@ -79,30 +81,39 @@ usuarioCtrl.updateUsu = async (req, res) => {
 }
 
 usuarioCtrl.loginUsu = async (req, res) => {
-        const { nombre_usuario, contraseña } = req.body;
-    
-        try {
-            const usuario = await Usuario.findOne({ nombre_usuario });
-    
-            if (!usuario) {
-                return res.status(401).json({ message: 'Credenciales incorrectas' });
-            }
-    
-            const contraseñaValida = await bcrypt.compare(contraseña, usuario.contraseña);
-    
-            if (!contraseñaValida) {
-                return res.status(402).json({ message: 'Credenciales incorrectas' });
-            }
-    
-            // Almacenar el ID del usuario en la sesión
-            req.session.usuarioId = usuario._id.toString();
-            
-            res.status(200).json({ message: 'Inicio de sesión exitoso' });
-        } catch (error) {
-            res.status(500).json({ message: error.message });
+    const { nombre_usuario, contraseña } = req.body;
+
+    try {
+        const usuario = await Usuario.findOne({ nombre_usuario });
+
+        if (!usuario) {
+            return res.status(401).json({ message: 'Credenciales incorrectas' });
         }
-    
+
+        const contraseñaValida = await bcrypt.compare(contraseña, usuario.contraseña);
+
+        if (!contraseñaValida) {
+            return res.status(402).json({ message: 'Credenciales incorrectas' });
+        }
+
+        // Almacenar el ID del usuario en la sesión
+        req.session.usuarioId = usuario._id.toString();
+
+        // Obtener y actualizar el estado de la mesa asociada
+        if (usuario.mesa) {
+            const mesa = await Mesa.findById(usuario.mesa);
+            if (mesa) {
+                mesa.estado = 'ocupada';
+                await mesa.save();
+            }
+        }
+
+        res.status(200).json({ message: 'Inicio de sesión exitoso' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 }
+
 usuarioCtrl.getUsuarioActual = async (req, res) => {
 
         try {
@@ -127,10 +138,30 @@ usuarioCtrl.getUsuarioActual = async (req, res) => {
 usuarioCtrl.logoutUsu = async (req, res) => {
     try {
         // Destruir la sesión del usuario
-        req.session.destroy((err) => {
+        req.session.destroy(async (err) => {
             if (err) {
                 return res.status(500).json({ message: 'Error al cerrar sesión' });
             }
+            
+            // Obtener el usuario actual
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            if (!usuario) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+
+            // Verificar si el usuario tiene una mesa asignada
+            if (usuario.mesa) {
+                // Obtener la mesa asociada al usuario
+                const mesa = await Mesa.findById(usuario.mesa);
+                if (!mesa) {
+                    return res.status(404).json({ message: 'Mesa no encontrada' });
+                }
+
+                // Actualizar el estado de la mesa a 'libre'
+                mesa.estado = 'libre';
+                await mesa.save();
+            }
+            
             res.clearCookie('connect.sid'); // Limpiar la cookie de sesión
             res.status(200).json({ message: 'Sesión cerrada exitosamente' });
         });
