@@ -1,3 +1,4 @@
+
 const cestaCtrl = {}
 
 const Producto = require('../models/Producto')
@@ -56,15 +57,18 @@ cestaCtrl.getCesta = async (req, res) => {
 
 
 cestaCtrl.updateCesta = async (req, res) => {
-    const { productoId } = req.params;
+    const productoId= req.params.id;    
     const { cantidad } = req.body;
 
     try {
         // Recuperar la cesta de compras del usuario desde la sesión
         const cesta = req.session.cesta || [];
 
+        // Convertir productoId a String para comparación
+        const objectIdStr = productoId.toString();
+
         // Buscar el producto en la cesta
-        const productoIndex = cesta.findIndex(item => item.productoId === productoId);
+        const productoIndex = cesta.findIndex(item => item.productoId.toString() === objectIdStr);
 
         if (productoIndex !== -1) {
             // Si el producto está en la cesta, actualizar la cantidad
@@ -78,6 +82,7 @@ cestaCtrl.updateCesta = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
 
 cestaCtrl.deleteProductoCesta = async (req, res) => {
     const productoId= req.params.id;
