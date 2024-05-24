@@ -1,34 +1,26 @@
-const usuarioCtrl = {}
-
-const Usuario = require('../models/Usuario')
-const Mesa = require('../models/Mesa'); 
-
-
+const usuarioCtrl = {};
+const Usuario = require('../models/Usuario');
+const Mesa = require('../models/Mesa');
 const bcrypt = require('bcrypt');
-const saltRounds = 10; // Número de rondas de sal para el hashing
-
+const saltRounds = 10;
 
 usuarioCtrl.getUsu = async (req, res) => {
     try {
-        const usuarios = await Usuario.find()
-        res.status(200).json(usuarios)
+        const usuarios = await Usuario.find();
+        res.status(200).json(usuarios);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
 
 usuarioCtrl.createUsu = async (req, res) => {
     const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, privilegio, rol, cliente_info } = req.body;
 
     try {
-
-        // Verificar si ya existe un usuario con el mismo nombre de usuario
         const usuarioExistente = await Usuario.findOne({ nombre_usuario });
-
         if (usuarioExistente) {
             return res.status(400).json({ message: "El nombre de usuario ya está en uso" });
         }
-
 
         const contraseña_hashed = await bcrypt.hash(contraseña, saltRounds);
 
@@ -40,7 +32,7 @@ usuarioCtrl.createUsu = async (req, res) => {
             fecha_nacimiento,
             privilegio: 0,
             rol,
-            cliente_info: rol === 'cliente' ? cliente_info : {} // Asegurando que el cliente_info esté vacío si el rol no es 'cliente'
+            cliente_info: rol === 'cliente' ? cliente_info : {}
         });
 
         await newUsu.save();
@@ -48,16 +40,16 @@ usuarioCtrl.createUsu = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
 
 usuarioCtrl.deleteUsu = async (req, res) => {
     try {
-        await Usuario.findByIdAndDelete(req.params.id)
-        res.status(200).json({ message: 'El usuario ha sido eliminado' })
+        await Usuario.findByIdAndDelete(req.params.id);
+        res.status(200).json({ message: 'El usuario ha sido eliminado' });
     } catch (error) {
         res.status(404).json({ message: "Usuario no encontrado" });
     }
-}
+};
 
 usuarioCtrl.updateUsu = async (req, res) => {
     const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, privilegio, rol, cliente_info } = req.body;
@@ -68,101 +60,94 @@ usuarioCtrl.updateUsu = async (req, res) => {
             nombre_usuario,
             nombre,
             apellido,
-            contraseña:contraseña_hashed,
+            contraseña: contraseña_hashed,
             fecha_nacimiento,
             privilegio,
             rol,
-            cliente_info: rol === 'cliente' ? cliente_info : {} // Asegurando que el cliente_info esté vacío si el rol no es 'cliente'
-        })
-        res.status(200).json({ message: 'El usuario ha sido actualizado' })
+            cliente_info: rol === 'cliente' ? cliente_info : {}
+        });
+        res.status(200).json({ message: 'El usuario ha sido actualizado' });
     } catch (error) {
         res.status(404).json({ message: "Usuario no encontrado" });
     }
-}
+};
 
 usuarioCtrl.loginUsu = async (req, res) => {
     const { nombre_usuario, contraseña } = req.body;
+    const { mesa } = req.query;
 
     try {
         const usuario = await Usuario.findOne({ nombre_usuario });
-
         if (!usuario) {
-            return res.status(401).json({ message: 'Credenciales incorrectas' });
+            return res.status(401).json({ message: 'Usuario incorrecto' });
         }
 
         const contraseñaValida = await bcrypt.compare(contraseña, usuario.contraseña);
-
         if (!contraseñaValida) {
             return res.status(402).json({ message: 'Credenciales incorrectas' });
         }
 
-        // Almacenar el ID del usuario en la sesión
         req.session.usuarioId = usuario._id.toString();
-
-        // Obtener y actualizar el estado de la mesa asociada
-        if (usuario.mesa) {
-            const mesa = await Mesa.findById(usuario.mesa);
-            if (mesa) {
-                mesa.estado = 'ocupada';
-                await mesa.save();
-            }
+        const mesaAsociada = await Mesa.findOne({ numero_mesa: mesa });
+        if (!mesaAsociada) {
+            return res.status(404).json({ message: 'Mesa no encontrada' });
         }
+
+        usuario.cliente_info.numero_mesa = mesaAsociada.numero_mesa;
+        await usuario.save();
+
+        mesaAsociada.estado = 'ocupada';
+        await mesaAsociada.save();
 
         res.status(200).json({ message: 'Inicio de sesión exitoso' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
 
 usuarioCtrl.getUsuarioActual = async (req, res) => {
-
-        try {
-            if(!req.session){
-                return res.status(401).json({ message: 'Sesión no inicializada' });
-            }
-            if (!req.session.usuarioId) {
-                return res.status(401).json({ message: 'Usuario no autenticado' });
-            }
-            
-            const usuario = await Usuario.findById(req.session.usuarioId, { contraseña: 0 }); // Excluir la contraseña
-            if (!usuario) {
-                return res.status(404).json({ message: 'Usuario no encontrado' });
-            }
-    
-            res.status(200).json(usuario);
-        } catch (error) {
-            res.status(500).json({ message: error.message });
+    try {
+        if (!req.session) {
+            return res.status(401).json({ message: 'Sesión no inicializada' });
         }
-    
-}
+        if (!req.session.usuarioId) {
+            return res.status(401).json({ message: 'Usuario no autenticado' });
+        }
+        
+        const usuario = await Usuario.findById(req.session.usuarioId, { contraseña: 0 });
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        res.status(200).json(usuario);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 usuarioCtrl.logoutUsu = async (req, res) => {
     try {
-        // Destruir la sesión del usuario
         req.session.destroy(async (err) => {
             if (err) {
                 return res.status(500).json({ message: 'Error al cerrar sesión' });
             }
             
-            // Obtener el usuario actual
             const usuario = await Usuario.findById(req.session.usuarioId);
             if (!usuario) {
                 return res.status(404).json({ message: 'Usuario no encontrado' });
             }
 
-            // Verificar si el usuario tiene una mesa asignada
-            if (usuario.mesa) {
-                // Obtener la mesa asociada al usuario
-                const mesa = await Mesa.findById(usuario.mesa);
+            if (usuario.cliente_info.numero_mesa) {
+                const mesa = await Mesa.findOne({ numero_mesa: usuario.cliente_info.numero_mesa });
                 if (!mesa) {
                     return res.status(404).json({ message: 'Mesa no encontrada' });
                 }
 
-                // Actualizar el estado de la mesa a 'libre'
                 mesa.estado = 'libre';
                 await mesa.save();
             }
             
-            res.clearCookie('connect.sid'); // Limpiar la cookie de sesión
+            res.clearCookie('connect.sid');
             res.status(200).json({ message: 'Sesión cerrada exitosamente' });
         });
     } catch (error) {
