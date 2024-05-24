@@ -3,6 +3,8 @@ const app = require('../src/app');
 const Usuario = require('../src/models/Usuario');
 const mongoose = require('mongoose');
 
+//QUE PASA CON LA FUNCION GETUSUARIOACTUAL, NNO ESTA EN ROUTE
+
 const obtenerIdPorNombreUsuario = async (nombreUsuario) => {
   try {
     // Buscar el usuario por su nombre de usuario
@@ -60,12 +62,6 @@ describe('Pruebas para la API de usuarios', () => {
     expect(response.status).toBe(200);
     expect(response.body.message).toBe("El usuario ha sido creado");
 
-    // Verificar si el usuario realmente ha sido creado en la base de datos
-    //const usuarioCreado = await Usuario.findOne({ nombre_usuario: nuevoUsuario.nombre_usuario });
-    //const idComoCadena = usuarioCreado._id.toString();
-    //console.log(usuarioCreado._id) 
-    //console.log(idComoCadena) 
-    //expect(usuarioCreado).toBeDefined();
     });
 
     it('Crear un usuario existente', async () => {
@@ -192,12 +188,12 @@ describe('Pruebas para la API de usuarios', () => {
   
       });
 
-      /*it('Cierre de sesión de un usuario inexistente', async () => {
+      it('Cierre de sesión de un usuario inexistente', async () => {
         const response = await request(app).post('/api/usuarios/auth/logout/').send(" ");
         expect(response.status).toBe(500);
         expect(response.body.message).toBe('Error al cerrar sesión');
     
-      });*/ //MIRAR EL USUARIO CONTROLLER PARA CORREGIR ERRORES
+      }); //MIRAR EL USUARIO CONTROLLER PARA CORREGIR ERRORES
 
     it('Eliminar un usuario específico', async () => {
       const objectId = await obtenerIdPorNombreUsuario("p82ceali");

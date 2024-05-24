@@ -72,7 +72,7 @@ describe('Pruebas para la API de mesas', () => {
         const url = '/api/mesa/' + objectId;
         const response = await request(app).get(url);
         expect(response.status).toBe(200);
-        console.log(response.body)
+        //console.log(response.body)
         expect(typeof response.body).toBe('object');
        // expect(Array.isArray(response.body)).toBe(true);
     });
