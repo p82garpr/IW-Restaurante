@@ -10,8 +10,8 @@ const usuarioSchema = new Schema({
     rol: { type: String, enum: ['cliente', 'administrador'] },
     cliente_info: {
         saldo: { type: Number, default: 0 },
-        numero_mesa: { type: Number, ref: 'Mesa' }
-
+        id_mesa: { type: String, ref: 'Mesa' },
+        
     },
         
 },

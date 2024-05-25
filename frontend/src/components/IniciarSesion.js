@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Container, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import axios from 'axios';
@@ -54,7 +54,8 @@ const IniciarSesionButton = styled(Button)`
 const IniciarSesion = () => {
   const [credenciales, setCredenciales] = useState({
     nombre_usuario: '',
-    contraseña: ''
+    contraseña: '',
+    mesaId: ''
   });
 
   const history = useHistory();
@@ -62,6 +63,53 @@ const IniciarSesion = () => {
   const query = new URLSearchParams(location.search);
   const mesaNumero = query.get('mesa');
 
+  // Obtener mesaId basado en mesaNumero cada vez que mesaNumero cambia
+  useEffect(() => {
+    const fetchMesaId = async () => {
+      try {
+        const mesaResponse = await axios.get('http://localhost:4000/api/mesa', { withCredentials: true });
+        const mesa = mesaResponse.data.find(m => m.numero_mesa === parseInt(mesaNumero, 10));
+
+        if (mesa) {
+          setCredenciales(prevCredenciales => ({
+            ...prevCredenciales,
+            mesaId: mesa._id // Agregar el ID de la mesa a las credenciales
+          }));
+        } else {
+          console.error('Mesa no encontrada');
+        }
+      } catch (error) {
+        console.error('Error al obtener la mesa:', error.response?.data?.message || error.message);
+      }
+    };
+    const fetchMesaIdNull = async () => {
+      try {
+        const mesaResponse = await axios.get('http://localhost:4000/api/mesa', { withCredentials: true });
+        const mesa = mesaResponse.data.find(m => m.numero_mesa === 0);
+
+        if (mesa) {
+          setCredenciales(prevCredenciales => ({
+            ...prevCredenciales,
+            mesaId: mesa._id // Agregar el ID de la mesa a las credenciales
+          }));
+        } else {
+          console.error('Mesa no encontrada');
+        }
+      } catch (error) {
+        console.error('Error al obtener la mesa:', error.response?.data?.message || error.message);
+      }
+    };
+
+    if (mesaNumero) {
+      fetchMesaId();
+    }else if(!mesaNumero && credenciales.nombre_usuario === 'p82ceali@uco.es'){
+      fetchMesaIdNull();
+    }else{
+      console.error('No se ha especificado el número de mesa');
+    }
+  }, [credenciales.nombre_usuario, mesaNumero]);
+
+  // Actualizar el estado de credenciales cuando cambian los inputs
   const handleChange = e => {
     const { name, value } = e.target;
     setCredenciales(prevCredenciales => ({
@@ -70,39 +118,39 @@ const IniciarSesion = () => {
     }));
   };
 
+  // Manejar el envío del formulario
   const handleSubmit = async e => {
     e.preventDefault();
     try {
       console.log('Enviando credenciales:', credenciales);
-      const response = await axios.post('http://localhost:4000/api/usuarios/auth/login', credenciales, { withCredentials: true });
-      
+
+      // Construir el cuerpo de la solicitud con las credenciales y el ID de la mesa
+      const requestBody = {
+        nombre_usuario: credenciales.nombre_usuario,
+        contraseña: credenciales.contraseña,
+        mesa: credenciales.mesaId // Incluir el ID de la mesa en el cuerpo de la solicitud
+      };
+
+      // Enviar solicitud POST para autenticación
+      const response = await axios.post('http://localhost:4000/api/usuarios/auth/login', requestBody, { withCredentials: true });
       console.log('Respuesta de autenticación:', response);
 
       if (response.status === 200) {
         console.log('Autenticación exitosa');
 
-        const mesaResponse = await axios.get('http://localhost:4000/api/mesa', { withCredentials: true });
-        console.log('Respuesta de las mesas:', mesaResponse);
+        // Actualizar el estado de la mesa a 'ocupada' si la autenticación es exitosa
+        const updateResponse = await axios.put(`http://localhost:4000/api/mesa/${credenciales.mesaId}`, {
+          estado: 'ocupada'
+        }, { withCredentials: true });
 
-        const mesa = mesaResponse.data.find(m => m.numero_mesa === parseInt(mesaNumero, 10));
+        console.log('Respuesta de actualización del estado de la mesa:', updateResponse);
 
-        if (mesa) {
-          console.log('Mesa encontrada:', mesa);
-          
-          const updateResponse = await axios.put(`http://localhost:4000/api/mesa/${mesa._id}`, {
-            estado: 'ocupada'
-          }, { withCredentials: true });
-
-          console.log('Respuesta de actualización del estado de la mesa:', updateResponse);
-
-          if (updateResponse.status === 200) {
-            console.log('Estado de la mesa actualizado');
-            history.push('/');
-          } else {
-            console.error('Error en la actualización del estado de la mesa:', updateResponse.status);
-          }
+        if (updateResponse.status === 200) {
+          console.log('Estado de la mesa actualizado');
+         // Redirigir a la página de inicio u otra ruta deseada
+         window.location.href = '/';
         } else {
-          console.error('Mesa no encontrada');
+          console.error('Error en la actualización del estado de la mesa:', updateResponse.status);
         }
       } else {
         console.error('Error en la autenticación:', response.status);

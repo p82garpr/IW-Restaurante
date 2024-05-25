@@ -73,8 +73,8 @@ usuarioCtrl.updateUsu = async (req, res) => {
 };
 
 usuarioCtrl.loginUsu = async (req, res) => {
-    const { nombre_usuario, contraseña } = req.body;
-    const { mesa } = req.query;
+    const { nombre_usuario, contraseña, mesa } = req.body;
+    
 
     try {
         const usuario = await Usuario.findOne({ nombre_usuario });
@@ -88,12 +88,13 @@ usuarioCtrl.loginUsu = async (req, res) => {
         }
 
         req.session.usuarioId = usuario._id.toString();
-        const mesaAsociada = await Mesa.findOne({ numero_mesa: mesa });
+        const mesaAsociada = await Mesa.findOne({ _id: mesa });
+        
         if (!mesaAsociada) {
             return res.status(404).json({ message: 'Mesa no encontrada' });
         }
-
-        usuario.cliente_info.numero_mesa = mesaAsociada.numero_mesa;
+       
+        usuario.cliente_info.id_mesa = mesaAsociada._id;
         await usuario.save();
 
         mesaAsociada.estado = 'ocupada';
