@@ -115,6 +115,7 @@ describe('Pruebas para la API de usuarios', () => {
       };
 
       const objectId = await obtenerIdPorNombreUsuario("p82ceali");
+      console.log(objectId)
       const url = '/api/usuarios/' + objectId;
 
       const response = await request(app).put(url).send(UsuarioAct);

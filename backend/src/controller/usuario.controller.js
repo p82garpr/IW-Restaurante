@@ -53,9 +53,12 @@ usuarioCtrl.deleteUsu = async (req, res) => {
 
 usuarioCtrl.updateUsu = async (req, res) => {
     const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, privilegio, rol, cliente_info } = req.body;
-
+    
     try {
-        const contraseña_hashed = await bcrypt.hash(contraseña, saltRounds);
+        const contraseña_hashed= "null"
+        if(contraseña){
+            contraseña_hashed = await bcrypt.hash(contraseña, saltRounds);
+        }
         await Usuario.findByIdAndUpdate(req.params.id, {
             nombre_usuario,
             nombre,
@@ -128,33 +131,40 @@ usuarioCtrl.getUsuarioActual = async (req, res) => {
 
 usuarioCtrl.logoutUsu = async (req, res) => {
     try {
+        const usuarioId = req.session.usuarioId; // Almacena el ID del usuario antes de destruir la sesión
+
         req.session.destroy(async (err) => {
             if (err) {
                 return res.status(500).json({ message: 'Error al cerrar sesión' });
             }
-            
-            const usuario = await Usuario.findById(req.session.usuarioId);
+
+            const usuario = await Usuario.findById(usuarioId); // Utiliza el ID almacenado
             if (!usuario) {
                 return res.status(404).json({ message: 'Usuario no encontrado' });
             }
 
-            if (usuario.cliente_info.numero_mesa) {
-                const mesa = await Mesa.findOne({ numero_mesa: usuario.cliente_info.numero_mesa });
+            if (usuario.cliente_info && usuario.cliente_info.id_mesa) {
+                const mesa = await Mesa.findById(usuario.cliente_info.id_mesa);
                 if (!mesa) {
                     return res.status(404).json({ message: 'Mesa no encontrada' });
                 }
 
                 mesa.estado = 'libre';
                 await mesa.save();
+
+                // Actualiza el usuario para eliminar la referencia a la mesa
+                usuario.cliente_info.id_mesa = null;
+                await usuario.save();
             }
-            
+
             res.clearCookie('connect.sid');
             res.status(200).json({ message: 'Sesión cerrada exitosamente' });
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
+
 
 
 
