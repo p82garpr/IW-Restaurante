@@ -14,7 +14,7 @@ usuarioCtrl.getUsu = async (req, res) => {
 };
 
 usuarioCtrl.createUsu = async (req, res) => {
-    const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, privilegio, rol, cliente_info } = req.body;
+    const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, cliente_info } = req.body;
 
     try {
         const usuarioExistente = await Usuario.findOne({ nombre_usuario });
@@ -31,8 +31,8 @@ usuarioCtrl.createUsu = async (req, res) => {
             contraseña: contraseña_hashed,
             fecha_nacimiento,
             privilegio: 0,
-            rol,
-            cliente_info: rol === 'cliente' ? cliente_info : {}
+            rol:"cliente",
+            cliente_info: cliente_info
         });
 
         await newUsu.save();
@@ -51,29 +51,42 @@ usuarioCtrl.deleteUsu = async (req, res) => {
     }
 };
 
+
+
 usuarioCtrl.updateUsu = async (req, res) => {
-    const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, privilegio, rol, cliente_info } = req.body;
-    
+    const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, cliente_info } = req.body;
+
     try {
-        const contraseña_hashed= "null"
-        if(contraseña){
-            contraseña_hashed = await bcrypt.hash(contraseña, saltRounds);
-        }
-        await Usuario.findByIdAndUpdate(req.params.id, {
+        let updateData = {
             nombre_usuario,
             nombre,
             apellido,
-            contraseña: contraseña_hashed,
             fecha_nacimiento,
-            privilegio,
-            rol,
-            cliente_info: rol === 'cliente' ? cliente_info : {}
-        });
-        res.status(200).json({ message: 'El usuario ha sido actualizado' });
+            cliente_info
+        };
+
+        // Solo actualizar la contraseña si se pasa en el cuerpo de la solicitud
+        if (contraseña) {
+            const contraseña_hashed = await bcrypt.hash(contraseña, saltRounds);
+            updateData.contraseña = contraseña_hashed;
+        }
+
+        // Intentar encontrar y actualizar el usuario
+        const usuario = await Usuario.findByIdAndUpdate(req.params.id, updateData, { new: true });
+
+        // Si el usuario no se encuentra, devolver 404
+        if (!usuario) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        // Devolver éxito si se actualizó el usuario
+        res.status(200).json({ message: 'El usuario ha sido actualizado', usuario });
     } catch (error) {
-        res.status(404).json({ message: "Usuario no encontrado" });
+        // Manejar cualquier otro error
+        res.status(500).json({ message: "Error al actualizar el usuario", error });
     }
 };
+
 
 usuarioCtrl.loginUsu = async (req, res) => {
     const { nombre_usuario, contraseña, mesa } = req.body;

@@ -117,6 +117,17 @@ cestaCtrl.deleteProductoCesta = async (req, res) => {
     }
 }
 
+cestaCtrl.deleteCesta = async (req, res) => {
+    try {
+        // Vaciar la cesta en la sesión
+        req.session.cesta = [];
+
+        res.status(200).json({ message: 'La cesta ha sido borrada por completo' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 
 
