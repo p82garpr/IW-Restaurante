@@ -25,6 +25,11 @@ mesaCtrl.createMesa = async (req, res) => {
     const { numero_mesa, estado, capacidad } = req.body;
 
     try {
+        // Verificar si ya existe una mesa con el mismo número
+        const mesaExistente = await Mesa.findOne({ numero_mesa });
+        if (mesaExistente) {
+            return res.status(400).json({ message: "Ya existe una mesa con este número" });
+        }
 
         // Generar el código QR utilizando el número de mesa
         const qrData = `http://localhost:3000/IniciarSesion?mesa=${numero_mesa}`;
@@ -35,7 +40,6 @@ mesaCtrl.createMesa = async (req, res) => {
             estado,
             capacidad,
             QR: qrCode // Almacena el código QR en la base de datos
-    
         });
 
         await newMesa.save();
@@ -44,6 +48,7 @@ mesaCtrl.createMesa = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
 
 mesaCtrl.deleteMesa = async (req, res) => {
     try {

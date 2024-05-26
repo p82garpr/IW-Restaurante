@@ -31,6 +31,12 @@ productoCtrl.createProd = async (req, res) => {
     const { nombre, precio, imagen, categoria, descripcion, ingredientes } = req.body;
 
     try {
+        // Verificar si ya existe un producto con el mismo nombre
+        const productoExistente = await Producto.findOne({ nombre });
+        if (productoExistente) {
+            return res.status(400).json({ message: "Ya existe un producto con este nombre" });
+        }
+
         // Buscar la categoría por nombre para obtener su ID
         const categoriaEncontrada = await Categoria.findOne({ nombre: categoria });
         
@@ -54,6 +60,7 @@ productoCtrl.createProd = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 productoCtrl.getProducto = async (req, res) => {
     try {
