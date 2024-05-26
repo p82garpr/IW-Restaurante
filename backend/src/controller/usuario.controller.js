@@ -90,8 +90,7 @@ usuarioCtrl.updateUsu = async (req, res) => {
 
 usuarioCtrl.loginUsu = async (req, res) => {
     const { nombre_usuario, contraseña, mesa } = req.body;
-    
-
+    console.log(req.body)
     try {
         const usuario = await Usuario.findOne({ nombre_usuario });
         if (!usuario) {
@@ -104,23 +103,37 @@ usuarioCtrl.loginUsu = async (req, res) => {
         }
 
         req.session.usuarioId = usuario._id.toString();
-        const mesaAsociada = await Mesa.findOne({ _id: mesa });
-        
-        if (!mesaAsociada) {
-            return res.status(404).json({ message: 'Mesa no encontrada' });
-        }
-       
-        usuario.cliente_info.id_mesa = mesaAsociada._id;
-        await usuario.save();
 
-        mesaAsociada.estado = 'ocupada';
-        await mesaAsociada.save();
+        // Verificar el privilegio del usuario
+        if (usuario.privilegio === 1 && mesa) { // Si el usuario es administrador y se proporciona un número de mesa
+            return res.status(403).json({ message: 'Los administradores no pueden iniciar sesión con un número de mesa' });
+        } else if (usuario.privilegio === 0) { // Si el usuario es cliente
+            console.log(mesa)
+            if (!mesa) {
+                return res.status(403).json({ message: 'Se necesita proporcionar un número de mesa para iniciar sesión como cliente' });
+            }
+
+            const mesaAsociada = await Mesa.findOne({ _id: mesa });
+            if (!mesaAsociada) {
+                return res.status(404).json({ message: 'Mesa no encontrada' });
+            }
+
+            usuario.cliente_info.id_mesa = mesaAsociada._id;
+            await usuario.save();
+
+            mesaAsociada.estado = 'Ocupada';
+            await mesaAsociada.save();
+        }
 
         res.status(200).json({ message: 'Inicio de sesión exitoso' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+
+
 
 usuarioCtrl.getUsuarioActual = async (req, res) => {
     try {
@@ -162,7 +175,7 @@ usuarioCtrl.logoutUsu = async (req, res) => {
                     return res.status(404).json({ message: 'Mesa no encontrada' });
                 }
 
-                mesa.estado = 'libre';
+                mesa.estado = 'Libre';
                 await mesa.save();
 
                 // Actualiza el usuario para eliminar la referencia a la mesa

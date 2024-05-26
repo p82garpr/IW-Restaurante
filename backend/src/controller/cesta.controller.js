@@ -109,7 +109,6 @@ cestaCtrl.deleteProductoCesta = async (req, res) => {
 
         // Actualizar la cesta en la sesión con la nueva lista
         req.session.cesta = nuevaCesta;
-        console.log("req.session.cesta: ",req.session.cesta)
 
         res.status(200).json({ message: 'Producto eliminado de la cesta' });
     } catch (error) {
