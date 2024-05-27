@@ -137,12 +137,7 @@ usuarioCtrl.loginUsu = async (req, res) => {
 
 usuarioCtrl.getUsuarioActual = async (req, res) => {
     try {
-        if (!req.session) {
-            return res.status(401).json({ message: 'Sesión no inicializada' });
-        }
-        if (!req.session.usuarioId) {
-            return res.status(401).json({ message: 'Usuario no autenticado' });
-        }
+        
         
         const usuario = await Usuario.findById(req.session.usuarioId, { contraseña: 0 });
         if (!usuario) {
