@@ -51,11 +51,11 @@ comandaCtrl.getComanda= async (req, res) => {
 };
 
 comandaCtrl.updateComanda = async (req, res) => {
-    const { nombre_usuario, productos, hora, fecha, comentarios, precio_total, estado } = req.body;
+    const { id_usuario, productos, hora, fecha, comentarios, precio_total, estado } = req.body;
 
     try {
         await Comanda.findByIdAndUpdate(req.params.id, {
-            nombre_usuario,
+            id_usuario,
             productos,
             hora,
             fecha,
