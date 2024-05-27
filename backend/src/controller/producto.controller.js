@@ -12,7 +12,7 @@ productoCtrl.getProd = async (req, res) => {
             
             if (!categoria) {
                 // Si la categoría no existe, retornar un array vacío de productos
-                return res.json([]);
+                return res.status(201).json([]);
             }
 
             // Filtrar productos por el ObjectId de la categoría
