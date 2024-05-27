@@ -136,10 +136,11 @@ usuarioCtrl.loginUsu = async (req, res) => {
 
 
 usuarioCtrl.getUsuarioActual = async (req, res) => {
+    
     try {
         
         
-        const usuario = await Usuario.findById(req.session.usuarioId, { contraseña: 0 });
+        const usuario = await Usuario.findById(req.params.id);
         if (!usuario) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
