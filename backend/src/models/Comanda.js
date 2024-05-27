@@ -1,7 +1,7 @@
 const {Schema, model} = require('mongoose')
 
 const comandaSchema = new Schema({
-    nombre_usuario: {type: String, ref: 'Usuario'},
+    id_usuario: {type: Schema.Types.ObjectId, ref: 'Usuario'},
     productos: [
         {
             producto: { type: Schema.Types.ObjectId, ref: 'Producto' },
