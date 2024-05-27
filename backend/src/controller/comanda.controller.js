@@ -19,14 +19,15 @@ comandaCtrl.getComandas = async (req, res) => {
 };
 
 comandaCtrl.createComanda = async (req, res) => {
-    const { nombre_usuario, productos, hora, fecha, comentarios, precio_total, estado } = req.body;
+    const { id_usuario, productos, hora, fecha, comentarios, precio_total,mesa, estado } = req.body;
 
     try {
         const nuevaComanda = new Comanda({
-            nombre_usuario,
+            id_usuario,
             productos,
             hora,
             fecha,
+            mesa,
             comentarios,
             precio_total,
             estado: estado || "porServir" // Si no se proporciona un estado, por defecto se establece como "porServir"
@@ -51,7 +52,7 @@ comandaCtrl.getComanda= async (req, res) => {
 };
 
 comandaCtrl.updateComanda = async (req, res) => {
-    const { id_usuario, productos, hora, fecha, comentarios, precio_total, estado } = req.body;
+    const { id_usuario, productos, hora, fecha, comentarios, precio_total, estado, mesa } = req.body;
 
     try {
         await Comanda.findByIdAndUpdate(req.params.id, {
@@ -61,6 +62,7 @@ comandaCtrl.updateComanda = async (req, res) => {
             fecha,
             comentarios,
             precio_total,
+            mesa,
             estado
         });
         res.status(200).json({ message: 'Comanda actualizada correctamente' });
