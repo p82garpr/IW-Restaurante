@@ -2,6 +2,7 @@
 const cestaCtrl = {}
 
 const Producto = require('../models/Producto')
+const Usuario = require('../models/Usuario');
 
 
 
@@ -9,6 +10,11 @@ cestaCtrl.addProductoCesta = async (req, res) => {
     const { productoId, cantidad } = req.body;
 
     try {
+        if (req.session && req.session.usuarioId) {
+            
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
         // Verificar si el producto existe
         const producto = await Producto.findById(productoId);
         if (!producto) {
@@ -38,6 +44,12 @@ cestaCtrl.addProductoCesta = async (req, res) => {
 
 cestaCtrl.getCesta = async (req, res) => {
     try {
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+           
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
         const cesta = req.session.cesta || [];
         const productosEnCesta = [];
 
@@ -61,6 +73,12 @@ cestaCtrl.updateCesta = async (req, res) => {
     const { cantidad } = req.body;
 
     try {
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
         // Recuperar la cesta de compras del usuario desde la sesión
         const cesta = req.session.cesta || [];
 
@@ -87,6 +105,12 @@ cestaCtrl.updateCesta = async (req, res) => {
 cestaCtrl.deleteProductoCesta = async (req, res) => {
     const productoId= req.params.id;
     try {
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
         // Recuperar la cesta de compras del usuario desde la sesión
         let cesta = req.session.cesta || [];
 
@@ -118,6 +142,12 @@ cestaCtrl.deleteProductoCesta = async (req, res) => {
 
 cestaCtrl.deleteCesta = async (req, res) => {
     try {
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
         // Vaciar la cesta en la sesión
         req.session.cesta = [];
 

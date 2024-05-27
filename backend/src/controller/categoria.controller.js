@@ -1,9 +1,11 @@
 const categoriaCtrl = {}
 
 const Categoria = require('../models/Categoria')
+const Usuario = require('../models/Usuario');
 
 categoriaCtrl.getCateg = async (req, res) => {
     try {
+        
         const categorias = await Categoria.find()
         res.json(categorias)
     } catch (error) {
@@ -13,6 +15,7 @@ categoriaCtrl.getCateg = async (req, res) => {
 
 categoriaCtrl.getCategoria = async (req, res) => {
     try {
+        
         const categoria = await Categoria.findById(req.params.id)
         res.json(categoria)
     } catch (error) {

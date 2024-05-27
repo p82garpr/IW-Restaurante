@@ -126,7 +126,6 @@ usuarioCtrl.updateUsu = async (req, res) => {
 
 usuarioCtrl.loginUsu = async (req, res) => {
     const { nombre_usuario, contraseña, mesa } = req.body;
-    console.log(req.body)
     try {
         const usuario = await Usuario.findOne({ nombre_usuario });
         if (!usuario) {

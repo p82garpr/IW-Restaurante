@@ -2,6 +2,7 @@ const productoCtrl = {};
 
 const Producto = require('../models/Producto');
 const Categoria = require('../models/Categoria');
+const Usuario = require('../models/Usuario');
 
 productoCtrl.getProd = async (req, res) => {
     try {
@@ -35,17 +36,24 @@ productoCtrl.createProd = async (req, res) => {
     const { nombre, precio, imagen, categoria, descripcion, ingredientes } = req.body;
 
     try {
-        // Verificar si ya existe un producto con el mismo nombre
+        // Verifica si el usuario tiene privilegios suficientes para crear un producto
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            if (!usuario || usuario.privilegio != 1) {
+                return res.status(403).json({ message: 'Forbidden: Insufficient privilege' });
+            }
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
         const productoExistente = await Producto.findOne({ nombre });
         if (productoExistente) {
             return res.status(400).json({ message: "Ya existe un producto con este nombre" });
         }
 
-        // Buscar la categoría por nombre para obtener su ID
         const categoriaEncontrada = await Categoria.findOne({ nombre: categoria });
         
         if (!categoriaEncontrada) {
-            // Si la categoría no existe, devolver un error
             return res.status(400).json({ message: "La categoría especificada no existe" });
         }
 
@@ -53,7 +61,7 @@ productoCtrl.createProd = async (req, res) => {
             nombre,
             precio,
             imagen,
-            categoria: categoriaEncontrada._id, // Utilizar el ID de la categoría encontrada
+            categoria: categoriaEncontrada._id,
             descripcion: ['entrante', 'principal', 'postre'].includes(categoria) ? descripcion : '',
             ingredientes: ['entrante', 'principal', 'postre'].includes(categoria) ? ingredientes : []
         });
@@ -68,6 +76,12 @@ productoCtrl.createProd = async (req, res) => {
 
 productoCtrl.getProducto = async (req, res) => {
     try {
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
         const producto = await Producto.findById(req.params.id)
         res.status(200).json(producto)
     } catch (error) {
@@ -77,6 +91,14 @@ productoCtrl.getProducto = async (req, res) => {
 
 productoCtrl.deleteProd = async (req, res) => {
     try {
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            if (!usuario || usuario.privilegio != 1) {
+                return res.status(403).json({ message: 'Forbidden: Insufficient privilege' });
+            }
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
         await Producto.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'Producto ha sido eliminado' });
     } catch (error) {
@@ -88,6 +110,16 @@ productoCtrl.updateProd = async (req, res) => {
     const { nombre, precio, imagen, categoria, descripcion, ingredientes } = req.body;
 
     try {
+        
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            if (!usuario || usuario.privilegio != 1) {
+                return res.status(403).json({ message: 'Forbidden: Insufficient privilege' });
+            }
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
         await Producto.findByIdAndUpdate(req.params.id, {
             nombre,
             precio,

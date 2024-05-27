@@ -1,10 +1,12 @@
 const mesaCtrl = {}
 const QRCode = require('qrcode');
 const Mesa = require('../models/Mesa')
+const Usuario = require('../models/Usuario');
 
 
 mesaCtrl.getMesas = async (req, res) => {
     try {
+        
         const mesas = await Mesa.find()
         res.status(200).json(mesas)
     } catch (error) {
@@ -14,6 +16,7 @@ mesaCtrl.getMesas = async (req, res) => {
 
 mesaCtrl.getMesa = async (req, res) => {
     try {
+        
         const mesa = await Mesa.findById(req.params.id)
         res.status(200).json(mesa)
     } catch (error) {
@@ -25,6 +28,14 @@ mesaCtrl.createMesa = async (req, res) => {
     const { numero_mesa, estado, capacidad } = req.body;
 
     try {
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            if (!usuario || usuario.privilegio != 1) {
+                return res.status(403).json({ message: 'Forbidden: Insufficient privilege' });
+            }
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
         // Verificar si ya existe una mesa con el mismo número
         const mesaExistente = await Mesa.findOne({ numero_mesa });
         if (mesaExistente) {
@@ -52,6 +63,14 @@ mesaCtrl.createMesa = async (req, res) => {
 
 mesaCtrl.deleteMesa = async (req, res) => {
     try {
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            if (!usuario || usuario.privilegio != 1) {
+                return res.status(403).json({ message: 'Forbidden: Insufficient privilege' });
+            }
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
         await Mesa.findByIdAndDelete(req.params.id)
         res.status(200).json({ message: 'La mesa ha sido eliminada' })
     } catch (error) {
@@ -63,6 +82,14 @@ mesaCtrl.updateMesa = async (req, res) => {
     const {numero_mesa, estado, capacidad } = req.body;
 
     try {
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            if (!usuario || usuario.privilegio != 1) {
+                return res.status(403).json({ message: 'Forbidden: Insufficient privilege' });
+            }
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
         await Mesa.findByIdAndUpdate(req.params.id, {
             numero_mesa,
             estado,
