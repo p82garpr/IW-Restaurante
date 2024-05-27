@@ -102,8 +102,6 @@ const IniciarSesion = () => {
 
     if (mesaNumero) {
       fetchMesaId();
-    }else if(!mesaNumero && credenciales.nombre_usuario === 'p82ceali@uco.es'){
-      fetchMesaIdNull();
     }else{
       console.error('No se ha especificado el número de mesa');
     }
