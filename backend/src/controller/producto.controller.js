@@ -5,20 +5,24 @@ const Categoria = require('../models/Categoria');
 
 productoCtrl.getProd = async (req, res) => {
     try {
+        // Verifica si el usuario tiene privilegios suficientes para obtener la lista de productos
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
         let productos;
         if (req.params.categoria) {
-            // Buscar el ObjectId de la categoría por su nombre
             const categoria = await Categoria.findOne({ nombre: req.params.categoria });
             
             if (!categoria) {
-                // Si la categoría no existe, retornar un array vacío de productos
                 return res.status(201).json([]);
             }
 
-            // Filtrar productos por el ObjectId de la categoría
             productos = await Producto.find({ categoria: categoria._id }).populate('categoria', 'nombre');
         } else {
-            // Si no se proporciona una categoría, obtener todos los productos
             productos = await Producto.find().populate('categoria', 'nombre');
         }
         res.status(200).json(productos);

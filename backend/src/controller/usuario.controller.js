@@ -6,6 +6,16 @@ const saltRounds = 10;
 
 usuarioCtrl.getUsu = async (req, res) => {
     try {
+        // Verifica si el usuario tiene privilegios suficientes para obtener la lista de usuarios
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            if (!usuario || usuario.privilegio != 1) {
+                return res.status(403).json({ message: 'Forbidden: Insufficient privilege' });
+            }
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
         const usuarios = await Usuario.find();
         res.status(200).json(usuarios);
     } catch (error) {
@@ -17,6 +27,14 @@ usuarioCtrl.createUsu = async (req, res) => {
     const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, cliente_info } = req.body;
 
     try {
+        // Verifica si el usuario tiene privilegios suficientes para crear un usuario
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
         const usuarioExistente = await Usuario.findOne({ nombre_usuario });
         if (usuarioExistente) {
             return res.status(400).json({ message: "El nombre de usuario ya está en uso" });
@@ -31,7 +49,7 @@ usuarioCtrl.createUsu = async (req, res) => {
             contraseña: contraseña_hashed,
             fecha_nacimiento,
             privilegio: 0,
-            rol:"cliente",
+            rol: "cliente",
             cliente_info: cliente_info
         });
 
@@ -44,6 +62,16 @@ usuarioCtrl.createUsu = async (req, res) => {
 
 usuarioCtrl.deleteUsu = async (req, res) => {
     try {
+        // Verifica si el usuario tiene privilegios suficientes para eliminar un usuario
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            if (!usuario || usuario.privilegio != 1) {
+                return res.status(403).json({ message: 'Forbidden: Insufficient privilege' });
+            }
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
         await Usuario.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'El usuario ha sido eliminado' });
     } catch (error) {
@@ -57,6 +85,14 @@ usuarioCtrl.updateUsu = async (req, res) => {
     const { nombre_usuario, nombre, apellido, contraseña, fecha_nacimiento, cliente_info } = req.body;
 
     try {
+        // Verifica si el usuario tiene privilegios suficientes para actualizar un usuario
+        if (req.session && req.session.usuarioId) {
+            const usuario = await Usuario.findById(req.session.usuarioId);
+            
+        } else {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
         let updateData = {
             nombre_usuario,
             nombre,
@@ -103,6 +139,7 @@ usuarioCtrl.loginUsu = async (req, res) => {
         }
 
         req.session.usuarioId = usuario._id.toString();
+        
 
         // Verificar el privilegio del usuario
         if (usuario.privilegio === 1 && mesa) { // Si el usuario es administrador y se proporciona un número de mesa
@@ -138,7 +175,6 @@ usuarioCtrl.loginUsu = async (req, res) => {
 usuarioCtrl.getUsuarioActual = async (req, res) => {
     
     try {
-        
         
         const usuario = await Usuario.findById(req.params.id);
         if (!usuario) {
