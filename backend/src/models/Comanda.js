@@ -8,7 +8,7 @@ const comandaSchema = new Schema({
             cantidad: Number
         }
     ],
-    mesa: {type: Schema.Types.ObjectId, ref: 'Mesa'},
+    mesa: Number,
     hora: String,
     fecha: Date,
     comentarios: String,

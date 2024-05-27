@@ -14,6 +14,14 @@ const MesasContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const MesaItem = styled.div`
@@ -76,6 +84,7 @@ const BotonOcuparMesa = styled.button`
 
 const Mesas = () => {
   const [mesas, setMesas] = useState([]);
+  const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
     const obtenerMesas = async () => {
@@ -86,8 +95,17 @@ const Mesas = () => {
         console.error('Error al obtener las mesas:', error);
       }
     };
+    const obtenerUsuarioActual = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
+        setUsuario(response.data);
+      } catch (error) {
+        console.error('Error al obtener información del usuario:', error);
+      }
+    };
 
     obtenerMesas();
+    obtenerUsuarioActual();
   }, []);
 
   const alternarDisponibilidadMesa = async (id, estadoActual) => {
@@ -105,28 +123,32 @@ const Mesas = () => {
   };
 
   return (
-    <>
-      <Encabezado>Listado de Mesas</Encabezado>
-      <MesasContainer>
-        {mesas.length === 0 ? (
-          <p>No hay mesas registradas</p>
-        ) : (
-          mesas.map((mesa) => (
-            <MesaItem key={mesa._id} estado={mesa.estado}>
-              <DetallesMesa>
-                <NumeroMesa>Mesa Nº: {mesa.numero_mesa}</NumeroMesa>
-                <CapacidadMesa>Capacidad: {mesa.capacidad}</CapacidadMesa>
-                <EstadoMesa>Estado: {mesa.estado}</EstadoMesa>
-                <QrImage src={mesa.QR} alt={`QR de la mesa ${mesa.numero_mesa}`} />
-              </DetallesMesa>
-              <BotonOcuparMesa onClick={() => alternarDisponibilidadMesa(mesa._id, mesa.estado)}>
-                {mesa.estado === 'Libre' ? 'Ocupar Mesa' : 'Liberar Mesa'}
-              </BotonOcuparMesa>
-            </MesaItem>
-          ))
-        )}
-      </MesasContainer>
-    </>
+    usuario && usuario.privilegio === 1 ? (
+      <>
+        <Encabezado>Listado de Mesas</Encabezado>
+        <MesasContainer>
+          {mesas.length === 0 ? (
+            <p>No hay mesas registradas</p>
+          ) : (
+            mesas.map((mesa) => (
+              <MesaItem key={mesa._id} estado={mesa.estado}>
+                <DetallesMesa>
+                  <NumeroMesa>Mesa Nº: {mesa.numero_mesa}</NumeroMesa>
+                  <CapacidadMesa>Capacidad: {mesa.capacidad}</CapacidadMesa>
+                  <EstadoMesa>Estado: {mesa.estado}</EstadoMesa>
+                  <QrImage src={mesa.QR} alt={`QR de la mesa ${mesa.numero_mesa}`} />
+                </DetallesMesa>
+                <BotonOcuparMesa onClick={() => alternarDisponibilidadMesa(mesa._id, mesa.estado)}>
+                  {mesa.estado === 'Libre' ? 'Ocupar Mesa' : 'Liberar Mesa'}
+                </BotonOcuparMesa>
+              </MesaItem>
+            ))
+          )}
+        </MesasContainer>
+      </>
+    ) : (
+      <p>No autorizado</p> //HAY QUE METER AQUI UNA REDIRECCION A ERROR 403
+    )
   );
 };
 

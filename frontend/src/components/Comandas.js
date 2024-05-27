@@ -97,6 +97,7 @@ const BotonMostrarHistorico = styled(Boton)`
 const Comandas = () => {
   const [comandas, setComandas] = useState([]);
   const history = useHistory();
+  const [nombreUsuario, setNombreUsuario] = useState(''); 
 
   useEffect(() => {
     const obtenerComandas = async () => {
@@ -108,6 +109,21 @@ const Comandas = () => {
         console.error('Error al obtener las comandas:', error);
       }
     };
+    const obtenerUsuario = async () => {
+      try {
+        //buscar el nombre del usuario con id de sesion en la comanda
+        const response = await axios.get('http://localhost:4000/api/comandas', { withCredentials: true });
+        const idUsuario = response.data[0].id_usuario;
+        console.log('ID del usuario:', idUsuario);
+        const responseUsuario = await axios.get(`http://localhost:4000/api/usuarios/${idUsuario}`, { withCredentials: true });
+        console.log('Nombre del usuario:', responseUsuario.data.nombre);
+        setNombreUsuario(responseUsuario.data.nombre);
+      }
+      catch (error) {
+        console.error('Error al obtener el nombre del usuario:', error);
+      }
+    };
+    obtenerUsuario();
 
     obtenerComandas();
   }, []);
@@ -139,7 +155,8 @@ const Comandas = () => {
         comandas.map((comanda) => (
           <ComandaItem key={comanda._id}>
             <DetallesComanda>
-              <NombreProducto>Comanda ID: {comanda._id}</NombreProducto>
+              <NombreProducto>Mesa: {comanda.mesa}</NombreProducto>
+              <NombreProducto>Cliente: {nombreUsuario}</NombreProducto>
               <FechaComanda>Fecha: {new Date(comanda.fecha).toLocaleDateString()}</FechaComanda>
               <ComentariosComanda>Comentarios: {comanda.comentarios}</ComentariosComanda>
               <PrecioProducto>Total: {comanda.precio_total} €</PrecioProducto>

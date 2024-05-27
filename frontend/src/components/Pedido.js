@@ -118,6 +118,10 @@ const Pedido = () => {
   const [total, setTotal] = useState(0);
   const [codigoDescuento, setCodigoDescuento] = useState('');
   const history = useHistory();
+  const [usuario, setUsuario] = useState('');
+  const [mesa, setMesa] = useState('');
+  
+
 
   useEffect(() => {
     const obtenerProductosCesta = async () => {
@@ -129,17 +133,42 @@ const Pedido = () => {
         console.error('Error al obtener los productos de la cesta:', error);
       }
     };
+    const obtenerUsuarioActual = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
+        //console.log('Usuario:', response.data);
+        setUsuario(response.data);
+      } catch (error) {
+        console.error('Error al obtener información del usuario:', error);
+      }
+    };
 
+    obtenerUsuarioActual();
+    const obtenerIdUsuario = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
+        setUsuario(response.data._id); // Aquí se guarda solo el ID del usuario
+        console.log('ID del usuario:', response.data._id);
+      } catch (error) {
+        console.error('Error al obtener el ID del usuario:', error);
+      }
+    };
+    const obtenerMesa = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
+        const idMesa = response.data.cliente_info.id_mesa;
+        console.log('ID de la mesa:', idMesa);
+        const numero_mesa = await axios.get(`http://localhost:4000/api/mesa/${idMesa}`, { withCredentials: true });
+        console.log('Número de mesa:', numero_mesa.data.numero_mesa);
+        setMesa(numero_mesa.data.numero_mesa);
+      } catch (error) {
+        console.error('Error al obtener la mesa:', error);
+      }
+    };
+    obtenerMesa();    
+    obtenerIdUsuario();
     obtenerProductosCesta();
   }, []);
-  const obtenerIdUsuario = async () => {
-    try {
-      const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
-      return response.data._id;
-    } catch (error) {
-      console.error('Error al obtener el ID del usuario:', error);
-    }
-  };
   
   const calcularTotal = (productos) => {
     const totalCalculado = productos.reduce((acc, producto) => acc + producto.producto.precio * producto.cantidad, 0);
@@ -154,18 +183,19 @@ const Pedido = () => {
   
     return `${año}-${mes}-${dia}`;
   };
+
   const finalizarPedido = async () => {
     try {
       const fechaActual = obtenerFechaActual();
       const comentarios = "No hay ningún comentario";
       let precio_total = total; // Suponiendo que esta función devuelve el precio total correctamente
       precio_total = parseFloat(precio_total).toFixed(2); // Suponiendo que esta función devuelve el precio total correctamente
-      const usuario = obtenerIdUsuario();
       const response = await axios.post('http://localhost:4000/api/comandas', {
         fecha: fechaActual,
         comentarios: comentarios,
         precio_total: precio_total,
-        id_usuario: usuario,
+        mesa: mesa,
+        id_usuario: usuario, // Asegurándose de que se use solo el ID del usuario
         productos: productosCesta.map(producto => ({
           producto: producto.producto._id,
           cantidad: producto.cantidad
@@ -193,7 +223,6 @@ const Pedido = () => {
     }
     
   };
-  
 
   const volverACategoria = () => {
     history.push('/');
@@ -208,8 +237,10 @@ const Pedido = () => {
     console.log('Código de descuento:', codigoDescuento);
   };
 
+  
   return (
-    <PedidoContainer>
+    usuario && usuario.privilegio===1 ? (
+      <PedidoContainer>
       <Encabezado>Pedido</Encabezado>
       <div>
         {productosCesta.map((producto) => (
@@ -239,6 +270,9 @@ const Pedido = () => {
         </BotonContainer>
       </PedidoCard>
     </PedidoContainer>
+    ) : (
+      <p>No autorizado</p> //HAY QUE METER AQUI UNA REDIRECCION A ERROR 403
+    )    
   );
 };
 
