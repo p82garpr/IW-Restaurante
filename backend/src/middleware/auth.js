@@ -1,7 +1,7 @@
 // middleware/auth.js
 const jwt = require('jsonwebtoken');
 const Usuario = require('../models/Usuario');
-const SECRET_KEY = 'your_secret_key';
+const SECRET_KEY = 'f9$7J@klQm!8aL#p';
 
 // Middleware de autenticación
 const authenticateToken = (req, res, next) => {

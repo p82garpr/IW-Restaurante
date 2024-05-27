@@ -47,6 +47,7 @@ router.route('/auth/sesion')
 router.route('/:id')
     .delete(deleteUsu)
     .put(updateUsu)
+    .get(getUsuarioActual)
 
 
 

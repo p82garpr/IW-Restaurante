@@ -4,7 +4,8 @@ const Usuario = require('../models/Usuario');
 const authorizePrivilege = (requiredPrivilege) => {
   return async (req, res, next) => {
     try {
-      const usuario = await Usuario.findById(req.user._id);
+        
+      const usuario = await Usuario.findById(req.usuario._id);
       if (!usuario) {
         return res.sendStatus(404); // Usuario no encontrado
       }
