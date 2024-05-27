@@ -82,29 +82,12 @@ const IniciarSesion = () => {
         console.error('Error al obtener la mesa:', error.response?.data?.message || error.message);
       }
     };
-    const fetchMesaIdNull = async () => {
-      try {
-        const mesaResponse = await axios.get('http://localhost:4000/api/mesa', { withCredentials: true });
-        const mesa = mesaResponse.data.find(m => m.numero_mesa === 0);
-
-        if (mesa) {
-          setCredenciales(prevCredenciales => ({
-            ...prevCredenciales,
-            mesaId: mesa._id // Agregar el ID de la mesa a las credenciales
-          }));
-        } else {
-          console.error('Mesa no encontrada');
-        }
-      } catch (error) {
-        console.error('Error al obtener la mesa:', error.response?.data?.message || error.message);
-      }
-    };
-
     if (mesaNumero) {
       fetchMesaId();
     }else{
-      console.error('No se ha especificado el número de mesa');
+      
     }
+
   }, [credenciales.nombre_usuario, mesaNumero]);
 
   // Actualizar el estado de credenciales cuando cambian los inputs
@@ -117,7 +100,9 @@ const IniciarSesion = () => {
   };
 
   // Manejar el envío del formulario
+  
   const handleSubmit = async e => {
+    var response;
     e.preventDefault();
     try {
       console.log('Enviando credenciales:', credenciales);
@@ -130,30 +115,18 @@ const IniciarSesion = () => {
       };
 
       // Enviar solicitud POST para autenticación
-      const response = await axios.post('http://localhost:4000/api/usuarios/auth/login', requestBody, { withCredentials: true });
+      response = await axios.post('http://localhost:4000/api/usuarios/auth/login', requestBody, { withCredentials: true });
+      
       console.log('Respuesta de autenticación:', response);
-
-      if (response.status === 200) {
-        console.log('Autenticación exitosa');
-
-        // Actualizar el estado de la mesa a 'ocupada' si la autenticación es exitosa
-        const updateResponse = await axios.put(`http://localhost:4000/api/mesa/${credenciales.mesaId}`, {
-          estado: 'ocupada'
-        }, { withCredentials: true });
-
-        console.log('Respuesta de actualización del estado de la mesa:', updateResponse);
-
-        if (updateResponse.status === 200) {
-          console.log('Estado de la mesa actualizado');
-         // Redirigir a la página de inicio u otra ruta deseada
-         window.location.href = '/';
-        } else {
-          console.error('Error en la actualización del estado de la mesa:', updateResponse.status);
-        }
-      } else {
-        console.error('Error en la autenticación:', response.status);
-      }
+      window.location.href = '/';
+      
+      
     } catch (error) {
+      console.log(error.response.status);
+      if (error.response.status === 403){
+        alert("Debes escanear un código QR para iniciar sesión")
+        //console.log("Debes escanear un código QR para iniciar sesión")
+      }
       console.error('Error en el inicio de sesión:', error.response?.data?.message || error.message);
     }
   };

@@ -132,7 +132,15 @@ const Pedido = () => {
 
     obtenerProductosCesta();
   }, []);
-
+  const obtenerIdUsuario = async () => {
+    try {
+      const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
+      return response.data._id;
+    } catch (error) {
+      console.error('Error al obtener el ID del usuario:', error);
+    }
+  };
+  
   const calcularTotal = (productos) => {
     const totalCalculado = productos.reduce((acc, producto) => acc + producto.producto.precio * producto.cantidad, 0);
     setTotal(totalCalculado.toFixed(2));
@@ -152,20 +160,33 @@ const Pedido = () => {
       const comentarios = "No hay ningún comentario";
       let precio_total = total; // Suponiendo que esta función devuelve el precio total correctamente
       precio_total = parseFloat(precio_total).toFixed(2); // Suponiendo que esta función devuelve el precio total correctamente
-  
+      const usuario = obtenerIdUsuario();
       const response = await axios.post('http://localhost:4000/api/comandas', {
         fecha: fechaActual,
         comentarios: comentarios,
-        precio_total: precio_total
+        precio_total: precio_total,
+        id_usuario: usuario,
+        productos: productosCesta.map(producto => ({
+          producto: producto.producto._id,
+          cantidad: producto.cantidad
+        })),
+        
       }, { withCredentials: true });
   
       console.log("Respuesta de la API:", response.data); // Agrega este console.log
   
       if (response.status === 201) {
         console.log('Comanda creada correctamente:', response.data.comanda);
+        const responseBorrarCesta= await axios.delete('http://localhost:4000/api/cesta', { withCredentials: true });
+        if(responseBorrarCesta.status === 200){
+          //console.log('Cesta borrada correctamente');
+          alert('Pedido finalizado correctamente');
+        }else{
+          //console.error('Error al borrar la cesta:', responseBorrarCesta.data.message);
+        }
         volverACategoria();
       } else {
-        console.error('Error al crear la comanda:', response.data.message);
+        //console.error('Error al crear la comanda:', response.data.message);
       }
     } catch (error) {
       console.error('Error al finalizar el pedido:', error.message);
