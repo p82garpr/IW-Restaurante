@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
+import ProductoComandas from './ProductosComandas';
 
 const ComandasContainer = styled.div`
   padding: 20px;
@@ -141,6 +142,9 @@ const Comandas = () => {
       console.error('Error al servir la comanda:', error);
     }
   };
+  const ProductoComandas = () => {
+    history.push('/ProductosComandas');
+  }
 
   const mostrarHistorico = () => {
     history.push('/HistoricoComandas');
@@ -163,7 +167,7 @@ const Comandas = () => {
             </DetallesComanda>
             <BotonesContainer>
               <Boton onClick={() => servirComanda(comanda._id)}>Servir</Boton>
-              <Boton onClick={() => console.log(`Ver productos de la comanda ${comanda._id}`)}>Productos Comanda</Boton>
+              <Boton onClick={() => ProductoComandas()}>Productos Comanda</Boton>
             </BotonesContainer>
           </ComandaItem>
         ))

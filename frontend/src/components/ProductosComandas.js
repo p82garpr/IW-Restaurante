@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 
+
 const PedidoContainer = styled.div`
   padding: 20px;
 `;
@@ -118,7 +119,6 @@ const Pedido = () => {
   const [total, setTotal] = useState(0);
   const [codigoDescuento, setCodigoDescuento] = useState('');
   const history = useHistory();
-  const [usuario2, setUsuario2] = useState('');
   const [usuario, setUsuario] = useState('');
   const [mesa, setMesa] = useState('');
   
@@ -127,9 +127,9 @@ const Pedido = () => {
   useEffect(() => {
     const obtenerProductosCesta = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/api/cesta', { withCredentials: true });
+        const response = await axios.get('http://localhost:4000/api/Coman', { withCredentials: true });
         setProductosCesta(response.data.cesta);
-        calcularTotal(response.data.cesta);
+        
       } catch (error) {
         console.error('Error al obtener los productos de la cesta:', error);
       }
@@ -138,7 +138,7 @@ const Pedido = () => {
       try {
         const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
         //console.log('Usuario:', response.data);
-        setUsuario2(response.data);
+        setUsuario(response.data);
       } catch (error) {
         console.error('Error al obtener información del usuario:', error);
       }
@@ -171,76 +171,15 @@ const Pedido = () => {
     obtenerProductosCesta();
   }, []);
   
-  const calcularTotal = (productos) => {
-    const totalCalculado = productos.reduce((acc, producto) => acc + producto.producto.precio * producto.cantidad, 0);
-    setTotal(totalCalculado.toFixed(2));
-  };
-
-  const obtenerFechaActual = () => {
-    const ahora = new Date();
-    const dia = ahora.getDate().toString().padStart(2, '0');
-    const mes = (ahora.getMonth() + 1).toString().padStart(2, '0'); // Se suma 1 porque en JavaScript los meses van de 0 a 11
-    const año = ahora.getFullYear();
   
-    return `${año}-${mes}-${dia}`;
+  const atras = () => {
+    history.push('/Comandas');
   };
 
-  const finalizarPedido = async () => {
-    try {
-      const fechaActual = obtenerFechaActual();
-      const comentarios = "No hay ningún comentario";
-      let precio_total = total; // Suponiendo que esta función devuelve el precio total correctamente
-      precio_total = parseFloat(precio_total).toFixed(2); // Suponiendo que esta función devuelve el precio total correctamente
-      const response = await axios.post('http://localhost:4000/api/comandas', {
-        fecha: fechaActual,
-        comentarios: comentarios,
-        precio_total: precio_total,
-        mesa: mesa,
-        id_usuario: usuario, // Asegurándose de que se use solo el ID del usuario
-        productos: productosCesta.map(producto => ({
-          producto: producto.producto._id,
-          cantidad: producto.cantidad
-        })),
-        
-      }, { withCredentials: true });
-  
-      console.log("Respuesta de la API:", response.data); // Agrega este console.log
-  
-      if (response.status === 201) {
-        console.log('Comanda creada correctamente:', response.data.comanda);
-        const responseBorrarCesta= await axios.delete('http://localhost:4000/api/cesta', { withCredentials: true });
-        if(responseBorrarCesta.status === 200){
-          //console.log('Cesta borrada correctamente');
-          alert('Pedido finalizado correctamente');
-        }else{
-          //console.error('Error al borrar la cesta:', responseBorrarCesta.data.message);
-        }
-        volverACategoria();
-      } else {
-        //console.error('Error al crear la comanda:', response.data.message);
-      }
-    } catch (error) {
-      console.error('Error al finalizar el pedido:', error.message);
-    }
-    
-  };
-
-  const volverACategoria = () => {
-    history.push('/');
-  };
-
-  const handleCodigoChange = (event) => {
-    setCodigoDescuento(event.target.value);
-  };
-
-  const handleComprobarCodigo = () => {
-    // Lógica para comprobar el código de descuento
-    console.log('Código de descuento:', codigoDescuento);
-  };
 
   
   return (
-    usuario2 && usuario2.privilegio===0 ? (
+    
       <PedidoContainer>
       <Encabezado>Pedido</Encabezado>
       <div>
@@ -255,26 +194,14 @@ const Pedido = () => {
           </ProductoItem>
         ))}
       </div>
-      <PedidoCard>
-        <Subtitulo>Cuenta</Subtitulo>
-        <TotalText>Total: {total} €</TotalText>
-        <InputContainer>
-          <InputCodigo type="text" placeholder="Introduce código de descuento" value={codigoDescuento} onChange={handleCodigoChange} />
-          <BotonComprobar onClick={handleComprobarCodigo}>Comprobar</BotonComprobar>
-        </InputContainer>
-        <TotalText>Descuento: 0 €</TotalText>
-        <TotalText>Precio Final: {total} €</TotalText>
-        
+      <PedidoCard>     
         <BotonContainer>
-          <Boton onClick={finalizarPedido}>Finalizar Pedido</Boton>
-          <Boton onClick={volverACategoria}>Seguir Comprando</Boton>
+          <Boton onClick={atras}>atras</Boton>
         </BotonContainer>
       </PedidoCard>
     </PedidoContainer>
-    ) : (
-      <p>No autorizado</p> //HAY QUE METER AQUI UNA REDIRECCION A ERROR 403
-    )    
+       
   );
 };
 
-export default Pedido;
+export default ProductosComandas;
