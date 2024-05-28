@@ -25,7 +25,7 @@ const SidePanel = styled.div`
 
 const ToggleButton = styled.button`
   position: fixed;
-  top: 50%;
+  top: 98%;
   ${({ open }) => (open ? 'right: 300px;' : 'right: 0;')}
   transform: translateY(-50%);
   background-color: #007bff;
