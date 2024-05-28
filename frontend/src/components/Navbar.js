@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import Cesta from './Cesta'; 
 import {
   Collapse,
   Navbar as RSNavbar,
@@ -15,6 +14,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
+import Cesta from './Cesta'; 
 
 const SidePanel = styled.div`
   position: fixed;
@@ -84,6 +84,7 @@ const StyledUncontrolledDropdown = styled(UncontrolledDropdown)`
     }
   }
 `;
+
 function NavbarComponent(props) {
   const [isOpenNavbar, setIsOpenNabvar] = useState(false);
   const [usuario, setUsuario] = useState(null);
@@ -142,11 +143,9 @@ function NavbarComponent(props) {
             )}
             {inicio !== null && (
               <>
-                
                 <NavItem>
                   <NavLink href="/CerrarSesion">Cerrar Sesión</NavLink>
                 </NavItem>
-                
                 <NavItem>
                   <NavLink href="/Perfil">Perfil</NavLink>
                 </NavItem>
@@ -158,15 +157,12 @@ function NavbarComponent(props) {
                   <NavLink href="/admin">Admin</NavLink>
                 </NavItem>
               </>
-            )}{inicio !== null && privilegio === 0 && (
-              <>
-                  <Cesta />
-              </>
             )}
           </Nav>
         </Collapse>
       </RSNavbar>
-      
+      {/* Mover la cesta fuera del Nav */}
+      {inicio !== null && privilegio === 0 && <Cesta />}
     </div>
   );
 }
