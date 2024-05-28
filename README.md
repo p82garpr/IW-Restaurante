@@ -14,7 +14,7 @@ Este es un proyecto de una aplicación web para menús de restaurantes que permi
    ```bash
    git clone https://github.com/p82garpr/IW-Restaurante.git
 
-   Configuración del Backend:
+   
 2. Navega al directorio del backend:
     ```bash
     cd IW-Restaurante/backend
@@ -40,3 +40,6 @@ Este es un proyecto de una aplicación web para menús de restaurantes que permi
 7. Inicia la aplicación del frontend:
     ```bash
     npm start
+    
+La aplicación del frontend debería estar ejecutándose en http://localhost:3000.
+
