@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import ProductoComandas from './ProductosComandas';
 
 const ComandasContainer = styled.div`
   padding: 20px;
-  position: relative; /* Agregamos position: relative para que BotonMostrarHistorico use position: absolute relativo a este contenedor */
+  position: relative;
 `;
 
 const ComandaItem = styled.div`
@@ -91,14 +90,14 @@ const BotonMostrarHistorico = styled(Boton)`
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  margin-bottom: 20px; /* Agregamos un margen adicional para separar el botón del borde inferior */
+  margin-bottom: 20px;
 `;
-
 
 const Comandas = () => {
   const [comandas, setComandas] = useState([]);
   const history = useHistory();
-  const [nombreUsuario, setNombreUsuario] = useState(''); 
+  const [nombreUsuario, setNombreUsuario] = useState('');
+  
 
   useEffect(() => {
     const obtenerComandas = async () => {
@@ -110,22 +109,19 @@ const Comandas = () => {
         console.error('Error al obtener las comandas:', error);
       }
     };
+
     const obtenerUsuario = async () => {
       try {
-        //buscar el nombre del usuario con id de sesion en la comanda
         const response = await axios.get('http://localhost:4000/api/comandas', { withCredentials: true });
         const idUsuario = response.data[0].id_usuario;
-        console.log('ID del usuario:', idUsuario);
         const responseUsuario = await axios.get(`http://localhost:4000/api/usuarios/${idUsuario}`, { withCredentials: true });
-        console.log('Nombre del usuario:', responseUsuario.data.nombre);
         setNombreUsuario(responseUsuario.data.nombre);
-      }
-      catch (error) {
+      } catch (error) {
         console.error('Error al obtener el nombre del usuario:', error);
       }
     };
-    obtenerUsuario();
 
+    obtenerUsuario();
     obtenerComandas();
   }, []);
 
@@ -134,7 +130,6 @@ const Comandas = () => {
       await axios.put(`http://localhost:4000/api/comandas/${id}`, {
         estado: 'servida'
       });
-      // Actualizar las comandas después de servir la comanda
       const response = await axios.get('http://localhost:4000/api/comandas', { withCredentials: true });
       const comandasPorServir = response.data.filter(comanda => comanda.estado === 'porServir');
       setComandas(comandasPorServir);
@@ -142,9 +137,10 @@ const Comandas = () => {
       console.error('Error al servir la comanda:', error);
     }
   };
-  const ProductoComandas = () => {
-    history.push('/ProductosComandas');
-  }
+
+  const verProductosComanda = (idComanda) => {
+    history.push(`/ProductosComandas?idComanda=${idComanda}`);
+  };
 
   const mostrarHistorico = () => {
     history.push('/HistoricoComandas');
@@ -167,12 +163,12 @@ const Comandas = () => {
             </DetallesComanda>
             <BotonesContainer>
               <Boton onClick={() => servirComanda(comanda._id)}>Servir</Boton>
-              <Boton onClick={() => ProductoComandas()}>Productos Comanda</Boton>
+              <Boton onClick={() => verProductosComanda(comanda._id)}>Productos Comanda</Boton>
             </BotonesContainer>
           </ComandaItem>
         ))
       )}
-      <BotonMostrarHistorico onClick={mostrarHistorico}>Mostrar Historico de Comandas</BotonMostrarHistorico>
+      <BotonMostrarHistorico onClick={mostrarHistorico}>Mostrar Histórico de Comandas</BotonMostrarHistorico>
     </ComandasContainer>
   );
 };

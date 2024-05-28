@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
-
+import { useHistory, useLocation } from 'react-router-dom';
 
 const PedidoContainer = styled.div`
   padding: 20px;
@@ -25,7 +24,7 @@ const ProductoImage = styled.img`
   border-radius: 10px;
 `;
 
-const DetallesProducto = styled.div`
+const DetallesProductoContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -47,30 +46,15 @@ const CantidadProducto = styled.p`
   color: #555;
 `;
 
-const PedidoCard = styled.div`
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-top: 20px;
-`;
-
-const TotalText = styled.p`
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #333;
-`;
-
 const BotonContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start; /* Alineación a la izquierda */
   margin-top: 20px;
 `;
 
 const Boton = styled.button`
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #dc3545; /* Color rojo */
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -79,7 +63,7 @@ const Boton = styled.button`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #c82333; /* Color rojo más oscuro al pasar el ratón */
   }
 `;
 
@@ -90,117 +74,86 @@ const Encabezado = styled.h1`
   text-align: center;
 `;
 
-const Subtitulo = styled.h2`
-  color: #333;
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-`;
+// Componente de indicador de carga
+const LoadingSpinner = () => {
+  return (
+    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+      <p>Cargando...</p>
+    </div>
+  );
+};
 
-const InputContainer = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
-`;
-
-const InputCodigo = styled.input`
-  flex: 1;
-  padding: 10px;
-  margin-right: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-`;
-
-const BotonComprobar = styled(Boton)`
-  flex: 0 0 25%;
-`;
-
-const ProductosComandas= () => {
-  const [productosCesta, setProductosCesta] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [codigoDescuento, setCodigoDescuento] = useState('');
+const ProductosComandas = () => {
+  const [detallesProductos, setDetallesProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [productosComanda, setProductosComanda] = useState([]);
   const history = useHistory();
-  const [usuario, setUsuario] = useState('');
-  const [mesa, setMesa] = useState('');
-  
-
+  const location = useLocation();
+  const idComanda = new URLSearchParams(location.search).get('idComanda');
 
   useEffect(() => {
     const obtenerProductosCesta = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/api/Coman', { withCredentials: true });
-        setProductosCesta(response.data.cesta);
-        
+        const response = await axios.get(`http://localhost:4000/api/comandas/${idComanda}`, { withCredentials: true });
+        setProductosComanda(response.data.comanda.productos);
       } catch (error) {
-        console.error('Error al obtener los productos de la cesta:', error);
+        console.error('Error al obtener los productos de la comanda:', error);
       }
     };
-    const obtenerUsuarioActual = async () => {
+  
+    if (idComanda) {
+      obtenerProductosCesta();
+    }
+  }, [idComanda]);
+  
+  useEffect(() => {
+    const obtenerDetallesProductos = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
-        //console.log('Usuario:', response.data);
-        setUsuario(response.data);
+        var detalles = [];
+        if (productosComanda.length > 0) {
+          for (let i = 0; i < productosComanda.length; i++) {
+            const response = await axios.get(`http://localhost:4000/api/productos/${productosComanda[i].producto}`, { withCredentials: true });
+            detalles.push(response.data);
+          }
+        }
+        setDetallesProductos(detalles);
+        setLoading(false);
       } catch (error) {
-        console.error('Error al obtener información del usuario:', error);
+        console.error('Error al obtener los detalles del producto:', error);
       }
     };
 
-    obtenerUsuarioActual();
-    const obtenerIdUsuario = async () => {
-      try {
-        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
-        setUsuario(response.data._id); // Aquí se guarda solo el ID del usuario
-        console.log('ID del usuario:', response.data._id);
-      } catch (error) {
-        console.error('Error al obtener el ID del usuario:', error);
-      }
-    };
-    const obtenerMesa = async () => {
-      try {
-        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
-        const idMesa = response.data.cliente_info.id_mesa;
-        console.log('ID de la mesa:', idMesa);
-        const numero_mesa = await axios.get(`http://localhost:4000/api/mesa/${idMesa}`, { withCredentials: true });
-        console.log('Número de mesa:', numero_mesa.data.numero_mesa);
-        setMesa(numero_mesa.data.numero_mesa);
-      } catch (error) {
-        console.error('Error al obtener la mesa:', error);
-      }
-    };
-    obtenerMesa();    
-    obtenerIdUsuario();
-    obtenerProductosCesta();
-  }, []);
-  
-  
+    obtenerDetallesProductos();
+  }, [productosComanda]);
+
   const atras = () => {
     history.push('/Comandas');
   };
 
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
-  
   return (
-    
-      <PedidoContainer>
-      <Encabezado>Pedido</Encabezado>
+    <PedidoContainer>
+      <Encabezado>Productos de la Comanda</Encabezado>
       <div>
-        {productosCesta.map((producto) => (
-          <ProductoItem key={producto._id}>
-            <ProductoImage src={`/images/${producto.producto.imagen}`} alt={producto.producto.nombre} />
-            <DetallesProducto>
-              <NombreProducto>{producto.producto.nombre}</NombreProducto>
-              <PrecioProducto>Precio: {producto.producto.precio} €</PrecioProducto>
-              <CantidadProducto>Cantidad: {producto.cantidad}</CantidadProducto>
-            </DetallesProducto>
+        {detallesProductos.map((producto, index) => (
+          <ProductoItem key={index}>
+            <ProductoImage src={`/images/${producto.imagen}`} alt={producto.nombre} />
+            <DetallesProductoContainer>
+              <NombreProducto>{producto.nombre}</NombreProducto>
+              <PrecioProducto>Precio: {producto.precio} €</PrecioProducto>
+              <CantidadProducto>Cantidad: {productosComanda[index].cantidad}</CantidadProducto>
+            </DetallesProductoContainer>
           </ProductoItem>
         ))}
       </div>
-      <PedidoCard>     
-        <BotonContainer>
-          <Boton onClick={atras}>atras</Boton>
-        </BotonContainer>
-      </PedidoCard>
+      {/* El botón "Atrás" se encuentra fuera del contenedor de tarjeta */}
+      <BotonContainer>
+        <Boton onClick={atras}>Atrás</Boton>
+      </BotonContainer>
     </PedidoContainer>
-       
   );
 };
 

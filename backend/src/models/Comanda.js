@@ -5,7 +5,7 @@ const comandaSchema = new Schema({
     productos: [
         {
             producto: { type: Schema.Types.ObjectId, ref: 'Producto' },
-            cantidad: Number
+            cantidad: Number,
         }
     ],
     mesa: Number,
