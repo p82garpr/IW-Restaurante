@@ -6,7 +6,7 @@ Este es un proyecto de una aplicación web para menús de restaurantes que permi
 
 - Node.js
 - npm (Node Package Manager)
-- MongoDB (para la base de datos)
+- MongoDB (para la base de datos, aunque ya está linkada la nuestra de Mongo Atlass)
 
 ### Instalación
 
@@ -40,6 +40,6 @@ Este es un proyecto de una aplicación web para menús de restaurantes que permi
 7. Inicia la aplicación del frontend:
     ```bash
     npm start
-    
+
 La aplicación del frontend debería estar ejecutándose en http://localhost:3000.
 
