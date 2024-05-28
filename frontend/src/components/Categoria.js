@@ -140,7 +140,7 @@ const Producto = ({ tipo, actualizarCesta, abrirPanel }) => {
           <ProductoCardBody>
             <ProductoTitle>{producto.nombre}</ProductoTitle>
             <ProductoPrice>{producto.precio} €</ProductoPrice>
-            {usuario ? (
+            {usuario && usuario.privilegio===0 ? (
               <ProductoButton onClick={() => agregarProductoACesta(producto._id)}>Agregar al carrito</ProductoButton>
             ) : (
               <Link to="/IniciarSesion" style={{ textDecoration: 'none' }}>
