@@ -37,6 +37,6 @@ Este es un proyecto de una aplicación web para menús de restaurantes que permi
     ```bash
     npm install
 
-Inicia la aplicación del frontend:
+7. Inicia la aplicación del frontend:
     ```bash
     npm start
