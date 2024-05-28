@@ -1,20 +1,10 @@
-
-const cestaCtrl = {}
-
-const Producto = require('../models/Producto')
-const Usuario = require('../models/Usuario');
-
-
+const Producto = require('../models/Producto');
+const cestaCtrl = {};
 
 cestaCtrl.addProductoCesta = async (req, res) => {
     const { productoId, cantidad } = req.body;
 
     try {
-        if (req.session && req.session.usuarioId) {
-            
-        } else {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
         // Verificar si el producto existe
         const producto = await Producto.findById(productoId);
         if (!producto) {
@@ -39,17 +29,10 @@ cestaCtrl.addProductoCesta = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
-
+};
 
 cestaCtrl.getCesta = async (req, res) => {
     try {
-        if (req.session && req.session.usuarioId) {
-            const usuario = await Usuario.findById(req.session.usuarioId);
-           
-        } else {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
         const cesta = req.session.cesta || [];
         const productosEnCesta = [];
 
@@ -65,20 +48,13 @@ cestaCtrl.getCesta = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
-
+};
 
 cestaCtrl.updateCesta = async (req, res) => {
-    const productoId= req.params.id;    
+    const productoId = req.params.id;
     const { cantidad } = req.body;
 
     try {
-        if (req.session && req.session.usuarioId) {
-            const usuario = await Usuario.findById(req.session.usuarioId);
-            
-        } else {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
         // Recuperar la cesta de compras del usuario desde la sesión
         const cesta = req.session.cesta || [];
 
@@ -99,55 +75,28 @@ cestaCtrl.updateCesta = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
-
+};
 
 cestaCtrl.deleteProductoCesta = async (req, res) => {
-    const productoId= req.params.id;
+    const productoId = req.params.id;
     try {
-        if (req.session && req.session.usuarioId) {
-            const usuario = await Usuario.findById(req.session.usuarioId);
-            
-        } else {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
         // Recuperar la cesta de compras del usuario desde la sesión
         let cesta = req.session.cesta || [];
 
         // Crear una nueva lista de productos en la cesta excluyendo el producto a eliminar
-        const nuevaCesta = [];
-        for (const item of cesta) {
-            // Verificar si item y item.productoId son definidos antes de acceder a sus propiedades
-            if (item && item.productoId) {
-            
-                // Convertir el productoId del elemento en la cesta a string para la comparación
-                const stringItemId = item.productoId.toString();
-                // Convertir el productoId de la solicitud a string para la comparación
-                const stringProductoId = productoId.toString();
-                if (stringItemId !== stringProductoId) {
-                    nuevaCesta.push(item);
-                }
-            
-            }
-        }
+        const nuevaCesta = cesta.filter(item => item.productoId.toString() !== productoId.toString());
 
         // Actualizar la cesta en la sesión con la nueva lista
         req.session.cesta = nuevaCesta;
 
         res.status(200).json({ message: 'Producto eliminado de la cesta' });
     } catch (error) {
-        res.status(500);
+        res.status(500).json({ message: error.message });
     }
-}
+};
 
 cestaCtrl.deleteCesta = async (req, res) => {
     try {
-        if (req.session && req.session.usuarioId) {
-            const usuario = await Usuario.findById(req.session.usuarioId);
-            
-        } else {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
         // Vaciar la cesta en la sesión
         req.session.cesta = [];
 
@@ -157,9 +106,4 @@ cestaCtrl.deleteCesta = async (req, res) => {
     }
 };
 
-
-
-
-
-
-module.exports = cestaCtrl
+module.exports = cestaCtrl;

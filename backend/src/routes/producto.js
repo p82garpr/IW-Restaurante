@@ -1,20 +1,17 @@
-const {Router} = require('express')
-const router = Router()
+const { Router } = require('express');
+const router = Router();
 
-const {createProd, getProd, getProducto, deleteProd, updateProd}= require('../controller/producto.controller')
+const { createProd, getProd, getProducto, deleteProd, updateProd } = require('../controller/producto.controller');
+const { isAuthenticated, hasPrivilege } = require('../middleware/authMiddleware');
 
-
-
-router.post('/', createProd);
+router.post('/', isAuthenticated, hasPrivilege(1), createProd);
 
 router.route('/:id')
-    .get(getProducto)
-    .delete(deleteProd)
-    .put(updateProd);
-
+    .get(isAuthenticated, getProducto)
+    .delete(isAuthenticated, hasPrivilege(1), deleteProd)
+    .put(isAuthenticated, hasPrivilege(1), updateProd);
 
 // Ruta para obtener todos los productos o filtrar por categoría
-router.get('/categoria/:categoria?', getProd);
-//consulta para esta api: http://localhost:4000/api/productos/categoria/entrante
+router.get('/categoria/:categoria?', isAuthenticated, getProd);
 
 module.exports = router;

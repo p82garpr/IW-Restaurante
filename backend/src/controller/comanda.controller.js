@@ -1,18 +1,8 @@
 const Comanda = require('../models/Comanda');
-const Usuario = require('../models/Usuario');
-
 const comandaCtrl = {};
 
 comandaCtrl.getComandas = async (req, res) => {
     try {
-        if (req.session && req.session.usuarioId) {
-            const usuario = await Usuario.findById(req.session.usuarioId);
-            if (!usuario || usuario.privilegio != 1) {
-                return res.status(403).json({ message: 'Forbidden: Insufficient privilege' });
-            }
-        } else {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
         let comandas;
         if (req.params.estado) {
             // Filtrar comandas por estado
@@ -28,15 +18,9 @@ comandaCtrl.getComandas = async (req, res) => {
 };
 
 comandaCtrl.createComanda = async (req, res) => {
-    const { id_usuario, productos, hora, fecha, comentarios, precio_total,mesa, estado } = req.body;
+    const { id_usuario, productos, hora, fecha, comentarios, precio_total, mesa, estado } = req.body;
 
     try {
-        if (req.session && req.session.usuarioId) {
-            const usuario = await Usuario.findById(req.session.usuarioId);
-            
-        } else {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
         const nuevaComanda = new Comanda({
             id_usuario,
             productos,
@@ -54,14 +38,8 @@ comandaCtrl.createComanda = async (req, res) => {
     }
 };
 
-comandaCtrl.getComanda= async (req, res) => {
+comandaCtrl.getComanda = async (req, res) => {
     try {
-        if (req.session && req.session.usuarioId) {
-            const usuario = await Usuario.findById(req.session.usuarioId);
-            
-        } else {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
         const comanda = await Comanda.findById(req.params.id);
         if (!comanda) {
             return res.status(404).json({ message: 'Comanda no encontrada' });
@@ -76,12 +54,6 @@ comandaCtrl.updateComanda = async (req, res) => {
     const { id_usuario, productos, hora, fecha, comentarios, precio_total, estado, mesa } = req.body;
 
     try {
-        if (req.session && req.session.usuarioId) {
-            const usuario = await Usuario.findById(req.session.usuarioId);
-           
-        } else {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
         await Comanda.findByIdAndUpdate(req.params.id, {
             id_usuario,
             productos,
@@ -100,14 +72,6 @@ comandaCtrl.updateComanda = async (req, res) => {
 
 comandaCtrl.deleteComanda = async (req, res) => {
     try {
-        if (req.session && req.session.usuarioId) {
-            const usuario = await Usuario.findById(req.session.usuarioId);
-            if (!usuario || usuario.privilegio != 1) {
-                return res.status(403).json({ message: 'Forbidden: Insufficient privilege' });
-            }
-        } else {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
         await Comanda.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'Comanda eliminada correctamente' });
     } catch (error) {

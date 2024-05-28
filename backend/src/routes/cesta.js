@@ -1,17 +1,16 @@
-const {Router} = require('express')
-const router = Router()
+const { Router } = require('express');
+const router = Router();
 
-const {addProductoCesta, getCesta, updateCesta, deleteProductoCesta,deleteCesta}= require('../controller/cesta.controller')
+const { addProductoCesta, getCesta, updateCesta, deleteProductoCesta, deleteCesta } = require('../controller/cesta.controller');
+const { isAuthenticated } = require('../middleware/authMiddleware');
 
 router.route('/')
-
-    .post(addProductoCesta)
-    .get(getCesta)
-    .delete(deleteCesta)
+    .post(isAuthenticated, addProductoCesta)
+    .get(isAuthenticated, getCesta)
+    .delete(isAuthenticated, deleteCesta);
 
 router.route('/:id')
-    .put(updateCesta)
-    .delete(deleteProductoCesta)
-
+    .put(isAuthenticated, updateCesta)
+    .delete(isAuthenticated, deleteProductoCesta);
 
 module.exports = router;
