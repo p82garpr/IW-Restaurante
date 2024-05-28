@@ -114,7 +114,7 @@ const BotonComprobar = styled(Boton)`
   flex: 0 0 25%;
 `;
 
-const Pedido = () => {
+const ProductosComandas= () => {
   const [productosCesta, setProductosCesta] = useState([]);
   const [total, setTotal] = useState(0);
   const [codigoDescuento, setCodigoDescuento] = useState('');

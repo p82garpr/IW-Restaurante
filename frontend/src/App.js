@@ -46,7 +46,7 @@ const App = () => {
           <Route path="/Comandas" component={Comandas} />
           <Route path="/Mesas" component={Mesas} />
           <Route path="/HistoricoComandas" component={HistoricoComandas} />
-          <Route path="/ProductosComandas" component={ProductoComandas} />
+          <Route path="/ProductosComandas" component={ProductosComandas} />
 
         </Switch>
         
