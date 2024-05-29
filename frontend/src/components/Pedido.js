@@ -121,8 +121,6 @@ const Pedido = () => {
   const [usuario2, setUsuario2] = useState('');
   const [usuario, setUsuario] = useState('');
   const [mesa, setMesa] = useState('');
-  
-
 
   useEffect(() => {
     const obtenerProductosCesta = async () => {
@@ -137,7 +135,6 @@ const Pedido = () => {
     const obtenerUsuarioActual = async () => {
       try {
         const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
-        //console.log('Usuario:', response.data);
         setUsuario2(response.data);
       } catch (error) {
         console.error('Error al obtener información del usuario:', error);
@@ -149,7 +146,6 @@ const Pedido = () => {
       try {
         const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
         setUsuario(response.data._id); // Aquí se guarda solo el ID del usuario
-        //console.log('ID del usuario:', response.data._id);
       } catch (error) {
         console.error('Error al obtener el ID del usuario:', error);
       }
@@ -158,19 +154,17 @@ const Pedido = () => {
       try {
         const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
         const idMesa = response.data.cliente_info.id_mesa;
-        //console.log('ID de la mesa:', idMesa);
         const numero_mesa = await axios.get(`http://localhost:4000/api/mesa/${idMesa}`, { withCredentials: true });
-        //console.log('Número de mesa:', numero_mesa.data.numero_mesa);
         setMesa(numero_mesa.data.numero_mesa);
       } catch (error) {
         console.error('Error al obtener la mesa:', error);
       }
     };
-    obtenerMesa();    
+    obtenerMesa();
     obtenerIdUsuario();
     obtenerProductosCesta();
   }, []);
-  
+
   const calcularTotal = (productos) => {
     const totalCalculado = productos.reduce((acc, producto) => acc + producto.producto.precio * producto.cantidad, 0);
     setTotal(totalCalculado.toFixed(2));
@@ -181,16 +175,22 @@ const Pedido = () => {
     const dia = ahora.getDate().toString().padStart(2, '0');
     const mes = (ahora.getMonth() + 1).toString().padStart(2, '0'); // Se suma 1 porque en JavaScript los meses van de 0 a 11
     const año = ahora.getFullYear();
-  
+
     return `${año}-${mes}-${dia}`;
   };
 
   const finalizarPedido = async () => {
+    const totalNumerico = parseFloat(total);
+    if (totalNumerico === 0) {
+      alert('No se pueden realizar pedidos con un total de 0 €.');
+      return;
+    }
+
     try {
       const fechaActual = obtenerFechaActual();
       const comentarios = "No hay ningún comentario";
-      let precio_total = total; // Suponiendo que esta función devuelve el precio total correctamente
-      precio_total = parseFloat(precio_total).toFixed(2); // Suponiendo que esta función devuelve el precio total correctamente
+      let precio_total = totalNumerico.toFixed(2);
+
       const response = await axios.post('http://localhost:4000/api/comandas', {
         fecha: fechaActual,
         comentarios: comentarios,
@@ -201,28 +201,22 @@ const Pedido = () => {
           producto: producto.producto._id,
           cantidad: producto.cantidad
         })),
-        
       }, { withCredentials: true });
-  
-      //console.log("Respuesta de la API:", response.data); // Agrega este console.log
-  
+
       if (response.status === 201) {
-        //console.log('Comanda creada correctamente:', response.data.comanda);
-        const responseBorrarCesta= await axios.delete('http://localhost:4000/api/cesta', { withCredentials: true });
-        if(responseBorrarCesta.status === 200){
-          //console.log('Cesta borrada correctamente');
+        const responseBorrarCesta = await axios.delete('http://localhost:4000/api/cesta', { withCredentials: true });
+        if (responseBorrarCesta.status === 200) {
           alert('Pedido finalizado correctamente');
-        }else{
-          //console.error('Error al borrar la cesta:', responseBorrarCesta.data.message);
+        } else {
+          console.error('Error al borrar la cesta:', responseBorrarCesta.data.message);
         }
         volverACategoria();
       } else {
-        //console.error('Error al crear la comanda:', response.data.message);
+        console.error('Error al crear la comanda:', response.data.message);
       }
     } catch (error) {
       console.error('Error al finalizar el pedido:', error.message);
     }
-    
   };
 
   const volverACategoria = () => {
@@ -235,45 +229,43 @@ const Pedido = () => {
 
   const handleComprobarCodigo = () => {
     // Lógica para comprobar el código de descuento
-    //console.log('Código de descuento:', codigoDescuento);
+    console.log('Código de descuento:', codigoDescuento);
   };
 
-  
   return (
-    usuario2 && usuario2.privilegio===0 ? (
+    usuario2 && usuario2.privilegio === 0 ? (
       <PedidoContainer>
-      <Encabezado>Pedido</Encabezado>
-      <div>
-        {productosCesta.map((producto) => (
-          <ProductoItem key={producto._id}>
-            <ProductoImage src={`/images/${producto.producto.imagen}`} alt={producto.producto.nombre} />
-            <DetallesProducto>
-              <NombreProducto>{producto.producto.nombre}</NombreProducto>
-              <PrecioProducto>Precio: {producto.producto.precio} €</PrecioProducto>
-              <CantidadProducto>Cantidad: {producto.cantidad}</CantidadProducto>
-            </DetallesProducto>
-          </ProductoItem>
-        ))}
-      </div>
-      <PedidoCard>
-        <Subtitulo>Cuenta</Subtitulo>
-        <TotalText>Total: {total} €</TotalText>
-        <InputContainer>
-          <InputCodigo type="text" placeholder="Introduce código de descuento" value={codigoDescuento} onChange={handleCodigoChange} />
-          <BotonComprobar onClick={handleComprobarCodigo}>Comprobar</BotonComprobar>
-        </InputContainer>
-        <TotalText>Descuento: 0 €</TotalText>
-        <TotalText>Precio Final: {total} €</TotalText>
-        
-        <BotonContainer>
-          <Boton onClick={finalizarPedido}>Finalizar Pedido</Boton>
-          <Boton onClick={volverACategoria}>Seguir Comprando</Boton>
-        </BotonContainer>
-      </PedidoCard>
-    </PedidoContainer>
+        <Encabezado>Pedido</Encabezado>
+        <div>
+          {productosCesta.map((producto) => (
+            <ProductoItem key={producto._id}>
+              <ProductoImage src={`/images/${producto.producto.imagen}`} alt={producto.producto.nombre} />
+              <DetallesProducto>
+                <NombreProducto>{producto.producto.nombre}</NombreProducto>
+                <PrecioProducto>Precio: {producto.producto.precio} €</PrecioProducto>
+                <CantidadProducto>Cantidad: {producto.cantidad}</CantidadProducto>
+              </DetallesProducto>
+            </ProductoItem>
+          ))}
+        </div>
+        <PedidoCard>
+          <Subtitulo>Cuenta</Subtitulo>
+          <TotalText>Total: {total} €</TotalText>
+          <InputContainer>
+            <InputCodigo type="text" placeholder="Introduce código de descuento" value={codigoDescuento} onChange={handleCodigoChange} />
+            <BotonComprobar onClick={handleComprobarCodigo}>Comprobar</BotonComprobar>
+          </InputContainer>
+          <TotalText>Descuento: 0 €</TotalText>
+          <TotalText>Precio Final: {total} €</TotalText>
+          <BotonContainer>
+            <Boton onClick={finalizarPedido}>Finalizar Pedido</Boton>
+            <Boton onClick={volverACategoria}>Seguir Comprando</Boton>
+          </BotonContainer>
+        </PedidoCard>
+      </PedidoContainer>
     ) : (
-      <p>No autorizado</p> //HAY QUE METER AQUI UNA REDIRECCION A ERROR 403
-    )    
+      <p>No autorizado</p> // HAY QUE METER AQUI UNA REDIRECCION A ERROR 403
+    )
   );
 };
 
