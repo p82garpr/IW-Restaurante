@@ -40,7 +40,7 @@ const MesaItem = styled.div`
 const DetallesMesa = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 20px;
+  align-items: center;
 `;
 
 const NumeroMesa = styled.h3`
@@ -60,14 +60,28 @@ const EstadoMesa = styled.p`
 
 const QrImage = styled.img`
   margin-top: 10px;
-  width: 100px;
-  height: 100px;
+  width: 170px;
+  height: 170px;
+`;
+
+const BotonesContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: center;
+
+    button {
+      margin-bottom: 10px;
+      width: 80%;
+    }
+  }
 `;
 
 const BotonOcuparMesa = styled.button`
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
   padding: 10px 15px;
   background-color: #007bff;
   color: #fff;
@@ -79,6 +93,39 @@ const BotonOcuparMesa = styled.button`
 
   &:hover {
     background-color: #0056b3;
+  }
+`;
+
+const BotonEliminarMesa = styled.button`
+  padding: 10px 15px;
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #b30000;
+  }
+`;
+
+const BotonDescargarQR = styled.a`
+  padding: 10px 15px;
+  background-color: #28a745;
+  color: #fff;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  text-decoration: none;
+  display: inline-block;
+
+  &:hover {
+    background-color: #218838;
   }
 `;
 
@@ -122,6 +169,17 @@ const Mesas = () => {
     }
   };
 
+  const eliminarMesa = async (id) => {
+    try {
+      await axios.delete(`http://localhost:4000/api/mesa/${id}`);
+      // Actualizar las mesas después de eliminar la mesa
+      const response = await axios.get('http://localhost:4000/api/mesa', { withCredentials: true });
+      setMesas(response.data);
+    } catch (error) {
+      console.error('Error al eliminar la mesa:', error);
+    }
+  };
+
   return (
     usuario && usuario.privilegio === 1 ? (
       <>
@@ -137,17 +195,21 @@ const Mesas = () => {
                   <CapacidadMesa>Capacidad: {mesa.capacidad}</CapacidadMesa>
                   <EstadoMesa>Estado: {mesa.estado}</EstadoMesa>
                   <QrImage src={mesa.QR} alt={`QR de la mesa ${mesa.numero_mesa}`} />
+                  <BotonDescargarQR href={mesa.QR} download={`QR_Mesa_${mesa.numero_mesa}.png`}>Descargar QR</BotonDescargarQR>
                 </DetallesMesa>
-                <BotonOcuparMesa onClick={() => alternarDisponibilidadMesa(mesa._id, mesa.estado)}>
-                  {mesa.estado === 'Libre' ? 'Ocupar Mesa' : 'Liberar Mesa'}
-                </BotonOcuparMesa>
+                <BotonesContainer>
+                  <BotonOcuparMesa onClick={() => alternarDisponibilidadMesa(mesa._id, mesa.estado)}>
+                    {mesa.estado === 'Libre' ? 'Ocupar Mesa' : 'Liberar Mesa'}
+                  </BotonOcuparMesa>
+                  <BotonEliminarMesa onClick={() => eliminarMesa(mesa._id)}>Eliminar Mesa</BotonEliminarMesa>
+                </BotonesContainer>
               </MesaItem>
             ))
           )}
         </MesasContainer>
       </>
     ) : (
-      <p>No autorizado</p> //HAY QUE METER AQUI UNA REDIRECCION A ERROR 403
+      <p>No autorizado</p> // HAY QUE METER AQUI UNA REDIRECCION A ERROR 403
     )
   );
 };
