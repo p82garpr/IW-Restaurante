@@ -81,7 +81,7 @@ const HistoricoUsuario = () => {
     const obtenerUsuario = async () => {
       try {
         const usuarioResponse = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
-        console.log('Nombre del usuario:', usuarioResponse.data._id);
+        //console.log('Nombre del usuario:', usuarioResponse.data._id);
         setIdUsuario(usuarioResponse.data._id);
       } catch (error) {
         console.error('Error al obtener los datos del usuario:', error);
@@ -97,7 +97,7 @@ const HistoricoUsuario = () => {
         if (idusuario) {
           const comandasResponse = await axios.get('http://localhost:4000/api/comandas', { withCredentials: true });
           const comandasFiltradas = comandasResponse.data.filter((comanda) => comanda.id_usuario === idusuario);
-          console.log('Comandas:', comandasFiltradas);
+          //console.log('Comandas:', comandasFiltradas);
           setComandas(comandasFiltradas);
         }
       } catch (error) {

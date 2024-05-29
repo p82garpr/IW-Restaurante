@@ -96,7 +96,7 @@ const ProductosComandas = () => {
     const obtenerUsuario = async () => {
       try {
         const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
-        console.log('Datos del usuario:', response.data.privilegio);
+        //console.log('Datos del usuario:', response.data.privilegio);
         setUserPrivilegios(response.data.privilegio);
       } catch (error) {
         console.error('Error al obtener los datos del usuario:', error);

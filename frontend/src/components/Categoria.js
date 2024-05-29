@@ -123,8 +123,8 @@ const Producto = ({ tipo, actualizarCesta, abrirPanel }) => {
   const agregarProductoACesta = async (productoId) => {
     try {
       await axios.post('http://localhost:4000/api/cesta', { productoId, cantidad: 1 });
-      actualizarCesta(); // Actualiza la cesta después de agregar un producto
-      abrirPanel(); // Abre el SidePanel después de agregar un producto
+      //actualizarCesta(); // Actualiza la cesta después de agregar un producto
+      //abrirPanel(); // Abre el SidePanel después de agregar un producto
     } catch (error) {
       console.error('Error al agregar el producto a la cesta:', error);
     }

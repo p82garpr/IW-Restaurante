@@ -1,12 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { Link } from 'react-router-dom'; // Asumiendo que usas React Router
 
 const Encabezado = styled.h1`
   color: #333;
   font-size: 2rem;
   margin-bottom: 20px;
   text-align: center;
+`;
+
+const BotonCrearMesaContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+`;
+
+const BotonCrearMesa = styled(Link)`
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: #fff;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-block;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+
+  @media (max-width: 480px) {
+    width: 80%;
+    text-align: center;
+  }
 `;
 
 const MesasContainer = styled.div`
@@ -184,6 +213,9 @@ const Mesas = () => {
     usuario && usuario.privilegio === 1 ? (
       <>
         <Encabezado>Listado de Mesas</Encabezado>
+        <BotonCrearMesaContainer>
+          <BotonCrearMesa to="/CrearMesa">Crear Nueva Mesa</BotonCrearMesa>
+        </BotonCrearMesaContainer>
         <MesasContainer>
           {mesas.length === 0 ? (
             <p>No hay mesas registradas</p>

@@ -149,7 +149,7 @@ const Pedido = () => {
       try {
         const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
         setUsuario(response.data._id); // Aquí se guarda solo el ID del usuario
-        console.log('ID del usuario:', response.data._id);
+        //console.log('ID del usuario:', response.data._id);
       } catch (error) {
         console.error('Error al obtener el ID del usuario:', error);
       }
@@ -158,9 +158,9 @@ const Pedido = () => {
       try {
         const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
         const idMesa = response.data.cliente_info.id_mesa;
-        console.log('ID de la mesa:', idMesa);
+        //console.log('ID de la mesa:', idMesa);
         const numero_mesa = await axios.get(`http://localhost:4000/api/mesa/${idMesa}`, { withCredentials: true });
-        console.log('Número de mesa:', numero_mesa.data.numero_mesa);
+        //console.log('Número de mesa:', numero_mesa.data.numero_mesa);
         setMesa(numero_mesa.data.numero_mesa);
       } catch (error) {
         console.error('Error al obtener la mesa:', error);
@@ -204,10 +204,10 @@ const Pedido = () => {
         
       }, { withCredentials: true });
   
-      console.log("Respuesta de la API:", response.data); // Agrega este console.log
+      //console.log("Respuesta de la API:", response.data); // Agrega este console.log
   
       if (response.status === 201) {
-        console.log('Comanda creada correctamente:', response.data.comanda);
+        //console.log('Comanda creada correctamente:', response.data.comanda);
         const responseBorrarCesta= await axios.delete('http://localhost:4000/api/cesta', { withCredentials: true });
         if(responseBorrarCesta.status === 200){
           //console.log('Cesta borrada correctamente');
@@ -235,7 +235,7 @@ const Pedido = () => {
 
   const handleComprobarCodigo = () => {
     // Lógica para comprobar el código de descuento
-    console.log('Código de descuento:', codigoDescuento);
+    //console.log('Código de descuento:', codigoDescuento);
   };
 
   

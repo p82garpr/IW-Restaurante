@@ -105,7 +105,7 @@ const IniciarSesion = () => {
     var response;
     e.preventDefault();
     try {
-      console.log('Enviando credenciales:', credenciales);
+      //console.log('Enviando credenciales:', credenciales);
 
       // Construir el cuerpo de la solicitud con las credenciales y el ID de la mesa
       const requestBody = {
@@ -117,12 +117,12 @@ const IniciarSesion = () => {
       // Enviar solicitud POST para autenticación
       response = await axios.post('http://localhost:4000/api/usuarios/auth/login', requestBody, { withCredentials: true });
       
-      console.log('Respuesta de autenticación:', response);
+      //console.log('Respuesta de autenticación:', response);
       window.location.href = '/';
       
       
     } catch (error) {
-      console.log(error.response.status);
+      //console.log(error.response.status);
       if (error.response.status === 403){
         alert("Debes escanear un código QR para iniciar sesión")
         //console.log("Debes escanear un código QR para iniciar sesión")
