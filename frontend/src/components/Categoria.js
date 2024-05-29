@@ -28,6 +28,8 @@ const ProductoCard = styled(Card)`
   margin: 20px;
   animation: ${slideUp} 0.5s ease-in-out;
   transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
 
   &:hover {
     transform: scale(1.05);
@@ -75,7 +77,7 @@ const ProductoCardBody = styled(CardBody)`
   display: flex;
   flex-direction: column;
   justify-content: center; /* Centra verticalmente los elementos hijos */
-  height: 100%;
+  flex-grow: 1; /* Asegura que el cuerpo de la tarjeta crezca para llenar el espacio disponible */
 `;
 
 const DetallesButton = styled(Button)`
