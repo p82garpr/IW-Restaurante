@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
 const ComandasContainer = styled.div`
   padding: 20px;
@@ -79,6 +80,7 @@ const Encabezado = styled.h1`
 const HistoricoComandas = () => {
   const [comandas, setComandas] = useState([]);
   const [nombreUsuario, setNombreUsuario] = useState('');
+  const history = useHistory();
 
   useEffect(() => {
     const obtenerComandas = async () => {
@@ -95,9 +97,9 @@ const HistoricoComandas = () => {
         //buscar el nombre del usuario con id de sesion en la comanda
         const response = await axios.get('http://localhost:4000/api/comandas', { withCredentials: true });
         const idUsuario = response.data[0].id_usuario;
-        console.log('ID del usuario:', idUsuario);
+        //console.log('ID del usuario:', idUsuario);
         const responseUsuario = await axios.get(`http://localhost:4000/api/usuarios/${idUsuario}`, { withCredentials: true });
-        console.log('Nombre del usuario:', responseUsuario.data.nombre);
+        //console.log('Nombre del usuario:', responseUsuario.data.nombre);
         setNombreUsuario(responseUsuario.data.nombre);
       }
       catch (error) {
@@ -109,7 +111,9 @@ const HistoricoComandas = () => {
 
     obtenerComandas();
   }, []);
-
+  const verProductosComanda = (idComanda) => {
+    history.push(`/ProductosComandas?idComanda=${idComanda}`);
+  };
   return (
     <ComandasContainer>
       <Encabezado>Historico de Comandas</Encabezado>
@@ -126,7 +130,7 @@ const HistoricoComandas = () => {
               <PrecioProducto>Total: {comanda.precio_total} €</PrecioProducto>
             </DetallesComanda>
             <BotonesContainer>
-              <Boton onClick={() => console.log(`Ver productos de la comanda ${comanda._id}`)}>Productos Comanda</Boton>
+              <Boton onClick={() => verProductosComanda(comanda._id)}>Productos Comanda</Boton>
             </BotonesContainer>
           </ComandaItem>
         ))

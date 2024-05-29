@@ -53,6 +53,7 @@ const App = () => {
           <Route path="/HistoricoUsuario" component={HistoricoUsuario} />
 
           <Route path="/CrearMesa" component={CrearMesa} />
+          
 
         </Switch>
         
