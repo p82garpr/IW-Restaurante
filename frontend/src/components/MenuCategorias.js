@@ -76,7 +76,7 @@ const Categoria = ({ cat }) => {
       <Title>Menú</Title>
       <CardContainer>
         {categorias.map(category => (
-          <Link key={category.id} to={`/${mapCategoryName[category.nombre]}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Link key={category._id} to={`/${mapCategoryName[category.nombre]}`} style={{ textDecoration: 'none', color: 'inherit' }}>
             <CategoryCard>
               <CardImage src={`/images/${category.imagen}`} alt={mapCategoryName[category.nombre]} />
               <CategoryTitle>{mapCategoryName[category.nombre]}</CategoryTitle>

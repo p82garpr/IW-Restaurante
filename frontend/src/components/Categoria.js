@@ -1,4 +1,3 @@
-// Producto.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardImg, CardBody, CardTitle, CardText, Button } from 'reactstrap';
@@ -50,7 +49,6 @@ const ProductoTitle = styled(CardTitle)`
   font-weight: bold;
   text-align: center;
 `;
-
 
 const ProductoPrice = styled(CardText)`
   color: green;
@@ -140,7 +138,7 @@ const Producto = ({ tipo, actualizarCesta, abrirPanel }) => {
           <ProductoCardBody>
             <ProductoTitle>{producto.nombre}</ProductoTitle>
             <ProductoPrice>{producto.precio} €</ProductoPrice>
-            {usuario && usuario.privilegio===0 ? (
+            {usuario && usuario.privilegio === 0 ? (
               <ProductoButton onClick={() => agregarProductoACesta(producto._id)}>Agregar al carrito</ProductoButton>
             ) : (
               <Link to="/IniciarSesion" style={{ textDecoration: 'none' }}>

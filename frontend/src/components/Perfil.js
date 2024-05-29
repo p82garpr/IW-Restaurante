@@ -76,7 +76,7 @@ const Perfil = () => {
         )}
         <ButtonContainer>
           <Link to="/EditarPerfil"><StyledButton>Editar Perfil</StyledButton></Link>
-          <Link to="/Historial"><StyledButton>Ver Historial</StyledButton></Link>
+          <Link to="/HistoricoUsuario"><StyledButton>Ver Historial</StyledButton></Link>
         </ButtonContainer>
       </PerfilBox>):( 
         <p>Debes iniciar sesión para ver tu perfil</p>

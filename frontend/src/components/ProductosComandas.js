@@ -87,11 +87,22 @@ const ProductosComandas = () => {
   const [detallesProductos, setDetallesProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [productosComanda, setProductosComanda] = useState([]);
+  const [userPrivilegios, setUserPrivilegios] = useState(null); // Estado para almacenar los privilegios del usuario
   const history = useHistory();
   const location = useLocation();
   const idComanda = new URLSearchParams(location.search).get('idComanda');
 
   useEffect(() => {
+    const obtenerUsuario = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/usuarios/auth/sesion', { withCredentials: true });
+        console.log('Datos del usuario:', response.data.privilegio);
+        setUserPrivilegios(response.data.privilegio);
+      } catch (error) {
+        console.error('Error al obtener los datos del usuario:', error);
+      }
+    };
+
     const obtenerProductosCesta = async () => {
       try {
         const response = await axios.get(`http://localhost:4000/api/comandas/${idComanda}`, { withCredentials: true });
@@ -100,16 +111,17 @@ const ProductosComandas = () => {
         console.error('Error al obtener los productos de la comanda:', error);
       }
     };
-  
+
+    obtenerUsuario();
     if (idComanda) {
       obtenerProductosCesta();
     }
   }, [idComanda]);
-  
+
   useEffect(() => {
     const obtenerDetallesProductos = async () => {
       try {
-        var detalles = [];
+        const detalles = [];
         if (productosComanda.length > 0) {
           for (let i = 0; i < productosComanda.length; i++) {
             const response = await axios.get(`http://localhost:4000/api/productos/${productosComanda[i].producto}`, { withCredentials: true });
@@ -127,7 +139,11 @@ const ProductosComandas = () => {
   }, [productosComanda]);
 
   const atras = () => {
-    history.push('/Comandas');
+    if (userPrivilegios === 0) {
+      history.push('/HistoricoUsuario');
+    } else {
+      history.push('/Comandas');
+    }
   };
 
   if (loading) {

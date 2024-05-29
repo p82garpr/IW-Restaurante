@@ -15,6 +15,7 @@ import Mesas from './components/Mesas';
 import Pedido from './components/Pedido';
 import HistoricoComandas from './components/HistoricoComandas';
 import ProductosComandas from './components/ProductosComandas';
+import HistoricoUsuario from './components/HistoricoUsuario';
 
 import axios from 'axios';
 axios.defaults.withCredentials = true;
@@ -47,6 +48,7 @@ const App = () => {
           <Route path="/Mesas" component={Mesas} />
           <Route path="/HistoricoComandas" component={HistoricoComandas} />
           <Route path="/ProductosComandas" component={ProductosComandas} />
+          <Route path="/HistoricoUsuario" component={HistoricoUsuario} />
 
         </Switch>
         
