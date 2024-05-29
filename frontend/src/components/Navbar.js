@@ -121,7 +121,7 @@ function NavbarComponent(props) {
                 <DropdownToggle nav caret>
                   Categorias
                 </DropdownToggle>
-                <DropdownMenu right>
+                <DropdownMenu end>
                   <DropdownItem href="/Entrantes">Entrantes</DropdownItem>
                   <DropdownItem href="/Principales">Principales</DropdownItem>
                   <DropdownItem href="/Bebidas">Bebidas</DropdownItem>
@@ -161,7 +161,6 @@ function NavbarComponent(props) {
           </Nav>
         </Collapse>
       </RSNavbar>
-      {/* Mover la cesta fuera del Nav */}
       {inicio !== null && privilegio === 0 && <Cesta />}
     </div>
   );

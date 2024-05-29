@@ -12,6 +12,6 @@ router.route('/:id')
     .put(isAuthenticated, hasPrivilege(1), updateProd);
 
 // Ruta para obtener todos los productos o filtrar por categoría
-router.get('/categoria/:categoria?', isAuthenticated, getProd);
+router.get('/categoria/:categoria?', getProd);
 
 module.exports = router;
