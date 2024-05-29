@@ -15,6 +15,9 @@ import Mesas from './components/Mesas';
 import Pedido from './components/Pedido';
 import HistoricoComandas from './components/HistoricoComandas';
 import ProductosComandas from './components/ProductosComandas';
+import HistoricoUsuario from './components/HistoricoUsuario';
+import CrearMesa from './components/CrearMesa';
+
 
 import axios from 'axios';
 axios.defaults.withCredentials = true;
