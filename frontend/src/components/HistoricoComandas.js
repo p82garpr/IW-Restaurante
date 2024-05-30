@@ -79,41 +79,39 @@ const Encabezado = styled.h1`
 
 const HistoricoComandas = () => {
   const [comandas, setComandas] = useState([]);
-  const [nombreUsuario, setNombreUsuario] = useState('');
+  const [nombresUsuarios, setNombresUsuarios] = useState({});
   const history = useHistory();
 
   useEffect(() => {
-    const obtenerComandas = async () => {
+    const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:4000/api/comandas', { withCredentials: true });
-        const comandasPorServir = response.data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-        setComandas(comandasPorServir);
+        const comandasData = response.data;
+        setComandas(comandasData);
+
+        // Fetch user names
+        const nombres = {};
+        await Promise.all(comandasData.map(async (comanda) => {
+          try {
+            const usuarioResponse = await axios.get(`http://localhost:4000/api/usuarios/${comanda.id_usuario}`, { withCredentials: true });
+            nombres[comanda.id_usuario] = usuarioResponse.data.nombre;
+          } catch (error) {
+            console.error('Error fetching user:', error);
+          }
+        }));
+        setNombresUsuarios(nombres);
       } catch (error) {
-        console.error('Error al obtener las comandas:', error);
-      }
-    };
-    const obtenerUsuario = async () => {
-      try {
-        //buscar el nombre del usuario con id de sesion en la comanda
-        const response = await axios.get('http://localhost:4000/api/comandas', { withCredentials: true });
-        const idUsuario = response.data[0].id_usuario;
-        //console.log('ID del usuario:', idUsuario);
-        const responseUsuario = await axios.get(`http://localhost:4000/api/usuarios/${idUsuario}`, { withCredentials: true });
-        //console.log('Nombre del usuario:', responseUsuario.data.nombre);
-        setNombreUsuario(responseUsuario.data.nombre);
-      }
-      catch (error) {
-        console.error('Error al obtener el nombre del usuario:', error);
+        console.error('Error fetching data:', error);
       }
     };
     
-    obtenerUsuario();
-
-    obtenerComandas();
+    fetchData();
   }, []);
+
   const verProductosComanda = (idComanda) => {
     history.push(`/ProductosComandas?idComanda=${idComanda}`);
   };
+
   return (
     <ComandasContainer>
       <Encabezado>Historico de Comandas</Encabezado>
@@ -124,7 +122,7 @@ const HistoricoComandas = () => {
           <ComandaItem key={comanda._id}>
             <DetallesComanda>
               <NombreProducto>Mesa: {comanda.mesa}</NombreProducto>
-              <NombreProducto>Cliente: {nombreUsuario}</NombreProducto>
+              <NombreProducto>Cliente: {nombresUsuarios[comanda.id_usuario]}</NombreProducto>
               <FechaComanda>Fecha: {new Date(comanda.fecha).toLocaleDateString()}</FechaComanda>
               <ComentariosComanda>Comentarios: {comanda.comentarios}</ComentariosComanda>
               <PrecioProducto>Total: {comanda.precio_total} €</PrecioProducto>
