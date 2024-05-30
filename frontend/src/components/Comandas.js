@@ -96,32 +96,29 @@ const BotonMostrarHistorico = styled(Boton)`
 const Comandas = () => {
   const [comandas, setComandas] = useState([]);
   const history = useHistory();
-  const [nombreUsuario, setNombreUsuario] = useState('');
+  const [nombresUsuarios, setNombresUsuarios] = useState({});
   
-
   useEffect(() => {
     const obtenerComandas = async () => {
       try {
         const response = await axios.get('http://localhost:4000/api/comandas', { withCredentials: true });
         const comandasPorServir = response.data.filter(comanda => comanda.estado === 'porServir');
         setComandas(comandasPorServir);
+
+        // Obtener nombres de usuarios para cada comanda
+        const nombres = {};
+        for (const comanda of comandasPorServir) {
+          if (!nombres[comanda.id_usuario]) {
+            const responseUsuario = await axios.get(`http://localhost:4000/api/usuarios/${comanda.id_usuario}`, { withCredentials: true });
+            nombres[comanda.id_usuario] = responseUsuario.data.nombre;
+          }
+        }
+        setNombresUsuarios(nombres);
       } catch (error) {
         console.error('Error al obtener las comandas:', error);
       }
     };
 
-    const obtenerUsuario = async () => {
-      try {
-        const response = await axios.get('http://localhost:4000/api/comandas', { withCredentials: true });
-        const idUsuario = response.data[0].id_usuario;
-        const responseUsuario = await axios.get(`http://localhost:4000/api/usuarios/${idUsuario}`, { withCredentials: true });
-        setNombreUsuario(responseUsuario.data.nombre);
-      } catch (error) {
-        console.error('Error al obtener el nombre del usuario:', error);
-      }
-    };
-
-    obtenerUsuario();
     obtenerComandas();
   }, []);
 
@@ -156,7 +153,7 @@ const Comandas = () => {
           <ComandaItem key={comanda._id}>
             <DetallesComanda>
               <NombreProducto>Mesa: {comanda.mesa}</NombreProducto>
-              <NombreProducto>Cliente: {nombreUsuario}</NombreProducto>
+              <NombreProducto>Cliente: {nombresUsuarios[comanda.id_usuario]}</NombreProducto>
               <FechaComanda>Fecha: {new Date(comanda.fecha).toLocaleDateString()}</FechaComanda>
               <ComentariosComanda>Comentarios: {comanda.comentarios}</ComentariosComanda>
               <PrecioProducto>Total: {comanda.precio_total} €</PrecioProducto>
