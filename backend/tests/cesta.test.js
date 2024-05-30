@@ -67,8 +67,52 @@ describe('Pruebas para la API de cesta', () => {
 
     });
 
-     
 
+    it('Añadir un producto inexistente a la cesta', async () => {
+
+    const response = await request(app).post('/api/cesta').send({ productoId: " ", cantidad: 2 });
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe('Producto no encontrado');
+
+    });
+
+    it('Devolver la cesta', async () => {
+      
+      const response = await request(app).get('/api/cesta');
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+
+    });
+
+    it('Modificar un producto existente en la cesta', async () => {
+      
+      const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
+      const url = '/api/cesta/' + objectId;
+      const response = await request(app).put(url).send({cantidad: 1});
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Cantidad de producto actualizada en la cesta');
+    });
+
+    it('Modificar un producto inexistente en la cesta', async () => {
+      
+      const response = await request(app).put('/api/cesta/5').send({cantidad: 5});
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Producto no encontrado en la cesta');
+    });
+     
+    it('Eliminar un producto existente en la cesta', async () => {
+      const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
+      const url = '/api/cesta/' + objectId;
+      const response = await request(app).delete(url);
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Producto eliminado de la cesta');
+    });
+
+    it('Eliminar un producto inexistente en la cesta', async () => {
+
+      const response = await request(app).delete('/api/cesta/5');
+      expect(response.status).toBe(500);
+    });
     
 
 })

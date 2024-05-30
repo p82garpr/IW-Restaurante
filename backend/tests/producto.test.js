@@ -57,7 +57,7 @@ describe('Pruebas para la API de productos', () => {
         expect(response.body.message).toBe("El producto ha sido creado");
     });
 
-   /* it('Crear un producto existente', async () => {
+   it('Crear un producto existente', async () => {
         const nuevoProd = new Producto({
             nombre : 'Fanta de naranja',
             precio : 2,
@@ -67,7 +67,7 @@ describe('Pruebas para la API de productos', () => {
         const response = await request(app).post('/api/productos').send(nuevoProd);
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("El producto ya existe");
-    }); */
+    }); 
 
     it('Crear un producto con una categoria inexistente', async () => {
         const nuevoProd = {
