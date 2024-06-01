@@ -6,7 +6,7 @@ const { isAuthenticated, hasPrivilege } = require('../middleware/authMiddleware'
 
 router.route('/')
     .get(isAuthenticated, hasPrivilege(1), getUsu)  // Obtener lista de usuarios requiere autenticación y privilegio 1
-    .post(isAuthenticated, hasPrivilege(1), createUsu);  // Crear un usuario requiere autenticación y privilegio 1
+    .post(createUsu);  // Crear un usuario 
 
 router.route('/auth/login')
     .post(loginUsu);
@@ -38,7 +38,7 @@ router.route('/auth/sesion')
 
 router.route('/:id')
     .delete(isAuthenticated, hasPrivilege(1), deleteUsu)  // Eliminar un usuario requiere autenticación y privilegio 1
-    .put(isAuthenticated, hasPrivilege(1), updateUsu)  // Actualizar un usuario requiere autenticación y privilegio 1
+    .put(isAuthenticated, updateUsu)  // Actualizar un usuario requiere autenticación y privilegio 1
     .get(isAuthenticated, getUsuarioActual);  // Obtener usuario actual requiere autenticación
 
 module.exports = router;

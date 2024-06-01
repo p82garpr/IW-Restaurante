@@ -44,10 +44,13 @@ usuarioCtrl.createUsu = async (req, res) => {
 
 usuarioCtrl.deleteUsu = async (req, res) => {
     try {
-        await Usuario.findByIdAndDelete(req.params.id);
+        const usuario = await Usuario.findByIdAndDelete(req.params.id);
+        if(!usuario){
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
         res.status(200).json({ message: 'El usuario ha sido eliminado' });
     } catch (error) {
-        res.status(404).json({ message: "Usuario no encontrado" });
+        return res.status(500).json({ message: error.message });
     }
 };
 
@@ -63,15 +66,16 @@ usuarioCtrl.updateUsu = async (req, res) => {
             cliente_info
         };
 
+
         // Solo actualizar la contraseña si se pasa en el cuerpo de la solicitud
         if (contraseña) {
             const contraseña_hashed = await bcrypt.hash(contraseña, saltRounds);
             updateData.contraseña = contraseña_hashed;
         }
-
+        
         // Intentar encontrar y actualizar el usuario
         const usuario = await Usuario.findByIdAndUpdate(req.params.id, updateData, { new: true });
-
+        
         // Si el usuario no se encuentra, devolver 404
         if (!usuario) {
             return res.status(404).json({ message: "Usuario no encontrado" });
@@ -81,7 +85,9 @@ usuarioCtrl.updateUsu = async (req, res) => {
         res.status(200).json({ message: 'El usuario ha sido actualizado', usuario });
     } catch (error) {
         // Manejar cualquier otro error
+        console.log(error);
         res.status(500).json({ message: "Error al actualizar el usuario", error });
+        
     }
 };
 
@@ -102,7 +108,7 @@ usuarioCtrl.loginUsu = async (req, res) => {
 
         // Verificar el privilegio del usuario
         if (usuario.privilegio === 1 && mesa) { // Si el usuario es administrador y se proporciona un número de mesa
-            return res.status(403).json({ message: 'Los administradores no pueden iniciar sesión con un número de mesa' });
+            return res.status(405).json({ message: 'Los administradores no pueden iniciar sesión con un número de mesa' });
         } else if (usuario.privilegio === 0) { // Si el usuario es cliente
             if (!mesa) {
                 return res.status(403).json({ message: 'Se necesita proporcionar un número de mesa para iniciar sesión como cliente' });

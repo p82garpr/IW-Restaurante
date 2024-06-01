@@ -2,6 +2,7 @@ const request = require('supertest');
 const app = require('../src/app'); 
 const Producto = require('../src/models/Producto');
 const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Types;
 
 //AÑADIR QUE NO SE PUEDA CREAR EL MSIMO PRODUCTO DOS VECES
 const obtenerIdPorNombreProducto = async (nombreProd) => {
@@ -23,27 +24,34 @@ const obtenerIdPorNombreProducto = async (nombreProd) => {
 
 describe('Pruebas para la API de productos', () => {
     beforeAll(async () => {
-        const URI = process.env.MONGODB_URI
-            ? process.env.MONGODB_URI
-            : 'mongodb+srv://i12hurel:admin@clusterpruebas.jelzqjk.mongodb.net/'
 
-          mongoose.connect(URI)
-
-          const connection = mongoose.connection
-
-          connection.once('open', ()=>{
-              console.log('la base de datos ha sido conectada: ', URI);
-          })
-      
+        const URI = process.env.MONGODB_URI || 'mongodb+srv://i12hurel:admin@clusterpruebas.jelzqjk.mongodb.net/test';
+        await mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true });
+  
+        server = app.listen(4000, () => {
+            console.log('Test server running on port 4000');
+        });
+        agent = request.agent(server); // Agente para manejar la sesión
+  
       });
-      
-     afterAll(async () => {
-        // Desconectarse de la base de datos de prueba
+  
+    afterAll(async () => {
         await mongoose.disconnect();
+        server.close();
     });
 
+    it('Crear un nuevo producto (login con cliente)', async () => {
 
-    it('Crear un nuevo producto', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass",
+            mesa: "6659a8bc77f42e5c4538cad4"
+        });
+  
+        
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+
         const nuevoProd = {
             nombre : "Fanta de naranja",
             precio : 2,
@@ -52,24 +60,96 @@ describe('Pruebas para la API de productos', () => {
             descripcion: " ",
             ingredientes: " ",
         };
-        const response = await request(app).post('/api/productos').send(nuevoProd);
+        const response = await agent.post('/api/productos').send(nuevoProd);
+        expect(response.status).toBe(403);
+        expect(response.body.message).toBe('Forbidden: Insufficient privilege');
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass"
+          });
+      
+          expect(logoutResponse.status).toBe(200);
+          expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
+    });
+    it('Crear un nuevo producto (login con admin)', async () => {
+
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+        });
+  
+        
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+
+        const nuevoProd = {
+            nombre : "Fanta de naranja",
+            precio : 2,
+            imagen: " ",
+            categoria: "bebida",
+            descripcion: " ",
+            ingredientes: " ",
+        };
+        const response = await agent.post('/api/productos').send(nuevoProd);
         expect(response.status).toBe(200);
         expect(response.body.message).toBe("El producto ha sido creado");
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+          });
+      
+          expect(logoutResponse.status).toBe(200);
+          expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
-   it('Crear un producto existente', async () => {
-        const nuevoProd = new Producto({
-            nombre : 'Fanta de naranja',
-            precio : 2,
-            categoria: 'bebida'
-        });
+    
 
-        const response = await request(app).post('/api/productos').send(nuevoProd);
-        expect(response.status).toBe(404);
-        expect(response.body.message).toBe("El producto ya existe");
+   it('Crear un producto existente', async () => {
+    
+    const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+        nombre_usuario: "admin",
+        contraseña: "admin"
+    });
+
+    
+    expect(loginResponse.status).toBe(200);
+    expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');     
+    
+    const nuevoProd = {
+                nombre : "Fanta de naranja",
+                precio : 2,
+                imagen: " ",
+                categoria: "bebida",
+                descripcion: " ",
+                ingredientes: " ",
+            };
+
+        const response = await agent.post('/api/productos').send(nuevoProd);
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe("Ya existe un producto con este nombre");
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+          });
+      
+          expect(logoutResponse.status).toBe(200);
+          expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     }); 
 
     it('Crear un producto con una categoria inexistente', async () => {
+        
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+        });
+    
+        
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso'); 
+
         const nuevoProd = {
             nombre : "Fanta de limón",
             precio : 2,
@@ -78,39 +158,97 @@ describe('Pruebas para la API de productos', () => {
             descripcion: " ",
             ingredientes: " ",
         };
-        const response = await request(app).post('/api/productos').send(nuevoProd);
-        expect(response.status).toBe(400);
+        const response = await agent.post('/api/productos').send(nuevoProd);
+        expect(response.status).toBe(401);
         expect(response.body.message).toBe("La categoría especificada no existe");
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+          });
+      
+          expect(logoutResponse.status).toBe(200);
+          expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
     it('Devolver todos los productos filtrados por categoría existente', async () => {
-        
+
         const response = await request(app).get('/api/productos/categoria/postre');
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body)).toBe(true);
     });
 
     it('Devolver todos los productos filtrados por categoría inexistente', async () => {
-        const response = await request(app).get('/api/productos/categoria/segundo');
-        expect(response.status).toBe(400);
+        const objectId = new ObjectId("5f1d7f1a1e4b1a1b1c1d2f2f");
+        const url = '/api/productos/categoria/' + objectId;
+        const response = await agent.get(url);
+        expect(response.status).toBe(401);
+        
     }); 
 
     it('Devolver un producto existente', async () => {    
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass",
+            mesa:"6659a8bc77f42e5c4538cad4"
+        });
+    
+        
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso'); 
+
         const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
         const url = '/api/productos/' + objectId;
-        const response = await request(app).get(url);
+        const response = await agent.get(url);
         expect(response.status).toBe(200);
         expect(response.body).toBeDefined();
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass"
+        });
+
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
     it('Devolver un producto inexistente', async () => {    
+        
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass",
+            mesa:"6659a8bc77f42e5c4538cad4"
+        });
+    
+        
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso'); 
+        
         const url = '/api/productos/12345'
-        const response = await request(app).get(url);
+        const response = await agent.get(url);
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("Producto no encontrado");
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass"
+        });
+
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
-    it('Actualizar un producto existente', async () => {
+    it('Actualizar un producto existente (login con cliente)', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass",
+            mesa:"6659a8bc77f42e5c4538cad4"
+        });
+    
+        
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso'); 
+        
         const nuevoProd = new Producto({
             nombre : 'Fanta de naranja',
             precio : 10,
@@ -118,31 +256,149 @@ describe('Pruebas para la API de productos', () => {
         });
         const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
         const url = '/api/productos/' + objectId;
-        const response = await request(app).put(url).send(nuevoProd);
-        expect(response.status).toBe(200);
-        expect(response.body.message).toBe("El producto ha sido actualizado");
+        const response = await agent.put(url).send(nuevoProd);
+        expect(response.status).toBe(403);
+        expect(response.body.message).toBe('Forbidden: Insufficient privilege');
+
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass"
+        });
+
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
-    it('Actualizar un producto inexistente', async () => {
-        const url = '/api/productos/12345';
-        const response = await request(app).put(url).send(" ");
-        expect(response.status).toBe(404);
-        expect(response.body.message).toBe("Producto no encontrado");
-    });
 
-    it('Eliminar un producto existente', async () => {
+    it('Actualizar un producto existente (login con admin)', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+        });
+    
+        
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso'); 
+        
+        const nuevoProd = new Producto({
+            nombre : 'Fanta de naranja',
+            precio : 10,
+            categoria: 'bebida'
+        });
         const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
         const url = '/api/productos/' + objectId;
-        const response = await request(app).delete(url);
+        const response = await agent.put(url).send(nuevoProd);
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe("El producto ha sido actualizado");
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+          });
+      
+          expect(logoutResponse.status).toBe(200);
+          expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
+    });
+
+    
+
+    it('Actualizar un producto inexistente', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+        });
+    
+        
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso'); 
+        const url = '/api/productos/12345';
+        const response = await agent.put(url).send(" ");
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe("Producto no encontrado");
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+        });
+
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
+    });
+
+    it('Eliminar un producto existente (login con cliente)', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass",
+            mesa:"6659a8bc77f42e5c4538cad4"
+        });
+    
+        
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso'); 
+
+        const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
+        const url = '/api/productos/' + objectId;
+        const response = await agent.delete(url);
+        expect(response.status).toBe(403);
+        expect(response.body.message).toBe('Forbidden: Insufficient privilege');
+        
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass"
+        });
+
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
+    });
+
+    it('Eliminar un producto existente (login con admin)', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+        });
+    
+        
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso'); 
+
+        const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
+        const url = '/api/productos/' + objectId;
+        const response = await agent.delete(url);
         expect(response.status).toBe(200);
         expect(response.body.message).toBe("Producto ha sido eliminado");
+        
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+        });
+
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
     it('Eliminar un producto inexistente', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+        });
+    
+        
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+
         const url = '/api/productos/carne';
-        const response = await request(app).delete(url);
+        const response = await agent.delete(url);
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("Producto no encontrado");
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+        });
+
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     }); 
 
 

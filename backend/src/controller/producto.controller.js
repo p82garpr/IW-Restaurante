@@ -9,7 +9,7 @@ productoCtrl.getProd = async (req, res) => {
         if (req.params.categoria) {
             const categoria = await Categoria.findOne({ nombre: req.params.categoria });
             if (!categoria) {
-                return res.status(201).json([]);
+                return res.status(401).json([]);
             }
             productos = await Producto.find({ categoria: categoria._id }).populate('categoria', 'nombre');
         } else {
@@ -26,13 +26,15 @@ productoCtrl.createProd = async (req, res) => {
 
     try {
         const productoExistente = await Producto.findOne({ nombre });
+
         if (productoExistente) {
             return res.status(400).json({ message: "Ya existe un producto con este nombre" });
         }
 
         const categoriaEncontrada = await Categoria.findOne({ nombre: categoria });
+
         if (!categoriaEncontrada) {
-            return res.status(400).json({ message: "La categoría especificada no existe" });
+            return res.status(401).json({ message: "La categoría especificada no existe" });
         }
 
         const newProd = new Producto({

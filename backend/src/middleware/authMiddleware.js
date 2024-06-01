@@ -9,7 +9,7 @@ const isAuthenticated = async (req, res, next) => {
     try {
         const usuario = await Usuario.findById(req.session.usuarioId);
         if (!usuario) {
-            return res.status(401).json({ message: 'Unauthorized' });
+            return res.status(402).json({ message: 'Unauthorized' });
         }
         req.usuario = usuario; // Almacena el usuario en el objeto de la solicitud para uso posterior
         next();
