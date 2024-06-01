@@ -33,8 +33,8 @@ let server;
       const URI = process.env.MONGODB_URI || 'mongodb+srv://i12hurel:admin@clusterpruebas.jelzqjk.mongodb.net/test';
       await mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-      server = app.listen(4000, () => {
-          console.log('Test server running on port 4000');
+      server = app.listen(7000, () => {
+          console.log('Test server running on port 7000');
       });
       agent = request.agent(server); // Agente para manejar la sesión
 

@@ -29,8 +29,8 @@ describe('Pruebas para la API de cesta', () => {
         const URI = process.env.MONGODB_URI || 'mongodb+srv://i12hurel:admin@clusterpruebas.jelzqjk.mongodb.net/test';
         await mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true });
   
-        server = app.listen(4000, () => {
-            console.log('Test server running on port 4000');
+        server = app.listen(9000, () => {
+            console.log('Test server running on port 9000');
         });
         agent = request.agent(server); // Agente para manejar la sesión
   
