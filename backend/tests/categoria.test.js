@@ -21,29 +21,31 @@ const obtenerIdPorNombre = async (nombreCat) => {
 };
 
 describe('Pruebas para la API de categorias', () => {
-    beforeAll(async () => {
-        const URI = process.env.MONGODB_URI
-            ? process.env.MONGODB_URI
-            : 'mongodb+srv://i12hurel:admin@clusterpruebas.jelzqjk.mongodb.net/'
+  
+  let server;
+  let agent;
+  
+  beforeAll(async () => {
 
-          mongoose.connect(URI)
+    const URI = process.env.MONGODB_URI || 'mongodb+srv://i12hurel:admin@clusterpruebas.jelzqjk.mongodb.net/test';
+    await mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-          const connection = mongoose.connection
-
-          connection.once('open', ()=>{
-              console.log('la base de datos ha sido conectada: ', URI);
-          })
-      
-      });
-      
-     afterAll(async () => {
-        // Desconectarse de la base de datos de prueba
-        await mongoose.disconnect();
+    server = app.listen(4000, () => {
+        console.log('Test server running on port 4000');
     });
+    agent = request.agent(server); // Agente para manejar la sesión
+
+  });
+    
+   afterAll(async () => {
+      // Desconectarse de la base de datos de prueba
+      await mongoose.disconnect();
+      server.close();
+  });
 
 
     it('Devolver todos las categorías', async () => {
-        const response = await request(app).get('/api/categorias');
+        const response = await agent.get('/api/categorias');
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body)).toBe(true);
     });
@@ -51,14 +53,14 @@ describe('Pruebas para la API de categorias', () => {
     it('Devolver una categoría existente', async () => {
         const objectId = await obtenerIdPorNombre('postre');
         const url = '/api/categorias/' + objectId;
-        const response = await request(app).get(url);
+        const response = await agent.get(url);
         expect(response.status).toBe(200);
         expect(response.body).toBeDefined();
     });
 
     it('Devolver una categoría inexistente', async () => {
         const url = '/api/categorias/12345';
-        const response = await request(app).get(url);
+        const response = await agent.get(url);
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("Categoria no encontrada");
     });

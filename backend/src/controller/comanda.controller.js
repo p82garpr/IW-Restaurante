@@ -72,7 +72,10 @@ comandaCtrl.updateComanda = async (req, res) => {
 
 comandaCtrl.deleteComanda = async (req, res) => {
     try {
-        await Comanda.findByIdAndDelete(req.params.id);
+        resp=await Comanda.findByIdAndDelete(req.params.id);
+        if(!resp){
+            return res.status(404).json({ message: 'Comanda no encontrada'});
+        }
         res.status(200).json({ message: 'Comanda eliminada correctamente' });
     } catch (error) {
         res.status(500).json({ message: error.message });

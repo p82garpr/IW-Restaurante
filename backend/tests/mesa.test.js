@@ -2,6 +2,8 @@ const request = require('supertest');
 const app = require('../src/app'); 
 const Mesa = require('../src/models/Mesa');
 const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Types;
+
 
 //COMPROBAR QUE NO SE CREE EL MISMO DOS VECES (EN TODOS LOS TEST)
 
@@ -44,8 +46,37 @@ let server;
         server.close();
     });
 
+    it('Crear una mesa (login con cliente)', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass",
+            mesa: "665b2732d0ed825046ea31bd"
+          });
     
-    it('Crear una mesa', async () => {
+          expect(loginResponse.status).toBe(200);
+          expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+    
+        
+        const nuevaMesa = {
+            numero_mesa: 2,
+            estado: 'Libre',
+            capacidad: 6
+        }
+        const response = await agent.post('/api/mesa').send(nuevaMesa);
+        expect(response.status).toBe(403);
+        expect(response.body.message).toBe('Forbidden: Insufficient privilege');
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass"
+        });
+
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
+    });
+
+    
+    it('Crear una mesa (login con admin)', async () => {
         const loginResponse = await agent.post('/api/usuarios/auth/login').send({
             nombre_usuario: "admin",
             contraseña: "admin"
@@ -56,93 +87,283 @@ let server;
     
         
         const nuevaMesa = {
-            numero_mesa: 1,
+            numero_mesa: 2,
             estado: 'Libre',
-            capacidad: 4
+            capacidad: 6
         }
         const response = await agent.post('/api/mesa').send(nuevaMesa);
         expect(response.status).toBe(200);
         expect(response.body.message).toBe("La mesa ha sido creada");
+        
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+            });
+    
+            expect(logoutResponse.status).toBe(200);
+            expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
-    /*it('Crear una mesa existente', async () => {
-        const nuevaMesa = {
-            numero_mesa: 1,
-            estado: 'libre',
-            capacidad: 4
-        }
-        const response = await request(app).post('/api/mesa').send(nuevaMesa);
-        expect(response.status).toBe(500);
-        expect(response.body.message).toBe("La mesa no se ha podido crear");
-    }); */
-
-    it('Devolver las mesas existentes', async () => {
+    it('Crear una mesa existente', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+          });
+    
+          expect(loginResponse.status).toBe(200);
+          expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
         const nuevaMesa = {
             numero_mesa: 2,
-            estado: 'libre',
-            capacidad: 3
+            estado: 'Libre',
+            capacidad: 6
         }
-        const res = await request(app).post('/api/mesa').send(nuevaMesa);
-        const response = await request(app).get('/api/mesa');
+        const response = await agent.post('/api/mesa').send(nuevaMesa);
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe("Ya existe una mesa con este número");
+        
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+            });
+    
+            expect(logoutResponse.status).toBe(200);
+            expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
+    });
+
+    it('Devolver las mesas existentes', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+          });
+
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+        
+        const response = await agent.get('/api/mesa');
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body)).toBe(true);
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+            });
+    
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
     it('Devolver una mesa existente', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+          });
+    
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+    
+        
         const objectId = await obtenerIdPorNumeroMesa(1);
         const url = '/api/mesa/' + objectId;
-        const response = await request(app).get(url);
+        const response = await agent.get(url);
         expect(response.status).toBe(200);
         //console.log(response.body)
         expect(typeof response.body).toBe('object');
        // expect(Array.isArray(response.body)).toBe(true);
+
+       const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+        nombre_usuario: "admin",
+        contraseña: "admin"
+        });
+
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
     it('Devolver una mesa inexistente', async () => {
-        const response = await request(app).get('/api/mesa/5');
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+          });
+    
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+        
+        const response = await agent.get('/api/mesa/665b2732d0ed825046gr31bd');
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("Mesa no encontrada");
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+            });
+    
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
-    it('Modificar una mesa existente', async () => {
+    it('Modificar una mesa existente (login con cliente)', async () => {
+        
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass",
+            mesa:"665b2732d0ed825046ea31bd"
+          });
+    
+          expect(loginResponse.status).toBe(200);
+          expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+        
         const nuevaMesa = {
-            numero_mesa: 1,
-            estado: 'ocupada',
-            capacidad: 4
+            numero_mesa: 2,
+            estado: 'Ocupada',
+            capacidad: 7
         }
-        const objectId = await obtenerIdPorNumeroMesa(1);
+        const objectId = await obtenerIdPorNumeroMesa(2);
         const url = '/api/mesa/' + objectId;
-        const response = await request(app).put(url).send(nuevaMesa);
+        const response = await agent.put(url).send(nuevaMesa);
+        expect(response.status).toBe(403);
+        expect(response.body.message).toBe('Forbidden: Insufficient privilege');
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass"
+            });
+    
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
+    });
+
+    it('Modificar una mesa existente (login con admin)', async () => {
+        
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+          });
+    
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+        
+        const nuevaMesa = {
+            numero_mesa: 2,
+            estado: 'Ocupada',
+            capacidad: 7
+        }
+        const objectId = await obtenerIdPorNumeroMesa(2);
+        const url = '/api/mesa/' + objectId;
+        const response = await agent.put(url).send(nuevaMesa);
         expect(response.status).toBe(200);
         expect(response.body.message).toBe('La mesa ha sido actualizada');
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+            });
+    
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
     it('Modificar una mesa inexistente', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+          });
+    
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
         
-        const response = await request(app).put('/api/mesa/5').send(" ");
+        const nuevaMesa = {
+            numero_mesa: 2,
+            estado: 'Ocupada',
+            capacidad: 7
+        }
+        
+        const response = await agent.put('/api/mesa/665b2732d0ed825046gr31bd').send(nuevaMesa);
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("Mesa no encontrada");
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+            });
+    
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
-    /*it('Eliminar una mesa existente', async () => {
-        const objectId = await obtenerIdPorNumeroMesa(1);
+    it('Eliminar una mesa existente (login con cliente)', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass",
+            mesa:"665b2732d0ed825046ea31bd"
+          });
+    
+          expect(loginResponse.status).toBe(200);
+          expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+        
+        
+        const objectId = await obtenerIdPorNumeroMesa(2);
         const url = '/api/mesa/' + objectId;
-        const response = await request(app).delete(url);
+        const response = await agent.delete(url);
+        expect(response.status).toBe(403);
+        expect(response.body.message).toBe('Forbidden: Insufficient privilege');
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "i12hurel",
+            contraseña: "pass"
+            });
+    
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
+
+    });
+
+    it('Eliminar una mesa existente (login con admin)', async () => {
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+          });
+    
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+        
+        const objectId = await obtenerIdPorNumeroMesa(2);
+        const url = '/api/mesa/' + objectId;
+        const response = await agent.delete(url);
         expect(response.status).toBe(200);
         expect(response.body.message).toBe('La mesa ha sido eliminada');
 
-        const objectId2 = await obtenerIdPorNumeroMesa(2);
-        const url2 = '/api/mesa/' + objectId2;
-        const res = await request(app).delete(url2);
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+            });
+    
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
+
     });
 
     it('Eliminar una mesa inexistente', async () => {
-
-        const response = await request(app).delete('/api/mesa/5');
+        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+          });
+    
+        expect(loginResponse.status).toBe(200);
+        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+        
+        const response = await agent.delete('/api/mesa/665b2732d0ed825046gr31bd');
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("Mesa no encontrada");
+
+        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
+            nombre_usuario: "admin",
+            contraseña: "admin"
+            });
     
-    });*/
+        expect(logoutResponse.status).toBe(200);
+        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
+    
+    });
 
 
 

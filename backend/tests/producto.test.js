@@ -45,7 +45,7 @@ describe('Pruebas para la API de productos', () => {
         const loginResponse = await agent.post('/api/usuarios/auth/login').send({
             nombre_usuario: "i12hurel",
             contraseña: "pass",
-            mesa: "6659a8bc77f42e5c4538cad4"
+            mesa: "665b2732d0ed825046ea31bd"
         });
   
         
@@ -190,7 +190,7 @@ describe('Pruebas para la API de productos', () => {
         const loginResponse = await agent.post('/api/usuarios/auth/login').send({
             nombre_usuario: "i12hurel",
             contraseña: "pass",
-            mesa:"6659a8bc77f42e5c4538cad4"
+            mesa:"665b2732d0ed825046ea31bd"
         });
     
         
@@ -217,7 +217,7 @@ describe('Pruebas para la API de productos', () => {
         const loginResponse = await agent.post('/api/usuarios/auth/login').send({
             nombre_usuario: "i12hurel",
             contraseña: "pass",
-            mesa:"6659a8bc77f42e5c4538cad4"
+            mesa:"665b2732d0ed825046ea31bd"
         });
     
         
@@ -238,11 +238,12 @@ describe('Pruebas para la API de productos', () => {
         expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
+    
     it('Actualizar un producto existente (login con cliente)', async () => {
         const loginResponse = await agent.post('/api/usuarios/auth/login').send({
             nombre_usuario: "i12hurel",
             contraseña: "pass",
-            mesa:"6659a8bc77f42e5c4538cad4"
+            mesa:"665b2732d0ed825046ea31bd"
         });
     
         
@@ -330,7 +331,7 @@ describe('Pruebas para la API de productos', () => {
         const loginResponse = await agent.post('/api/usuarios/auth/login').send({
             nombre_usuario: "i12hurel",
             contraseña: "pass",
-            mesa:"6659a8bc77f42e5c4538cad4"
+            mesa:"665b2732d0ed825046ea31bd"
         });
     
         
@@ -401,5 +402,6 @@ describe('Pruebas para la API de productos', () => {
         expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     }); 
 
+    
 
 })

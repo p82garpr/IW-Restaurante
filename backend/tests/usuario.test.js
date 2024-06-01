@@ -87,7 +87,7 @@ describe('Pruebas para la API de usuarios', () => {
     const loginResponse = await agent.post('/api/usuarios/auth/login').send({
         nombre_usuario: "p82ceali",
         contraseña: "pass",
-        mesa:"6659a8bc77f42e5c4538cad4"
+        mesa:"665b2732d0ed825046ea31bd"
     });
 
     expect(loginResponse.status).toBe(200);
@@ -240,7 +240,7 @@ describe('Pruebas para la API de usuarios', () => {
       const loginResponse = await agent.post('/api/usuarios/auth/login').send({
         nombre_usuario: "p82ceali",
         contraseña: "pass",
-        mesa:"6659a8bc77f42e5c4538cad4"
+        mesa:"665b2732d0ed825046ea31bd"
       });
 
       expect(loginResponse.status).toBe(200);
