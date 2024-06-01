@@ -21,97 +21,209 @@ const obtenerIdPorNombreProducto = async (nombreProd) => {
   };
 
 describe('Pruebas para la API de cesta', () => {
+  let server;
+  let agent;
+    
     beforeAll(async () => {
-        const URI = process.env.MONGODB_URI
-            ? process.env.MONGODB_URI
-            : 'mongodb+srv://i12hurel:admin@clusterpruebas.jelzqjk.mongodb.net/'
 
-          mongoose.connect(URI)
-
-          const connection = mongoose.connection
-
-          connection.once('open', ()=>{
-              console.log('la base de datos ha sido conectada: ', URI);
-          })
-      
+        const URI = process.env.MONGODB_URI || 'mongodb+srv://i12hurel:admin@clusterpruebas.jelzqjk.mongodb.net/test';
+        await mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true });
+  
+        server = app.listen(4000, () => {
+            console.log('Test server running on port 4000');
+        });
+        agent = request.agent(server); // Agente para manejar la sesión
+  
       });
-      
+  
     afterAll(async () => {
-        // Eliminar todos los datos de prueba de la base de datos
-        //await Usuario.deleteMany({});
-        
-        // Desconectarse de la base de datos de prueba
         await mongoose.disconnect();
+        server.close();
     });
+
 
 
     it('Añadir un producto existente a la cesta', async () => {
 
-        const nuevoProd = {
-            nombre : "Fanta de naranja",
-            precio : 2,
-            imagen: " ",
-            categoria: "bebida",
-            descripcion: " ",
-            ingredientes: " ",
-        };
-    
-      const res = await request(app).post('/api/productos').send(nuevoProd);
-      //expect(res.status).toBe(200);
-      //expect(res.body.message).toBe("El producto ha sido creado");
 
-      const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
-      const response = await request(app).post('/api/cesta').send({ productoId: objectId, cantidad: 2 });
+      const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass",
+        mesa:"665b2732d0ed825046ea31bd"
+      });
+
+      expect(loginResponse.status).toBe(200);
+      expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+
+      const objectId = await obtenerIdPorNombreProducto("Fanta de limon");
+      const response = await agent.post('/api/cesta').send({ productoId: objectId, cantidad: 1 });
       expect(response.status).toBe(200);
       expect(response.body.message).toBe('Producto agregado a la cesta');
+
+      const logoutResponse2 = await agent.post('/api/usuarios/auth/logout').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass"
+      });
+  
+      expect(logoutResponse2.status).toBe(200);
+      expect(logoutResponse2.body.message).toBe('Sesión cerrada exitosamente');
 
     });
 
 
     it('Añadir un producto inexistente a la cesta', async () => {
 
-    const response = await request(app).post('/api/cesta').send({ productoId: " ", cantidad: 2 });
+      const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass",
+        mesa:"665b2732d0ed825046ea31bd"
+      });
+
+      expect(loginResponse.status).toBe(200);
+      expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+
+    const response = await agent.post('/api/cesta').send({ productoId: "665b2732d0ed825046ea31bd", cantidad: 1 });
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('Producto no encontrado');
+
+    const logoutResponse2 = await agent.post('/api/usuarios/auth/logout').send({
+      nombre_usuario: "i12hurel",
+      contraseña: "pass"
+    });
+
+    expect(logoutResponse2.status).toBe(200);
+    expect(logoutResponse2.body.message).toBe('Sesión cerrada exitosamente');
 
     });
 
     it('Devolver la cesta', async () => {
-      
-      const response = await request(app).get('/api/cesta');
+      const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass",
+        mesa:"665b2732d0ed825046ea31bd"
+      });
+
+      expect(loginResponse.status).toBe(200);
+      expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+
+      const response = await agent.get('/api/cesta');
       expect(response.status).toBe(200);
-      expect(Array.isArray(response.body)).toBe(true);
+      expect(Array.isArray(response.body)).toBe(false);
+      
+      const logoutResponse2 = await agent.post('/api/usuarios/auth/logout').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass"
+      });
+  
+      expect(logoutResponse2.status).toBe(200);
+      expect(logoutResponse2.body.message).toBe('Sesión cerrada exitosamente');
 
     });
 
     it('Modificar un producto existente en la cesta', async () => {
       
-      const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
-      const url = '/api/cesta/' + objectId;
-      const response = await request(app).put(url).send({cantidad: 1});
+      const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass",
+        mesa:"665b2732d0ed825046ea31bd"
+      });
+
+      expect(loginResponse.status).toBe(200);
+      expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+
+      const objectId = await obtenerIdPorNombreProducto("Fanta de limon");
+      const response = await agent.post('/api/cesta').send({ productoId: objectId, cantidad: 1 });
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe('Cantidad de producto actualizada en la cesta');
+      expect(response.body.message).toBe('Producto agregado a la cesta');
+
+      const url = '/api/cesta/' + objectId;
+      const response2 = await agent.put(url).send({cantidad: 3});
+      expect(response2.status).toBe(200);
+      expect(response2.body.message).toBe('Cantidad de producto actualizada en la cesta');
+
+      const logoutResponse2 = await agent.post('/api/usuarios/auth/logout').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass"
+      });
+  
+      expect(logoutResponse2.status).toBe(200);
+      expect(logoutResponse2.body.message).toBe('Sesión cerrada exitosamente');
     });
 
     it('Modificar un producto inexistente en la cesta', async () => {
       
-      const response = await request(app).put('/api/cesta/5').send({cantidad: 5});
-      expect(response.status).toBe(200);
+      const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass",
+        mesa:"665b2732d0ed825046ea31bd"
+      });
+
+      expect(loginResponse.status).toBe(200);
+      expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+
+      const response = await agent.put('/api/cesta/665b2732d0ed825046ea31bd').send({cantidad: 5});
+      expect(response.status).toBe(404);
       expect(response.body.message).toBe('Producto no encontrado en la cesta');
+
+      const logoutResponse2 = await agent.post('/api/usuarios/auth/logout').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass"
+      });
+  
+      expect(logoutResponse2.status).toBe(200);
+      expect(logoutResponse2.body.message).toBe('Sesión cerrada exitosamente');
     });
      
     it('Eliminar un producto existente en la cesta', async () => {
-      const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
-      const url = '/api/cesta/' + objectId;
-      const response = await request(app).delete(url);
+      const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass",
+        mesa:"665b2732d0ed825046ea31bd"
+      });
+
+      expect(loginResponse.status).toBe(200);
+      expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+
+      const objectId = await obtenerIdPorNombreProducto("Fanta de limon");
+      const response = await agent.post('/api/cesta').send({ productoId: objectId, cantidad: 1 });
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe('Producto eliminado de la cesta');
+      expect(response.body.message).toBe('Producto agregado a la cesta');
+
+      const url = '/api/cesta/' + objectId;
+      const response2 = await agent.delete(url);
+      expect(response2.status).toBe(200);
+      expect(response2.body.message).toBe('Producto eliminado de la cesta');
+
+      const logoutResponse2 = await agent.post('/api/usuarios/auth/logout').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass"
+      });
+  
+      expect(logoutResponse2.status).toBe(200);
+      expect(logoutResponse2.body.message).toBe('Sesión cerrada exitosamente');
     });
 
     it('Eliminar un producto inexistente en la cesta', async () => {
+      const loginResponse = await agent.post('/api/usuarios/auth/login').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass",
+        mesa:"665b2732d0ed825046ea31bd"
+      });
 
-      const response = await request(app).delete('/api/cesta/5');
-      expect(response.status).toBe(500);
+      expect(loginResponse.status).toBe(200);
+      expect(loginResponse.body.message).toBe('Inicio de sesión exitoso');
+      const response = await agent.delete('/api/cesta/nestea');
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe('Producto no encontrado en la cesta');
+
+
+      const logoutResponse2 = await agent.post('/api/usuarios/auth/logout').send({
+        nombre_usuario: "i12hurel",
+        contraseña: "pass"
+      });
+  
+      expect(logoutResponse2.status).toBe(200);
+      expect(logoutResponse2.body.message).toBe('Sesión cerrada exitosamente');
     });
     
 

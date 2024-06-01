@@ -83,6 +83,13 @@ cestaCtrl.deleteProductoCesta = async (req, res) => {
         // Recuperar la cesta de compras del usuario desde la sesión
         let cesta = req.session.cesta || [];
 
+        // Verificar si el producto está en la cesta
+        const productoEnCesta = cesta.some(item => item.productoId.toString() === productoId.toString());
+
+        if (!productoEnCesta) {
+            return res.status(404).json({ message: 'Producto no encontrado en la cesta' });
+        }
+
         // Crear una nueva lista de productos en la cesta excluyendo el producto a eliminar
         const nuevaCesta = cesta.filter(item => item.productoId.toString() !== productoId.toString());
 
@@ -94,6 +101,7 @@ cestaCtrl.deleteProductoCesta = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 cestaCtrl.deleteCesta = async (req, res) => {
     try {
