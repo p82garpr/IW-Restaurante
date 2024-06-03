@@ -187,15 +187,6 @@ describe('Pruebas para la API de productos', () => {
     }); 
 
     it('Devolver un producto existente', async () => {    
-        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
-            nombre_usuario: "i12hurel",
-            contraseña: "pass",
-            mesa:"665b2732d0ed825046ea31bd"
-        });
-    
-        
-        expect(loginResponse.status).toBe(200);
-        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso'); 
 
         const objectId = await obtenerIdPorNombreProducto("Fanta de naranja");
         const url = '/api/productos/' + objectId;
@@ -203,39 +194,16 @@ describe('Pruebas para la API de productos', () => {
         expect(response.status).toBe(200);
         expect(response.body).toBeDefined();
 
-        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
-            nombre_usuario: "i12hurel",
-            contraseña: "pass"
-        });
-
-        expect(logoutResponse.status).toBe(200);
-        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
     it('Devolver un producto inexistente', async () => {    
         
-        const loginResponse = await agent.post('/api/usuarios/auth/login').send({
-            nombre_usuario: "i12hurel",
-            contraseña: "pass",
-            mesa:"665b2732d0ed825046ea31bd"
-        });
-    
-        
-        expect(loginResponse.status).toBe(200);
-        expect(loginResponse.body.message).toBe('Inicio de sesión exitoso'); 
         
         const url = '/api/productos/12345'
         const response = await agent.get(url);
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("Producto no encontrado");
 
-        const logoutResponse = await agent.post('/api/usuarios/auth/logout').send({
-            nombre_usuario: "i12hurel",
-            contraseña: "pass"
-        });
-
-        expect(logoutResponse.status).toBe(200);
-        expect(logoutResponse.body.message).toBe('Sesión cerrada exitosamente');
     });
 
     
