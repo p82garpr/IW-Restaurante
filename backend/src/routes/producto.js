@@ -4,10 +4,10 @@ const router = Router();
 const { createProd, getProd, getProducto, deleteProd, updateProd } = require('../controller/producto.controller');
 const { isAuthenticated, hasPrivilege } = require('../middleware/authMiddleware');
 
-router.post('/', isAuthenticated, hasPrivilege(1), createProd);
+router.post('/', isAuthenticated, hasPrivilege(1),createProd);
 
 router.route('/:id')
-    .get(isAuthenticated, getProducto)
+    .get(getProducto)
     .delete(isAuthenticated, hasPrivilege(1), deleteProd)
     .put(isAuthenticated, hasPrivilege(1), updateProd);
 
